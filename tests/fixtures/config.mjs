@@ -1,0 +1,27 @@
+export function testEnv(overrides = {}) {
+  return {
+    APP_URL: "http://localhost:3000",
+    ADMIN_URL: "http://localhost:3000",
+    NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+    NEXT_PUBLIC_WS_URL: "ws://localhost:3001/ws",
+    MONGODB_URI: "mongodb://127.0.0.1:27017/armani_test?directConnection=true&replicaSet=rs0",
+    REDIS_URL: "redis://127.0.0.1:6379",
+    MINIO_ENDPOINT: "http://127.0.0.1:9000",
+    MINIO_REGION: "us-east-1",
+    MINIO_BUCKET: "armani-test-media",
+    MINIO_ACCESS_KEY: "test_access_key",
+    MINIO_SECRET_KEY: "test_secret_key_never_use_in_deployment",
+    AUTH_SESSION_SECRET: "test_customer_session_secret_32_chars",
+    AUTH_ADMIN_SESSION_SECRET: "test_admin_session_secret_32_characters",
+    ENCRYPTION_KEY: "1".repeat(64),
+    PAYMENT_CALLBACK_BASE_URL: "http://localhost:3000",
+    WEBSOCKET_PORT: "3001",
+    WEBSOCKET_PATH: "/ws",
+    WEBSOCKET_HEARTBEAT_MS: "30000",
+    PRINTER_BRIDGE_ID: "test-bridge",
+    PRINTER_BRIDGE_TOKEN: "test_printer_bridge_token_32_characters",
+    LOG_LEVEL: "info",
+    LOG_FORMAT: "json",
+    ...overrides,
+  };
+}

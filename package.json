@@ -2,6 +2,7 @@
   "name": "armani-caffe",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "packageManager": "npm@11.12.1",
   "engines": {
     "node": ">=24.15.0 <25",
@@ -12,6 +13,7 @@
     "build": "next build",
     "start": "next start",
     "start:local": "npm run build && npm run start",
+    "env:init": "node scripts/create-local-env.mjs",
     "infra:up": "docker compose -f infra/compose.yaml up -d --wait mongodb redis minio",
     "infra:init:mongo": "docker compose -f infra/compose.yaml --profile init run --rm mongo-init",
     "infra:init:minio": "docker compose -f infra/compose.yaml --profile init run --rm minio-init",
@@ -26,7 +28,7 @@
     "check:boundaries": "node scripts/check-server-boundaries.mjs",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:integration": "node --test tests/integration/*.test.mjs",
-    "test:e2e": "npm run build && node --test tests/e2e/*.test.mjs",
+    "test:e2e": "node scripts/run-e2e.mjs",
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run check:boundaries && npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { spawn } from "node:child_process";
+import { spawn, spawnSync } from "node:child_process";
 import net from "node:net";
 import path from "node:path";
 import test from "node:test";
@@ -42,4 +42,21 @@ test("production server serves the Persian RTL home page", async () => {
   } finally {
     child.kill();
   }
+});
+
+test("production server exits when a required secret is missing", async () => {
+  const port = await unusedPort();
+  const result = spawnSync(
+    process.execPath,
+    [path.join("node_modules", "next", "dist", "bin", "next"), "start", "-p", String(port)],
+    {
+      cwd: process.cwd(),
+      env: { ...process.env, AUTH_SESSION_SECRET: "" },
+      encoding: "utf8",
+      timeout: 20000,
+    },
+  );
+
+  assert.equal(result.status, 1);
+  assert.match(result.stderr, /AUTH_SESSION_SECRET is required/);
 });
