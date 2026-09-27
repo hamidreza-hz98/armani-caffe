@@ -72,4 +72,6 @@ npm run start:local # ساخت و اجرای محلی نسخهٔ production
 
 قواعد افزودن وابستگی‌ها در [dependency policy](docs/dependency-policy.md) و قالب ثبت تصمیم‌های معماری در [ADR template](docs/adr/0000-template.md) آمده‌اند. کد مربوط به پایگاه داده، رازها، MinIO، صف و پرداخت باید زیر `src/server` بماند و در هر فایل `import "server-only"` داشته باشد.
 
+مرزهای ماژول‌ها، مسئولیت‌ها و جریان درخواست در [راهنمای معماری](docs/architecture.md) ثبت شده‌اند. `npm run check:architecture` جهت وابستگی‌ها و چرخه‌های import را بررسی می‌کند.
+
 برای اجرای MongoDB، Redis و MinIO، دستورات راه‌اندازی، آزمون، توقف و پاک‌سازی داده‌ها را در [راهنمای زیرساخت محلی](docs/local-infrastructure.md) ببینید. برنامهٔ Next.js همچنان روی میزبان اجرا می‌شود.

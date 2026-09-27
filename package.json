@@ -26,10 +26,11 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check:boundaries": "node scripts/check-server-boundaries.mjs",
+    "check:architecture": "node scripts/check-architecture.mjs",
     "test:unit": "node --test tests/unit/*.test.mjs",
     "test:integration": "node --test tests/integration/*.test.mjs",
     "test:e2e": "node scripts/run-e2e.mjs",
-    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run check:boundaries && npm run test:unit && npm run test:integration && npm run test:e2e"
+    "validate": "npm run format:check && npm run lint && npm run typecheck && npm run check:boundaries && npm run check:architecture && npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
     "next": "16.3.6",
