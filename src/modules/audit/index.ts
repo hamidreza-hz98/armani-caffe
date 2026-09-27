@@ -1,2 +1,8 @@
 // Browser-safe public boundary. Export only contracts and pure domain types.
-export type { AuditActor, AuditEvent, AuditEventWriter } from "./domain/index.ts";
+export type {
+  AuditActor,
+  AuditDraft,
+  AuditEvent,
+  AuditEventWriter,
+  SensitiveArea,
+} from "./domain/index.ts";

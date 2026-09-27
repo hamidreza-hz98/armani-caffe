@@ -118,6 +118,8 @@ describe("Mongoose domain schema defenses", () => {
       action: "seed",
       subject: { kind: "settings", id: "1" },
       requestId: "test",
+      area: "settings",
+      idempotencyKey: "audit-schema-test",
       outcome: "success",
     };
     await expect(
@@ -175,8 +177,11 @@ describe("Mongoose domain schema defenses", () => {
         aggregateId: "1",
         eventType: "placed",
         payload: { orderId: "1" },
+        requestId: "test",
+        actor: { kind: "system" },
         status: "processing",
         attempts: 1,
+        maxAttempts: 8,
         availableAt: new Date(),
         idempotencyKey: "o-1",
       }).validate(),

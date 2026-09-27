@@ -1,0 +1,13 @@
+# Audit and transactional outbox
+
+Sensitive admin, payment, order, inventory, settings, and print mutations use `commitSensitiveChange`. The caller supplies a domain change, a nonempty set of outbox events, and an audit draft with the same request ID and actor. All three writes run in one MongoDB transaction. An exception or invalid payload rolls back every write. Rejected sensitive attempts can be recorded separately with `recordRejectedSensitiveAction` and a failure outcome.
+
+Audit records are append-only. The collection rejects document updates and deletes through Mongoose, uses a unique idempotency key, and has no TTL. Metadata and outbox payloads accept only flat, safe primitive fields; keys resembling secrets, tokens, credentials, card details, or passwords are rejected. Never place raw personal, payment, or authentication data in either record. Administrative direct database access must also respect this policy; Mongoose middleware is not a database permission boundary.
+
+The outbox worker atomically claims one available event with a lease token. Completion and failure updates require that token, so a late worker cannot acknowledge a newer claim. Handlers receive an abort signal and have a timeout shorter than the lease. Failed attempts use jittered exponential backoff (one second base, five-minute cap), then move to `dead` after `maxAttempts`. The worker records a fixed failure code; detailed exceptions are only sent through redacted correlated logs. Delivered records expire after 90 days; dead records remain for operator review.
+
+Delivery is **at least once**, not exactly once: a lease can expire after a downstream side effect but before its acknowledgement. Every handler must use the event's stable `idempotencyKey` with its downstream system and honor abort signals. Replaying a dead or delivered event keeps that key, resets attempts, and increments `replayCount`. Inspect the event and downstream state before replaying it.
+
+The reusable worker is in `src/modules/notifications/infrastructure/worker.ts`. It claims only event types with registered handlers. No concrete downstream delivery handlers exist yet because notification/payment/print consumers are later tasks; `npm run outbox:work` starts an idle worker and does not consume events. Do not deploy it as a production consumer until handlers are registered. `npm run outbox:replay -- <event-id> --apply` explicitly requeues an eligible event; this is a state-changing operator command.
+
+Replica-set integration tests cover atomic commit and rollback, competing claims, stale acknowledgement, retries, dead-letter transition, replay with deduplication, and secret redaction. Run them with `npm run test:integration`.

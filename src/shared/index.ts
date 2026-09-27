@@ -1,3 +1,4 @@
+export * from "./actor.ts";
 export * from "./authorization.ts";
 export * from "./date.ts";
 export * from "./domain.ts";

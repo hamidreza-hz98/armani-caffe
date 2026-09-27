@@ -22,9 +22,15 @@ export const auditEventSchema = new Schema(
   {
     occurredAt: utcDateField(),
     actor: { type: actorSchema, required: true },
+    area: {
+      type: String,
+      required: true,
+      enum: ["admin", "payment", "order", "inventory", "settings", "print"],
+    },
     action: requiredText(120),
     subject: { type: subjectSchema, required: true },
     requestId: requiredText(80),
+    idempotencyKey: requiredText(128),
     outcome: { type: String, required: true, enum: ["success", "failure"] },
     metadata: { type: Map, of: Schema.Types.Mixed, default: {} },
   },
@@ -40,6 +46,8 @@ auditEventSchema.index(
   { name: "audit_actor_time" },
 );
 auditEventSchema.index({ requestId: 1, occurredAt: -1 }, { name: "audit_request_time" });
+auditEventSchema.index({ area: 1, occurredAt: -1 }, { name: "audit_area_time" });
+auditEventSchema.index({ idempotencyKey: 1 }, { unique: true, name: "audit_idempotency_unique" });
 auditEventSchema.index({ occurredAt: -1 }, { name: "audit_time" });
 auditEventSchema.pre("validate", function () {
   const metadata = this.get("metadata") as Map<string, unknown>;
@@ -48,4 +56,13 @@ auditEventSchema.pre("validate", function () {
   } catch (error) {
     this.invalidate("metadata", (error as Error).message);
   }
+});
+auditEventSchema.pre("save", function () {
+  if (!this.isNew) throw new Error("Audit events are append-only");
+});
+auditEventSchema.pre(/^(?:update|delete|replace|findOneAnd)/, function () {
+  throw new Error("Audit events are append-only");
+});
+auditEventSchema.pre("deleteOne", { document: true, query: false }, function () {
+  throw new Error("Audit events are append-only");
 });
