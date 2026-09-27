@@ -1,0 +1,110 @@
+name: armani-caffe
+
+services:
+  mongodb:
+    image: mongo:8.0.30-noble
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo:/infra/mongo:ro
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mongosh",
+          "--quiet",
+          "mongodb://127.0.0.1:27017/admin?directConnection=true",
+          "--eval",
+          "db.adminCommand({ ping: 1 }).ok",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+    restart: unless-stopped
+
+  mongo-init:
+    image: mongo:8.0.30-noble
+    profiles: ["init"]
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    volumes:
+      - ./mongo:/infra/mongo:ro
+    entrypoint:
+      [
+        "mongosh",
+        "--quiet",
+        "mongodb://mongodb:27017/admin?directConnection=true",
+        "/infra/mongo/init-replica.js",
+      ]
+    restart: "no"
+
+  redis:
+    image: redis:8.2.9-alpine
+    command:
+      [
+        "redis-server",
+        "--appendonly",
+        "yes",
+        "--appendfsync",
+        "everysec",
+        "--save",
+        "60",
+        "1000",
+        "--dir",
+        "/data",
+      ]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 5s
+    restart: unless-stopped
+
+  minio:
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-armani_dev}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-armani_dev_password_change_me}
+    ports:
+      - "127.0.0.1:${MINIO_API_PORT:-9000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    restart: unless-stopped
+
+  minio-init:
+    image: minio/mc:RELEASE.2025-08-13T08-35-41Z
+    profiles: ["init"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-armani_dev}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-armani_dev_password_change_me}
+      MINIO_MEDIA_BUCKET: ${MINIO_MEDIA_BUCKET:-armani-media}
+      MINIO_CORS_ORIGINS: ${MINIO_CORS_ORIGINS:-http://localhost:3000,http://127.0.0.1:3000}
+    volumes:
+      - ./minio:/infra/minio:ro
+    entrypoint: ["/bin/sh", "/infra/minio/init.sh"]
+    restart: "no"
+
+volumes:
+  mongodb_data:
+  redis_data:
+  minio_data:

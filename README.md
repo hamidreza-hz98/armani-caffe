@@ -6,6 +6,7 @@
 
 - Node.js 24.15.0 (مطابق `.nvmrc`)
 - npm 11.12.1 (مطابق `packageManager`)
+- Docker Desktop یا Docker Engine همراه با Compose v2 برای سرویس‌های محلی
 
 ## راه‌اندازی اولیه
 
@@ -36,3 +37,5 @@ npm run start:local # ساخت و اجرای محلی نسخهٔ production
 پیش از توسعهٔ محلی، `.env.example` را به `.env.local` کپی کنید و فقط متغیرهای موردنیاز را مقدار دهید. فایل‌های واقعی محیطی در Git ثبت نمی‌شوند. هیچ راز سروری نباید پیشوند `NEXT_PUBLIC_` داشته باشد.
 
 قواعد افزودن وابستگی‌ها در [dependency policy](docs/dependency-policy.md) و قالب ثبت تصمیم‌های معماری در [ADR template](docs/adr/0000-template.md) آمده‌اند. کد مربوط به پایگاه داده، رازها، MinIO، صف و پرداخت باید زیر `src/server` بماند و در هر فایل `import "server-only"` داشته باشد.
+
+برای اجرای MongoDB، Redis و MinIO، دستورات راه‌اندازی، آزمون، توقف و پاک‌سازی داده‌ها را در [راهنمای زیرساخت محلی](docs/local-infrastructure.md) ببینید. برنامهٔ Next.js همچنان روی میزبان اجرا می‌شود.

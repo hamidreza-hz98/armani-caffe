@@ -4,7 +4,7 @@ Use built-in browser, Node.js, React, and Next.js capabilities before adding a p
 
 Pin runtime and package manager versions with `.nvmrc`, `packageManager`, and `engines`. Keep the npm lockfile committed. Use `npm ci` in CI and deployment. Keep dependency major versions fixed; prefer exact versions for newly added packages. Review security, maintenance, bundle impact, and licenses before upgrades. Upgrade majors deliberately in their own change.
 
-Infrastructure packages and services need an ADR before adoption. Document ownership, secrets, data retention, operational failure modes, and exit path. The five folders under `src/server` reserve boundaries for database, secrets, MinIO, queue, and payments; they do not imply those services are installed or configured. Each source module there must directly import `server-only`, and `npm run check:boundaries` enforces this. Client code must not import these modules. Next.js rejects a client import of a marked module during compilation.
+Infrastructure packages and services need an ADR before adoption. Document ownership, secrets, data retention, operational failure modes, and exit path. The local container services are recorded in [ADR 0001](adr/0001-local-infrastructure.md); they are not a production deployment decision. The five folders under `src/server` reserve boundaries for database, secrets, MinIO, queue, and payments. Each source module there must directly import `server-only`, and `npm run check:boundaries` enforces this. Client code must not import these modules. Next.js rejects a client import of a marked module during compilation.
 
 ## Current dependencies
 
