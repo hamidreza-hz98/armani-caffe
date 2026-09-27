@@ -1,0 +1,17 @@
+.next
+node_modules
+coverage
+playwright-report
+test-results
+dist
+build
+out
+uploads
+storage
+volumes
+data
+package-lock.json
+next-env.d.ts
+*.tsbuildinfo
+AGENTS.md
+CLAUDE.md
