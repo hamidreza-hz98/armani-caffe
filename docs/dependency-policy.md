@@ -8,14 +8,15 @@ Infrastructure packages and services need an ADR before adoption. Document owner
 
 ## Current dependencies
 
-| Dependency                          | Purpose                                                       | Platform alternative                              |
-| ----------------------------------- | ------------------------------------------------------------- | ------------------------------------------------- |
-| Next.js                             | App Router, rendering, routing, build                         | Node HTTP server plus custom routing and bundling |
-| React and React DOM                 | Component rendering                                           | Direct DOM manipulation                           |
-| server-only                         | Build-time protection for private server modules              | Convention alone cannot block client imports      |
-| TypeScript and type packages        | Static typing and React/Node declarations                     | JavaScript and runtime checks alone               |
-| ESLint and eslint-config-next       | Code quality and Next/React rules                             | Compiler checks alone                             |
-| Prettier and eslint-config-prettier | Stable formatting and removal of conflicting lint style rules | Editor-specific formatting                        |
-| eslint-plugin-simple-import-sort    | Enforced import/export order                                  | Manual ordering                                   |
+| Dependency                          | Purpose                                                          | Platform alternative                              |
+| ----------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
+| Next.js                             | App Router, rendering, routing, build                            | Node HTTP server plus custom routing and bundling |
+| React and React DOM                 | Component rendering                                              | Direct DOM manipulation                           |
+| server-only                         | Build-time protection for private server modules                 | Convention alone cannot block client imports      |
+| TypeScript and type packages        | Static typing and React/Node declarations                        | JavaScript and runtime checks alone               |
+| ESLint and eslint-config-next       | Code quality and Next/React rules                                | Compiler checks alone                             |
+| Prettier and eslint-config-prettier | Stable formatting and removal of conflicting lint style rules    | Editor-specific formatting                        |
+| eslint-plugin-simple-import-sort    | Enforced import/export order                                     | Manual ordering                                   |
+| Mongoose 9                          | MongoDB schemas, validation, document versions, and transactions | Raw MongoDB driver plus custom ODM conventions    |
 
 Node's built-in test runner powers unit, integration, and production HTTP smoke tests, so no test framework is installed yet.

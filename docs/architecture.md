@@ -25,7 +25,7 @@ Armani Caffe is one deployable Next.js application, not a set of microservices. 
 
 Every module has `domain/` (models and rules), `application/` (use cases and ports), `infrastructure/` (database/external adapters), and `contracts/` (transport-safe validation and DTOs). The root `index.ts` is the browser-safe public boundary and may export only pure domain and contracts. `server.ts` is the server-only public boundary for composed use cases. Both are deliberately empty until their corresponding features are implemented; consumers must not bypass them. Infrastructure files and `server.ts` directly import `server-only`.
 
-`src/shared` contains only dependency-free, reusable primitives: branded Mongo-compatible IDs, integer rial money, bounded pagination, result/error types, UTC date handling, and permission checks. `src/server/database` contains server-only database utilities and the transaction runner port. It is not a shortcut for module-owned repositories.
+`src/shared` contains only dependency-free, reusable primitives: branded Mongo-compatible IDs, integer toman money, bounded pagination, result/error types, UTC date handling, and permission checks. `src/server/database` contains server-only database utilities and the transaction runner port. It is not a shortcut for module-owned repositories.
 
 ## Allowed dependency direction
 

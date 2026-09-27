@@ -74,4 +74,6 @@ npm run start:local # ساخت و اجرای محلی نسخهٔ production
 
 مرزهای ماژول‌ها، مسئولیت‌ها و جریان درخواست در [راهنمای معماری](docs/architecture.md) ثبت شده‌اند. `npm run check:architecture` جهت وابستگی‌ها و چرخه‌های import را بررسی می‌کند.
 
+قراردادهای پایگاه داده، migration، index و seed در [راهنمای پایگاه داده](docs/database.md) آمده‌اند. هیچ migration یا همگام‌سازی index هنگام درخواست عادی اجرا نمی‌شود.
+
 برای اجرای MongoDB، Redis و MinIO، دستورات راه‌اندازی، آزمون، توقف و پاک‌سازی داده‌ها را در [راهنمای زیرساخت محلی](docs/local-infrastructure.md) ببینید. برنامهٔ Next.js همچنان روی میزبان اجرا می‌شود.

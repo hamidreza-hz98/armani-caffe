@@ -1,0 +1,73 @@
+import "server-only";
+
+import type { Connection } from "mongoose";
+
+import * as baseline from "./migrations/0001-baseline.ts";
+
+export const migrations = [baseline] as const;
+
+export const databaseIndexes = [
+  {
+    collection: "_schema_migrations",
+    keys: { appliedAt: 1 },
+    name: "migration_applied_at",
+  },
+  { collection: "_seed_runs", keys: { createdAt: 1 }, name: "seed_created_at" },
+] as const;
+
+function database(connection: Connection): NonNullable<Connection["db"]> {
+  if (!connection.db) throw new Error("MongoDB connection has no selected database");
+  return connection.db;
+}
+
+export async function migrationStatus(connection: Connection) {
+  const collection = database(connection).collection<{ _id: number; appliedAt: Date }>(
+    "_schema_migrations",
+  );
+  const applied = await Promise.all(
+    migrations.map((migration) => collection.findOne({ _id: migration.version })),
+  );
+  return migrations.map((migration, index) => ({
+    version: migration.version,
+    description: migration.description,
+    appliedAt: applied[index]?.appliedAt ?? null,
+  }));
+}
+
+export async function applyMigrations(connection: Connection, now: () => Date = () => new Date()) {
+  const db = database(connection);
+  const applied = [];
+  for (const migration of migrations) {
+    let didApply = false;
+    await connection.transaction(async (session) => {
+      const ledger = db.collection<{ _id: number; appliedAt: Date }>("_schema_migrations");
+      if (await ledger.findOne({ _id: migration.version }, { session })) return;
+      const timestamp = now();
+      await migration.up(db, session, timestamp);
+      await ledger.insertOne({ _id: migration.version, appliedAt: timestamp }, { session });
+      didApply = true;
+    });
+    if (didApply) applied.push(migration.version);
+  }
+  return applied;
+}
+
+export async function seedBaseline(connection: Connection, now: () => Date = () => new Date()) {
+  const db = database(connection);
+  await connection.transaction(async (session) => {
+    await db
+      .collection<{ _id: string; createdAt: Date }>("_seed_runs")
+      .updateOne(
+        { _id: "baseline-v1" },
+        { $setOnInsert: { createdAt: now() } },
+        { upsert: true, session },
+      );
+  });
+}
+
+export async function applyDatabaseIndexes(connection: Connection) {
+  const db = database(connection);
+  for (const index of databaseIndexes) {
+    await db.collection(index.collection).createIndex(index.keys, { name: index.name });
+  }
+}

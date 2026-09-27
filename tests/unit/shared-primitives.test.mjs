@@ -10,18 +10,18 @@ import {
   parseEntityId,
   parseUtcTimestamp,
   requirePermission,
-  rial,
   subtractMoney,
+  toman,
   utcNow,
 } from "../../src/shared/index.ts";
 
 test("IDs, money, and pagination reject invalid values", () => {
   assert.equal(parseEntityId("ABCDEF012345ABCDEF012345"), "abcdef012345abcdef012345");
   assert.throws(() => parseEntityId("not-an-id"));
-  assert.deepEqual(addMoney(rial(10), rial(5)), rial(15));
-  assert.deepEqual(subtractMoney(rial(10), rial(5)), rial(5));
-  assert.throws(() => rial(0.5));
-  assert.throws(() => subtractMoney(rial(5), rial(10)));
+  assert.deepEqual(addMoney(toman(10), toman(5)), toman(15));
+  assert.deepEqual(subtractMoney(toman(10), toman(5)), toman(5));
+  assert.throws(() => toman(0.5));
+  assert.throws(() => subtractMoney(toman(5), toman(10)));
   assert.deepEqual(pagination(3, 20), { page: 3, pageSize: 20, skip: 40 });
   assert.throws(() => pagination(0));
   assert.throws(() => pagination(1, 101));

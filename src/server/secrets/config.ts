@@ -1,6 +1,6 @@
 import "server-only";
 
-import { parseServerConfig, type ServerConfig } from "@/config/server-schema";
+import { parseServerConfig, type ServerConfig } from "../../config/server-schema.ts";
 
 let cached: ServerConfig | undefined;
 

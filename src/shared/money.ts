@@ -1,16 +1,16 @@
-export type Money = Readonly<{ currency: "IRR"; amount: number }>;
+export type Money = Readonly<{ currency: "IRT"; amountToman: number }>;
 
-export function rial(amount: number): Money {
-  if (!Number.isSafeInteger(amount) || amount < 0) {
-    throw new RangeError("Money amount must be a non-negative safe integer in rials");
+export function toman(amountToman: number): Money {
+  if (!Number.isSafeInteger(amountToman) || amountToman < 0) {
+    throw new RangeError("Money amount must be a non-negative safe integer in toman");
   }
-  return Object.freeze({ currency: "IRR", amount });
+  return Object.freeze({ currency: "IRT", amountToman });
 }
 
 export function addMoney(left: Money, right: Money): Money {
-  return rial(left.amount + right.amount);
+  return toman(left.amountToman + right.amountToman);
 }
 
 export function subtractMoney(left: Money, right: Money): Money {
-  return rial(left.amount - right.amount);
+  return toman(left.amountToman - right.amountToman);
 }
