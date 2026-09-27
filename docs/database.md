@@ -23,7 +23,9 @@ Mongoose is used only inside server-only infrastructure. Importing a model or he
 | `_seed_runs`         | `_id` (MongoDB default)                         | Idempotent seed identity |
 | `_seed_runs`         | `seed_created_at` on `createdAt` ascending      | Operational history      |
 
-Business collections and their indexes will be added with their owning modules. `db:indexes:plan` lists desired indexes without connecting. `db:indexes:apply -- --apply` creates/ensures declared indexes but **never drops** unexpected indexes. Review index changes and arrange a backup before production application; removal needs its own reviewed migration.
+Business indexes are declared by their owning modules. `db:indexes:plan` lists desired indexes without connecting. `db:indexes:apply -- --apply` creates/ensures declared indexes but **never drops** unexpected indexes. Review index changes and arrange a backup before production application; removal needs its own reviewed migration.
+
+The business collections, ownership, retention, lifecycle rules, and named index purposes are now specified in the [domain model](domain-model.md). Their schema-declared indexes are included in the explicit plan; they are not created during requests.
 
 ## Local commands
 

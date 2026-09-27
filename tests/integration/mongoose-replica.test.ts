@@ -11,6 +11,7 @@ import {
   tomanAmountField,
 } from "../../src/server/database/conventions.ts";
 import { mapDuplicateKey } from "../../src/server/database/errors.ts";
+import { applyDatabaseIndexes, databaseIndexes } from "../../src/server/database/operations.ts";
 import { applyPagination } from "../../src/server/database/pagination.ts";
 import { customerFactory, isolatedResources, sequentialObjectIds } from "../fixtures/isolation.ts";
 
@@ -85,4 +86,15 @@ test("real replica-set transaction commits and unique phone index maps to confli
     expect(mapDuplicateKey(error)?.code).toBe("CONFLICT");
   }
   expect(await Customer.countDocuments()).toBe(1);
+}, 120_000);
+
+test("declared business indexes apply explicitly to an isolated replica set", async () => {
+  if (!connection?.db) throw new Error("Isolated MongoDB connection was not started");
+  await applyDatabaseIndexes(connection);
+  const indexes = await connection.db.collection("outbox_events").listIndexes().toArray();
+  expect(indexes.some((index) => index.name === "outbox_claim")).toBe(true);
+  expect(indexes.some((index) => index.name === "outbox_idempotency_unique" && index.unique)).toBe(
+    true,
+  );
+  expect(databaseIndexes.length).toBeGreaterThan(45);
 }, 120_000);

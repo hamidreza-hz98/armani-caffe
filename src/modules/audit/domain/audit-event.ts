@@ -1,8 +1,10 @@
+import type { UtcTimestamp } from "../../../shared/domain.ts";
+
 export type AuditActor = Readonly<{ kind: "admin" | "customer" | "system"; id: string | null }>;
 
 export type AuditEvent = Readonly<{
   id: string;
-  occurredAt: string;
+  occurredAt: UtcTimestamp;
   actor: AuditActor;
   action: string;
   subject: Readonly<{ kind: string; id: string }>;

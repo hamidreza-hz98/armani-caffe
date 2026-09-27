@@ -2,6 +2,7 @@ import "server-only";
 
 import type { Connection } from "mongoose";
 
+import { businessIndexes } from "./business-indexes.ts";
 import * as baseline from "./migrations/0001-baseline.ts";
 
 export const migrations = [baseline] as const;
@@ -13,6 +14,7 @@ export const databaseIndexes = [
     name: "migration_applied_at",
   },
   { collection: "_seed_runs", keys: { createdAt: 1 }, name: "seed_created_at" },
+  ...businessIndexes,
 ] as const;
 
 function database(connection: Connection): NonNullable<Connection["db"]> {
@@ -68,6 +70,18 @@ export async function seedBaseline(connection: Connection, now: () => Date = () 
 export async function applyDatabaseIndexes(connection: Connection) {
   const db = database(connection);
   for (const index of databaseIndexes) {
-    await db.collection(index.collection).createIndex(index.keys, { name: index.name });
+    const collection = db.collection(index.collection);
+    const options = "options" in index ? index.options : {};
+    await collection.createIndex(index.keys as Parameters<typeof collection.createIndex>[0], {
+      name: index.name,
+      ...("unique" in options && options.unique === true ? { unique: true } : {}),
+      ...("partialFilterExpression" in options
+        ? { partialFilterExpression: options.partialFilterExpression }
+        : {}),
+      ...("expireAfterSeconds" in options
+        ? { expireAfterSeconds: options.expireAfterSeconds }
+        : {}),
+      ...("default_language" in options ? { default_language: options.default_language } : {}),
+    });
   }
 }

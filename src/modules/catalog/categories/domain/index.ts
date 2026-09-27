@@ -1,2 +1,2 @@
 // Domain entities, value objects, and invariants belong here.
-export {};
+export * from "./model.ts";

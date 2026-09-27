@@ -1,4 +1,4 @@
 import "server-only";
 
 // Server public boundary. Compose use cases and adapters here.
-export {};
+export { invoiceSchema } from "./infrastructure/schema.ts";
