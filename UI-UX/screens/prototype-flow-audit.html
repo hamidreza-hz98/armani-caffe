@@ -1,0 +1,1608 @@
+<!DOCTYPE html>
+
+<html class="light" dir="rtl" lang="fa"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>کافه آرمانی | بورد ممیزی جامع یکپارچگی محصول و شبیه‌ساز تعاملی جریان‌ها</title>
+<!-- Google Fonts: Vazirmatn -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with forms & container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-primary-fixed-variant": "#4a4642",
+            "on-primary": "#ffffff",
+            "on-secondary-fixed-variant": "#5b4133",
+            "on-primary-container": "#89837e",
+            "error": "#ba1a1a",
+            "surface-tint": "#625d59",
+            "on-surface-variant": "#4c4640",
+            "outline-variant": "#cfc5bd",
+            "primary-fixed": "#e9e1dc",
+            "surface-container-highest": "#e7e2da",
+            "surface-container-low": "#f8f3eb",
+            "primary": "#000000",
+            "surface-bright": "#fef9f1",
+            "surface-dim": "#ded9d2",
+            "surface-container-high": "#ece8e0",
+            "secondary-container": "#fed8c5",
+            "on-primary-fixed": "#1e1b18",
+            "primary-container": "#1e1b18",
+            "inverse-on-surface": "#f5f0e8",
+            "primary-fixed-dim": "#ccc5c0",
+            "on-tertiary-fixed-variant": "#653d19",
+            "secondary-fixed-dim": "#e4bfad",
+            "secondary": "#75584a",
+            "on-tertiary-fixed": "#2e1500",
+            "on-error-container": "#93000a",
+            "on-secondary-fixed": "#2a170c",
+            "on-background": "#1d1c17",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-container": "#2e1500",
+            "tertiary": "#000000",
+            "on-secondary": "#ffffff",
+            "tertiary-fixed": "#ffdcc2",
+            "secondary-fixed": "#ffdbca",
+            "on-error": "#ffffff",
+            "on-surface": "#1d1c17",
+            "surface-variant": "#e7e2da",
+            "error-container": "#ffdad6",
+            "on-tertiary": "#ffffff",
+            "on-tertiary-container": "#ab794f",
+            "inverse-primary": "#ccc5c0",
+            "surface": "#fef9f1",
+            "inverse-surface": "#32302b",
+            "background": "#fef9f1",
+            "surface-container": "#f2ede5",
+            "tertiary-fixed-dim": "#f5bb8b",
+            "outline": "#7d766f",
+            "on-secondary-container": "#795c4e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "margin": "1.25rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2rem",
+            "space-md": "1rem",
+            "gutter": "1rem",
+            "space-xs": "0.25rem"
+          },
+          "fontFamily": {
+            "label-lg": ["Vazirmatn"],
+            "headline-xl-mobile": ["Vazirmatn"],
+            "body-md": ["Vazirmatn"],
+            "headline-xl": ["Vazirmatn"],
+            "body-lg": ["Vazirmatn"],
+            "label-sm": ["Vazirmatn"],
+            "headline-md": ["Vazirmatn"],
+            "label-md": ["Vazirmatn"],
+            "body-sm": ["Vazirmatn"],
+            "headline-lg": ["Vazirmatn"]
+          },
+          "fontSize": {
+            "label-lg": ["14px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-xl-mobile": ["28px", { "lineHeight": "42px", "fontWeight": "800" }],
+            "body-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-xl": ["36px", { "lineHeight": "52px", "fontWeight": "800" }],
+            "body-lg": ["16px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "headline-md": ["20px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "18px", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-lg": ["26px", { "lineHeight": "40px", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #fef9f1;
+      color: #1d1c17;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f2ede5;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cfc5bd;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7d766f;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- ================= TOP APP BAR (Shared Component) ================= -->
+<header class="bg-surface sticky top-0 z-50 shadow-sm border-b border-outline-variant">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+<!-- Brand & Title -->
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center font-bold text-headline-md shadow-sm">
+          آ
+        </div>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block tracking-tight">کافه آرمانی</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant block">دیزاین سیستم و بورد ممیزی جامع جریان‌ها</span>
+</div>
+</div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden lg:flex items-center gap-6">
+<a class="text-on-surface font-bold border-b-2 border-primary pb-1 text-label-lg font-label-lg transition-colors" href="#audit-section">
+          ممیزی توکن‌ها و استانداردها
+        </a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#simulator-section">
+          شبیه‌ساز ۵ جریان تعاملی
+        </a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#compliance-matrix">
+          ماتریس انطباق نماها
+        </a>
+</nav>
+<!-- Actions & Fast Switcher -->
+<div class="flex items-center gap-3">
+<div class="relative hidden sm:block">
+<input class="h-9 pr-9 pl-3 rounded-lg border border-outline-variant bg-surface-container-low text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-secondary transition-all w-52" placeholder="جستجوی توکن یا جریان..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-on-surface-variant text-[18px]">search</span>
+</div>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-xl text-label-md font-label-md hover:bg-primary-container active:scale-95 transition-all flex items-center gap-2 shadow-sm" onclick="document.getElementById('simulator-section').scrollIntoView({behavior: 'smooth'})">
+<span class="material-symbols-outlined text-[18px]">play_circle</span>
+<span>شروع تست تعاملی</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ================= MAIN CANVAS ================= -->
+<main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-12">
+<!-- ================= 1. AUDIT & TOKEN NORMALIZATION BOARD ================= -->
+<section class="space-y-6" id="audit-section">
+<!-- Section Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-4 border-b border-outline-variant">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm font-bold">
+              لایه‌ی ممیزی طراحی و مهندسی معکوس
+            </span>
+<span class="text-body-sm font-body-sm text-outline">نسخه ۲.۴.۰ • تیر ۱۴۰۳</span>
+</div>
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight">
+            بورد ممیزی جامع یکپارچگی محصول (Cross-Screen Audit)
+          </h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1 max-w-3xl">
+            اعتبارسنجی دقیق پالت رنگ‌های دانه قهوه و کاغذ خام، مقیاس تایپوگرافی راست‌به‌چپ (RTL)، انحنای استاندارد کامپوننت‌ها و نشانگرهای دوگانه دسترسی‌پذیری در تمامی ۵ جریان کلیدی.
+          </p>
+</div>
+<!-- Quick Summary Metrics -->
+<div class="flex items-center gap-3">
+<div class="bg-surface-container border border-outline-variant px-4 py-2.5 rounded-xl text-center">
+<div class="text-label-sm font-label-sm text-on-surface-variant">انطباق توکن‌ها</div>
+<div class="text-headline-md font-headline-md text-on-surface">٪۹۸.۴</div>
+</div>
+<div class="bg-surface-container border border-outline-variant px-4 py-2.5 rounded-xl text-center">
+<div class="text-label-sm font-label-sm text-on-surface-variant">وضعیت جریان‌ها</div>
+<div class="text-headline-md font-headline-md text-secondary">۵ از ۵ فعال</div>
+</div>
+</div>
+</div>
+<!-- Bento Grid for Design Tokens & Normalized Specs -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+<!-- Token 1: Palette Architecture (5 cols) -->
+<div class="md:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">palette</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">پالت ممیزی رنگی (Token Palette)</h2>
+</div>
+<span class="text-label-sm font-label-sm text-outline">Material 3 Color Roles</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<!-- Espresso Primary -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-primary border border-outline flex-shrink-0 flex items-center justify-center text-white text-[10px] font-bold">#171411</div>
+<div class="min-w-0">
+<span class="block text-label-md font-label-md text-on-surface truncate">Espresso Primary</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant">بدنه و سرتیترها</span>
+</div>
+</div>
+<!-- Cream Surface -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface border border-outline-variant flex-shrink-0 flex items-center justify-center text-on-surface text-[10px] font-bold">#FEF9F1</div>
+<div class="min-w-0">
+<span class="block text-label-md font-label-md text-on-surface truncate">Cream Canvas</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant">بک‌گراند خالص کاغذ</span>
+</div>
+</div>
+<!-- Terracotta Accent -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary text-on-secondary flex-shrink-0 flex items-center justify-center text-[10px] font-bold">#75584A</div>
+<div class="min-w-0">
+<span class="block text-label-md font-label-md text-on-surface truncate">Terracotta Roast</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant">اکسنت و تمایز المان‌ها</span>
+</div>
+</div>
+<!-- Amber Container -->
+<div class="p-3 rounded-xl bg-surface-container-low border border-outline-variant flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-secondary-container text-on-secondary-container flex-shrink-0 flex items-center justify-center text-[10px] font-bold">#FED8C5</div>
+<div class="min-w-0">
+<span class="block text-label-md font-label-md text-on-surface truncate">Amber Warmth</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant">کانتینر انتخاب و اکتیو</span>
+</div>
+</div>
+</div>
+<!-- Dual-Cue Legend (Accessibility Guardrail) -->
+<div class="p-3.5 bg-surface-container rounded-xl border border-outline-variant space-y-2">
+<span class="text-label-md font-label-md text-on-surface flex items-center gap-1.5 font-bold">
+<span class="material-symbols-outlined text-[18px] text-secondary">visibility</span>
+              قانون نشانگر دوگانه (Dual-Cue Non-Reliance on Color Alone)
+            </span>
+<div class="grid grid-cols-3 gap-2 pt-1 text-center">
+<div class="p-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center justify-center gap-1 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-emerald-700">check_circle</span>
+<span>تایید (سبز + تیک)</span>
+</div>
+<div class="p-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center justify-center gap-1 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-amber-700">warning</span>
+<span>هشدار (زرد + اخطار)</span>
+</div>
+<div class="p-1.5 rounded-lg bg-surface-container-lowest border border-outline-variant flex items-center justify-center gap-1 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-error">cancel</span>
+<span>بحرانی (قرمز + ضربدر)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Token 2: Normalized Typography & Numerals (4 cols) -->
+<div class="md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">format_shapes</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">مقیاس تایپوگرافی RTL</h2>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant text-label-sm font-label-sm">Vazirmatn Baseline</span>
+</div>
+<div class="space-y-2.5">
+<div class="flex items-baseline justify-between p-2 rounded-lg bg-surface-container-low border border-outline-variant">
+<div>
+<span class="text-headline-lg font-headline-lg text-on-surface block leading-tight">تیتر بزرگ کافه آرمانی</span>
+<span class="text-label-sm font-label-sm text-outline">headline-lg (26px / 40px)</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-bold">۷۰۰ بولد</span>
+</div>
+<div class="flex items-baseline justify-between p-2 rounded-lg bg-surface-container-low border border-outline-variant">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block leading-tight">تیتر میانی کارت و فرم‌ها</span>
+<span class="text-label-sm font-label-sm text-outline">headline-md (20px / 32px)</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant font-bold">۷۰۰ بولد</span>
+</div>
+<div class="flex items-baseline justify-between p-2 rounded-lg bg-surface-container-low border border-outline-variant">
+<div>
+<span class="text-body-md font-body-md text-on-surface-variant block leading-snug">متن توضیحات رسپی و استانداردهای باریستا</span>
+<span class="text-label-sm font-label-sm text-outline">body-md (14px / 24px)</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">۴۰۰ نرمال</span>
+</div>
+<!-- Numerals & Currency Norm -->
+<div class="p-2.5 bg-secondary-container/30 border border-outline-variant rounded-xl flex items-center justify-between">
+<div>
+<span class="block text-label-md font-label-md text-on-surface font-bold">استاندارد ارقام و تاریخ جلالی</span>
+<span class="block text-body-sm font-body-sm text-on-surface-variant">فرمت یکپارچه ارز: «۱۴۵٬۰۰۰ تومان»</span>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-secondary font-bold">۲۶ تیر ۱۴۰۳</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Token 3: Standardized Radii & Elevation (3 cols) -->
+<div class="md:col-span-3 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">rounded_corner</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">انحنای کامپوننت‌ها</h2>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-surface-container-low border border-outline-variant rounded-2xl flex items-center justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface block font-bold">rounded-2xl (16px)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">کارت‌های محصول و پنل‌ها</span>
+</div>
+<div class="w-8 h-8 rounded-2xl bg-secondary border border-outline-variant"></div>
+</div>
+<div class="p-3 bg-surface-container-low border border-outline-variant rounded-xl flex items-center justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface block font-bold">rounded-xl (12px)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">فیلدهای ورودی و دکمه‌ها</span>
+</div>
+<div class="w-8 h-8 rounded-xl bg-primary border border-outline"></div>
+</div>
+<div class="p-3 bg-surface-container-low border border-outline-variant rounded-lg flex items-center justify-between">
+<div>
+<span class="text-label-md font-label-md text-on-surface block font-bold">rounded-lg (8px)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">چیپ‌ها، تب‌ها و تگ‌ها</span>
+</div>
+<div class="w-8 h-8 rounded-lg bg-surface-container-highest border border-outline"></div>
+</div>
+<div class="p-2 bg-surface-container-low border border-outline-variant rounded-full flex items-center justify-between px-3">
+<span class="text-label-sm font-label-sm text-on-surface font-bold">rounded-full (9999px)</span>
+<span class="w-5 h-5 rounded-full bg-secondary-container border border-outline-variant"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Compliance Matrix Table across the 5 Critical Flows -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4" id="compliance-matrix">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div>
+<h3 class="text-headline-md font-headline-md text-on-surface">جدول پایش یکپارچگی ۵ جریان کلیدی اپلیکیشن</h3>
+<p class="text-body-sm font-body-sm text-on-surface-variant">بررسی وضعیت پیاده‌سازی گسست‌های بین ویوها، مدیریت خطا، اعتبارسنجی پیامکی و کسر انبار</p>
+</div>
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-label-sm font-label-sm font-bold">
+<span class="material-symbols-outlined text-[16px] text-emerald-800">verified</span>
+            تمام جریان‌ها آماده اتصال به API
+          </span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-right text-body-sm font-body-sm">
+<thead>
+<tr class="border-b border-outline-variant text-on-surface-variant bg-surface-container-low">
+<th class="p-3 font-label-md">کد جریان</th>
+<th class="p-3 font-label-md">عنوان جریان کاری</th>
+<th class="p-3 font-label-md">نقش کاربری</th>
+<th class="p-3 font-label-md">نماهای تحت پوشش</th>
+<th class="p-3 font-label-md">المان‌های کلیدی تطبیق‌یافته</th>
+<th class="p-3 font-label-md text-center">وضعیت ممیزی</th>
+<th class="p-3 font-label-md text-center">اکشن مستقیم</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Flow 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-mono font-bold text-secondary">FLOW-01</td>
+<td class="p-3 font-bold text-on-surface">ویترین آنلاین، افزودنی‌ها و پرداخت شاپرک</td>
+<td class="p-3 text-on-surface-variant">مشتری مهمان / وفادار</td>
+<td class="p-3 text-outline">منو ← باتم‌شیت آمریکانو ← سبد خرید ← شاپرک ← تایید</td>
+<td class="p-3">شیر بدون لاکتوز، رمز یکبارمصرف پیامکی، درگاه شاپرک</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">check</span> تایید شده
+                  </span>
+</td>
+<td class="p-3 text-center">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface text-label-sm font-label-sm transition-colors" onclick="switchFlow(1)">
+                    مشاهده شبیه‌ساز
+                  </button>
+</td>
+</tr>
+<!-- Flow 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-mono font-bold text-secondary">FLOW-02</td>
+<td class="p-3 font-bold text-on-surface">میزکار صندوقدار، صف سفارشات و استپر تهیه</td>
+<td class="p-3 text-on-surface-variant">صندوقدار / سرپرست بار</td>
+<td class="p-3 text-outline">لاگین صندوق ← نوتیفیکیشن زنده ← فاکتور ← استپر وضعیت</td>
+<td class="p-3">۳ گام (در صف، دم‌آوری، آماده)، هشدار صوتی، تسویه آنی</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">check</span> تایید شده
+                  </span>
+</td>
+<td class="p-3 text-center">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface text-label-sm font-label-sm transition-colors" onclick="switchFlow(2)">
+                    مشاهده شبیه‌ساز
+                  </button>
+</td>
+</tr>
+<!-- Flow 3 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-mono font-bold text-secondary">FLOW-03</td>
+<td class="p-3 font-bold text-on-surface">تعریف آیتم جدید، انتخاب رسپی و انتشار در منو</td>
+<td class="p-3 text-on-surface-variant">مدیر کافه و هد باریستا</td>
+<td class="p-3 text-outline">فرم آیتم ← مدیا منیجر ← کسر رسپی انبار ← پیش‌نویس ← انتشار</td>
+<td class="p-3">دوز اسپرسو (۱۸ گرم)، شیر جوشیده (۱۸۰ml)، حالت پیش‌نویس</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-300 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">sync</span> اصلاح شده
+                  </span>
+</td>
+<td class="p-3 text-center">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface text-label-sm font-label-sm transition-colors" onclick="switchFlow(3)">
+                    مشاهده شبیه‌ساز
+                  </button>
+</td>
+</tr>
+<!-- Flow 4 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-mono font-bold text-secondary">FLOW-04</td>
+<td class="p-3 font-bold text-on-surface">هشدار کسری دانه گواتمالا، خرید و ثبت لجر</td>
+<td class="p-3 text-on-surface-variant">انباردار و مدیر مالی</td>
+<td class="p-3 text-outline">داشبورد انبار ← هشدار بحرانی ← فاکتور ورود ← تایید ۲ مرحله‌ای</td>
+<td class="p-3">حداقل ذخیره (۳ کیلوگرم)، کد ورود کالا، دفتر کل تغییرناپذیر</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-300 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">check</span> تایید شده
+                  </span>
+</td>
+<td class="p-3 text-center">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface text-label-sm font-label-sm transition-colors" onclick="switchFlow(4)">
+                    مشاهده شبیه‌ساز
+                  </button>
+</td>
+</tr>
+<!-- Flow 5 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors">
+<td class="p-3 font-mono font-bold text-secondary">FLOW-05</td>
+<td class="p-3 font-bold text-on-surface">بارگذاری گروهی رسانه‌ها، رفع خطای سایز و سئو</td>
+<td class="p-3 text-on-surface-variant">تولید محتوا و ادمین سایت</td>
+<td class="p-3 text-outline">آپلود گروهی ۳ عکس ← خطای ۲ مگابایت ← اصلاح خودکار ← Alt سئو</td>
+<td class="p-3">فشرده‌سازی خودکار WebP، تگ فارسی سئو، تخصیص دسته‌بندی</td>
+<td class="p-3 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-300 text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[14px]">link</span> آماده اتصال
+                  </span>
+</td>
+<td class="p-3 text-center">
+<button class="px-2.5 py-1 rounded-lg bg-surface-container-high hover:bg-secondary-container text-on-surface text-label-sm font-label-sm transition-colors" onclick="switchFlow(5)">
+                    مشاهده شبیه‌ساز
+                  </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ================= 2. MAIN INTERACTIVE FLOW SIMULATOR ================= -->
+<section class="space-y-6 pt-4" id="simulator-section">
+<!-- Section Title & Flow Navigation Tabs -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 sm:p-6 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<span class="w-3 h-3 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-label-sm font-label-sm font-bold text-secondary">شبیه‌ساز زنده تعاملی پروتوتایپ</span>
+</div>
+<h2 class="text-headline-xl font-headline-xl text-on-surface">
+              پروتوتایپ جریان‌های عملیاتی کافه آرمانی
+            </h2>
+<p class="text-body-md font-body-md text-on-surface-variant">
+              جریان مورد نظر را انتخاب کنید و گام‌به‌گام بین نماها جابجا شوید تا رفتار دقیق UI، بازخوردها و فرم‌ها را بیازمایید.
+            </p>
+</div>
+<!-- Flow Quick Badges -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">touch_app</span>
+              دارای ورودی‌های تعاملی
+            </span>
+<span class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">devices</span>
+              شبیه‌سازی کامل موبایل و وب
+            </span>
+</div>
+</div>
+<!-- 5 Flow Selector Tabs -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 p-1.5 bg-surface-container-low rounded-xl border border-outline-variant">
+<button class="flow-btn text-right p-3 rounded-lg bg-surface-container-lowest text-on-surface shadow-sm border border-secondary transition-all" id="flow-tab-1" onclick="switchFlow(1)">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm text-secondary font-bold">جریان شماره ۱</span>
+<span class="material-symbols-outlined text-[18px] text-secondary">shopping_cart</span>
+</div>
+<div class="text-label-md font-label-md font-bold truncate">ویترین و خرید آنلاین</div>
+<div class="text-body-sm font-body-sm text-outline truncate">منو ← آمریکانو ← شاپرک</div>
+</button>
+<button class="flow-btn text-right p-3 rounded-lg hover:bg-surface-container-lowest text-on-surface-variant transition-all" id="flow-tab-2" onclick="switchFlow(2)">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm text-outline font-bold">جریان شماره ۲</span>
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+</div>
+<div class="text-label-md font-label-md font-bold truncate">میزکار صندوقدار و استپر</div>
+<div class="text-body-sm font-body-sm text-outline truncate">سفارش زنده ← استپر دم‌آوری</div>
+</button>
+<button class="flow-btn text-right p-3 rounded-lg hover:bg-surface-container-lowest text-on-surface-variant transition-all" id="flow-tab-3" onclick="switchFlow(3)">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm text-outline font-bold">جریان شماره ۳</span>
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+</div>
+<div class="text-label-md font-label-md font-bold truncate">تعریف محصول و رسپی</div>
+<div class="text-body-sm font-body-sm text-outline truncate">رسپی قهوه ← کسر انبار ← انتشار</div>
+</button>
+<button class="flow-btn text-right p-3 rounded-lg hover:bg-surface-container-lowest text-on-surface-variant transition-all" id="flow-tab-4" onclick="switchFlow(4)">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm text-outline font-bold">جریان شماره ۴</span>
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+</div>
+<div class="text-label-md font-label-md font-bold truncate">انبارداری و هشدار گواتمالا</div>
+<div class="text-body-sm font-body-sm text-outline truncate">کسری دانه ← فاکتور ورود ← دفتر کل</div>
+</button>
+<button class="flow-btn text-right p-3 rounded-lg hover:bg-surface-container-lowest text-on-surface-variant transition-all" id="flow-tab-5" onclick="switchFlow(5)">
+<div class="flex items-center justify-between mb-1">
+<span class="text-label-sm font-label-sm text-outline font-bold">جریان شماره ۵</span>
+<span class="material-symbols-outlined text-[18px]">perm_media</span>
+</div>
+<div class="text-label-md font-label-md font-bold truncate">مدیریت رسانه و آپلود</div>
+<div class="text-body-sm font-body-sm text-outline truncate">۳ عکس ← تصحیح سایز ← سئو Alt</div>
+</button>
+</div>
+</div>
+<!-- FLOW STAGE CONTAINER (Swappable via JS) -->
+<div class="bg-surface-container-low border border-outline-variant rounded-2xl p-4 sm:p-8 min-h-[620px] transition-all" id="flow-viewport">
+<!-- ============================================== -->
+<!-- FLOW 1 CONTAINER: Online Store & Checkout      -->
+<!-- ============================================== -->
+<div class="space-y-6" id="flow-stage-1">
+<!-- Stepper Breadcrumb -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-label-md">۱</span>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">ویترین آنلاین مشتری کافه آرمانی</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">انتخاب نوشیدنی تخصصی، شخصی‌سازی سیروپ، احراز هویت پیامکی و شاپرک</span>
+</div>
+</div>
+<!-- Flow 1 Step Navigation Buttons -->
+<div class="flex items-center gap-1.5 bg-surface-container p-1 rounded-xl">
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm font-bold bg-primary text-on-primary" id="f1-btn-1" onclick="setFlow1Step(1)">۱. انتخاب منو</button>
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface" id="f1-btn-2" onclick="setFlow1Step(2)">۲. باتم‌شیت آمریکانو</button>
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface" id="f1-btn-3" onclick="setFlow1Step(3)">۳. ورود پیامکی</button>
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface" id="f1-btn-4" onclick="setFlow1Step(4)">۴. سبد خرید</button>
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface" id="f1-btn-5" onclick="setFlow1Step(5)">۵. درگاه شاپرک</button>
+<button class="px-3 py-1.5 rounded-lg text-label-sm font-label-sm text-on-surface-variant hover:text-on-surface" id="f1-btn-6" onclick="setFlow1Step(6)">۶. فاکتور نهایی</button>
+</div>
+</div>
+<!-- Step 1.1: Menu View -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-1">
+<!-- Mobile Preview Frame -->
+<div class="lg:col-span-8 space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex gap-2">
+<span class="px-3 py-1 rounded-full bg-primary text-on-primary text-label-sm font-label-sm font-bold">اسپرسو و قهوه‌ها</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">دم‌آوری دستی و پوراور</span>
+<span class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm">کیک و بیسترو</span>
+</div>
+<span class="text-body-sm font-body-sm text-outline">۴ آیتم فعال</span>
+</div>
+<!-- Menu Items Grid -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<!-- Product 1: Americano (Clickable target) -->
+<div class="cursor-pointer bg-surface-container-lowest border-2 border-secondary/60 hover:border-secondary rounded-2xl p-4 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between" onclick="setFlow1Step(2)">
+<div class="flex justify-between items-start gap-3">
+<div class="space-y-1">
+<div class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+<h4 class="text-headline-md font-headline-md text-on-surface group-hover:text-secondary transition-colors">آمریکانو کافه آرمانی</h4>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2">
+                        دابل شات عصاره‌گیری شده از ترکیب ۸۰٪ عربیکای کلمبیا و ۲۰٪ اتیوپی یرگاچف به همراه آب تصفیه جوشیده.
+                      </p>
+</div>
+<div class="w-20 h-20 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-[36px]">coffee</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface font-bold">۸۵٬۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant mr-1">تومان</span>
+</div>
+<span class="px-3 py-1.5 rounded-xl bg-secondary-container text-on-secondary-container text-label-sm font-label-sm font-bold flex items-center gap-1 group-hover:bg-primary group-hover:text-on-primary transition-all">
+<span class="material-symbols-outlined text-[16px]">add</span>
+                      انتخاب و شخصی‌سازی
+                    </span>
+</div>
+</div>
+<!-- Product 2: Flat White -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex justify-between items-start gap-3">
+<div class="space-y-1">
+<h4 class="text-headline-md font-headline-md text-on-surface">فلت وایت ارگانیک</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2">ریسترتو دوبل با میکروفوم شیر تازه محلی با طعم‌یاد کارامل و فندق برشته.</p>
+</div>
+<div class="w-20 h-20 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-[36px]">local_cafe</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface font-bold">۱۱۰٬۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant mr-1">تومان</span>
+</div>
+<button class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant text-label-sm font-label-sm" disabled="">مشاهده جزئیات</button>
+</div>
+</div>
+<!-- Product 3: V60 Filter Coffee -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex justify-between items-start gap-3">
+<div class="space-y-1">
+<h4 class="text-headline-md font-headline-md text-on-surface">پوراور V60 گیشا کلمبیا</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2">دم‌آوری دستی با فیلتر کاغذی، اسیدیته شفاف لیمویی و ترنج، تن‌واری مخملی.</p>
+</div>
+<div class="w-20 h-20 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-[36px]">filter_vintage</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface font-bold">۱۴۵٬۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant mr-1">تومان</span>
+</div>
+<button class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant text-label-sm font-label-sm" disabled="">مشاهده جزئیات</button>
+</div>
+</div>
+<!-- Product 4: Cold Brew Nitro -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-2xl p-4 shadow-sm flex flex-col justify-between opacity-80">
+<div class="flex justify-between items-start gap-3">
+<div class="space-y-1">
+<h4 class="text-headline-md font-headline-md text-on-surface">کلد برو نیتروژن ۱۸ ساعته</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant line-clamp-2">عصاره‌گیری سرد طولانی با تزریق نیتروژن خوراکی، کرمای ابریشمی و ماندگار.</p>
+</div>
+<div class="w-20 h-20 rounded-xl bg-surface-container flex items-center justify-center flex-shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-[36px]">ac_unit</span>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-headline-md font-headline-md text-on-surface font-bold">۱۳۰٬۰۰۰</span>
+<span class="text-label-sm font-label-sm text-on-surface-variant mr-1">تومان</span>
+</div>
+<button class="px-3 py-1.5 rounded-xl bg-surface-container text-on-surface-variant text-label-sm font-label-sm" disabled="">مشاهده جزئیات</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Helper Guidance Sidebar -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-4">
+<div class="flex items-center gap-2 text-secondary">
+<span class="material-symbols-outlined">info</span>
+<span class="text-label-lg font-label-lg font-bold">راهنمای سناریوی جریان ۱</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                روی کارت مشخص‌شده‌ی <strong>«آمریکانو کافه آرمانی»</strong> کلیک کنید تا رفتار شبیه‌سازی‌شده‌ی باز شدن باتم‌شیت با تنظیمات افزودنی‌های ویژه (شیر بدون لاکتوز و سیروپ وانیل ماداگاسکار) اجرا شود.
+              </p>
+<div class="p-3 bg-secondary-container/40 rounded-xl border border-outline-variant space-y-1">
+<span class="text-label-sm font-label-sm font-bold text-on-secondary-container">پارامترهای سفارش نمونه:</span>
+<ul class="text-body-sm font-body-sm text-on-surface list-disc list-inside space-y-0.5">
+<li>آمریکانو پایه: ۸۵٬۰۰۰ تومان</li>
+<li>شیر بدون لاکتوز: +۲۵٬۰۰۰ تومان</li>
+<li>سیروپ وانیل ماداگاسکار: +۲۰٬۰۰۰ تومان</li>
+</ul>
+</div>
+<button class="w-full py-2.5 bg-primary text-on-primary rounded-xl text-label-md font-label-md font-bold hover:bg-primary-container transition-all" onclick="setFlow1Step(2)">
+                مرحله بعد: باز کردن باتم‌شیت آمریکانو
+              </button>
+</div>
+</div>
+<!-- Step 1.2: Bottom Sheet Customization Modal (Simulated) -->
+<div class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-2">
+<div class="lg:col-span-8 bg-surface-container-lowest border-2 border-secondary rounded-2xl p-6 shadow-lg space-y-5">
+<div class="flex items-start justify-between border-b border-outline-variant pb-4">
+<div>
+<span class="px-2.5 py-0.5 rounded-full bg-secondary-container text-on-secondary-container text-label-sm font-label-sm font-bold">باتم‌شیت سفارشی‌سازی محصول</span>
+<h3 class="text-headline-lg font-headline-lg text-on-surface mt-1">آمریکانو تخصصی کافه آرمانی</h3>
+<span class="text-body-sm font-body-sm text-on-surface-variant">قیمت پایه: ۸۵٬۰۰۰ تومان</span>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" onclick="setFlow1Step(1)">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Options Selection -->
+<div class="space-y-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-2">نوع دانه و خاستگاه برشته‌کاری:</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="flex items-center gap-2 p-3 rounded-xl border border-secondary bg-secondary-container/20 cursor-pointer">
+<input checked="" class="text-secondary focus:ring-secondary" name="bean" type="radio"/>
+<span class="text-label-md font-label-md text-on-surface">بلند اختصاصی آرمانی (کلمبیا - اتیوپی)</span>
+</label>
+<label class="flex items-center gap-2 p-3 rounded-xl border border-outline-variant bg-surface-container-low cursor-pointer opacity-70">
+<input class="text-secondary focus:ring-secondary" name="bean" type="radio"/>
+<span class="text-label-md font-label-md text-on-surface">تک‌خاستگاه گواتمالا آنتیگوا (+۱۵٬۰۰۰ ت)</span>
+</label>
+</div>
+</div>
+<!-- Add-ons with Checkboxes -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-2">افزودنی‌های دلخواه (Add-ons):</label>
+<div class="space-y-2">
+<label class="flex items-center justify-between p-3 rounded-xl border border-secondary bg-secondary-container/30 cursor-pointer">
+<div class="flex items-center gap-2">
+<input checked="" class="rounded text-secondary focus:ring-secondary" id="f1-addon-milk" type="checkbox"/>
+<span class="text-label-md font-label-md text-on-surface font-bold">شیر بدون لاکتوز (Lactose-Free Milk)</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-secondary">+۲۵٬۰۰۰ تومان</span>
+</label>
+<label class="flex items-center justify-between p-3 rounded-xl border border-secondary bg-secondary-container/30 cursor-pointer">
+<div class="flex items-center gap-2">
+<input checked="" class="rounded text-secondary focus:ring-secondary" id="f1-addon-syrup" type="checkbox"/>
+<span class="text-label-md font-label-md text-on-surface font-bold">سیروپ دست‌ساز وانیل ماداگاسکار</span>
+</div>
+<span class="text-label-sm font-label-sm font-bold text-secondary">+۲۰٬۰۰۰ تومان</span>
+</label>
+<label class="flex items-center justify-between p-3 rounded-xl border border-outline-variant bg-surface-container-low cursor-pointer opacity-70">
+<div class="flex items-center gap-2">
+<input class="rounded text-secondary focus:ring-secondary" type="checkbox"/>
+<span class="text-label-md font-label-md text-on-surface">اکسترا شات اسپرسو تخصصی</span>
+</div>
+<span class="text-label-sm font-label-sm text-outline">+۳۰٬۰۰۰ تومان</span>
+</label>
+</div>
+</div>
+<!-- Note to Barista -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-1">یادداشت برای باریستا:</label>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-low text-body-sm font-body-sm text-on-surface" type="text" value="لطفاً دمای آب خیلی بالا نباشد، با تشکر."/>
+</div>
+</div>
+<!-- Footer with dynamic sum -->
+<div class="pt-4 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">مبلغ کل این سفارش:</span>
+<div class="text-headline-lg font-headline-lg text-on-surface font-extrabold">
+                    ۱۳۰٬۰۰۰ <span class="text-label-md font-label-md text-on-surface-variant font-normal">تومان</span>
+</div>
+</div>
+<button class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-label-lg font-label-lg hover:bg-primary-container transition-all flex items-center gap-2" onclick="setFlow1Step(3)">
+<span>تایید و ادامه به احراز هویت پیامکی</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</button>
+</div>
+</div>
+<!-- Flow Context & Specs -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-4">
+<span class="text-label-lg font-label-lg font-bold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined">rule</span>
+                ممیزی این نما
+              </span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                باتم‌شیت از انحنای استاندارد <code class="bg-surface-container px-1 rounded text-primary">rounded-2xl (16px)</code> و عمق سایه سطح ۳ (Level 3 Elevation) استفاده می‌کند.
+              </p>
+<div class="p-3 bg-surface-container rounded-xl text-body-sm font-body-sm space-y-1">
+<div class="flex justify-between"><span>محاسبه آنی قیمت:</span> <span class="font-bold text-emerald-800">فعال (بدون لود)</span></div>
+<div class="flex justify-between"><span>پوشش کنتراست فونت:</span> <span class="font-bold text-on-surface">AAA استاندارد</span></div>
+</div>
+</div>
+</div>
+<!-- Step 1.3: SMS Authentication Dialog -->
+<div class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-3">
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-8 shadow-sm flex flex-col items-center text-center space-y-5">
+<div class="w-14 h-14 rounded-2xl bg-secondary-container text-secondary flex items-center justify-center">
+<span class="material-symbols-outlined text-[32px]">sms</span>
+</div>
+<div class="space-y-1">
+<h3 class="text-headline-lg font-headline-lg text-on-surface">احراز هویت سریع شماره همراه</h3>
+<p class="text-body-md font-body-md text-on-surface-variant">کد تایید ۴ رقمی به شماره ۰۹۱۲۳۴۵۶۷۸۹ پیامک شد</p>
+</div>
+<!-- OTP Inputs -->
+<div class="flex items-center gap-3 dir-ltr">
+<input class="w-12 h-14 text-center text-headline-lg font-bold rounded-xl border-2 border-secondary bg-surface-container-low text-on-surface focus:outline-none" maxlength="1" type="text" value="۴"/>
+<input class="w-12 h-14 text-center text-headline-lg font-bold rounded-xl border-2 border-secondary bg-surface-container-low text-on-surface focus:outline-none" maxlength="1" type="text" value="۸"/>
+<input class="w-12 h-14 text-center text-headline-lg font-bold rounded-xl border-2 border-secondary bg-surface-container-low text-on-surface focus:outline-none" maxlength="1" type="text" value="۲"/>
+<input class="w-12 h-14 text-center text-headline-lg font-bold rounded-xl border-2 border-secondary bg-surface-container-low text-on-surface focus:outline-none" maxlength="1" type="text" value="۱"/>
+</div>
+<div class="text-label-sm font-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+                ارسال مجدد کد پس از ۰۱:۴۵
+              </div>
+<button class="w-full max-w-sm py-3 rounded-xl bg-primary text-on-primary text-label-lg font-label-lg font-bold hover:bg-primary-container transition-all" onclick="setFlow1Step(4)">
+                تایید هویت و ورود به سبد خرید
+              </button>
+</div>
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-3">
+<span class="text-label-lg font-label-lg font-bold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined">security</span>
+                امنیت و همگام‌سازی CRM
+              </span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                پس از تایید شماره، سوابق قبلی مشتری، ترجیحات قهوه و باشگاه وفاداری کافه آرمانی به شکل خودکار بارگذاری و تخفیف‌های تعلق‌گرفته لحاظ می‌گردند.
+              </p>
+</div>
+</div>
+<!-- Step 1.4: Cart Review (/cart) -->
+<div class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-4">
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-sm space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3">
+<h3 class="text-headline-md font-headline-md text-on-surface">بازبینی سبد خرید (/cart)</h3>
+<span class="text-label-sm font-label-sm text-secondary font-bold">۱ قلم کالا آماده پرداخت</span>
+</div>
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container flex items-center justify-center text-secondary">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h4 class="text-label-lg font-label-lg font-bold text-on-surface">آمریکانو تخصصی کافه آرمانی</h4>
+<span class="text-body-sm font-body-sm text-on-surface-variant block">با شیر بدون لاکتوز (+۲۵٬۰۰۰) و سیروپ وانیل (+۲۰٬۰۰۰)</span>
+</div>
+</div>
+<div class="text-right">
+<div class="text-label-lg font-label-lg font-bold text-on-surface">۱۳۰٬۰۰۰ تومان</div>
+<span class="text-label-sm font-label-sm text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">آماده دم‌آوری</span>
+</div>
+</div>
+<!-- Discount Code Input -->
+<div class="flex items-center gap-2 pt-2">
+<input class="flex-1 h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm" placeholder="کد تخفیف باشگاه مشتریان (اختیاری)" type="text"/>
+<button class="px-4 h-11 rounded-xl bg-surface-container border border-outline-variant text-label-md font-label-md hover:bg-secondary-container transition-all">اعمال کد</button>
+</div>
+<div class="pt-4 border-t border-outline-variant flex items-center justify-between">
+<div>
+<span class="text-body-sm font-body-sm text-outline">قابل پرداخت نهایی:</span>
+<div class="text-headline-lg font-headline-lg text-primary font-bold">۱۳۰٬۰۰۰ تومان</div>
+</div>
+<button class="px-6 py-3 rounded-xl bg-primary text-on-primary font-bold text-label-lg font-label-lg hover:bg-primary-container transition-all flex items-center gap-2" onclick="setFlow1Step(5)">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+<span>اتصال به درگاه پرداخت شاپرک</span>
+</button>
+</div>
+</div>
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-3">
+<span class="text-label-lg font-label-lg font-bold text-secondary">تحویل سفارش:</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">تحویل حضوری در سالن شعبه مرکزی ولیعصر، حداکثر تا ۱۲ دقیقه پس از پرداخت موفق.</p>
+</div>
+</div>
+<!-- Step 1.5: Shaparak Payment Gateway Simulator -->
+<div class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-5">
+<div class="lg:col-span-8 bg-surface-container-lowest border-2 border-outline-variant rounded-2xl p-6 shadow-md space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3 bg-slate-900 text-white p-3 rounded-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-amber-400">lock</span>
+<span class="font-bold text-label-md">شبکه الکترونیکی پرداخت کارت (شاپرک)</span>
+</div>
+<span class="text-label-sm text-slate-300 font-mono">ARMANI-PAY-88491</span>
+</div>
+<div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant flex justify-between items-center text-body-sm">
+<div>
+<span class="text-outline">پذیرنده:</span>
+<span class="font-bold text-on-surface mr-1">کافه آرمانی شعبه مرکزی</span>
+</div>
+<div>
+<span class="text-outline">مبلغ پرداختی:</span>
+<span class="font-bold text-secondary text-label-lg mr-1">۱۳۰٬۰۰۰ تومان</span>
+</div>
+</div>
+<div class="space-y-3 pt-2">
+<div>
+<label class="block text-label-sm font-label-sm font-bold text-on-surface mb-1">شماره کارت ۱۶ رقمی:</label>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-mono dir-ltr text-center font-bold" type="text" value="۶۰۳۷ - ۹۹۱۸ - **** - ۳۴۸۱"/>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-label-sm font-label-sm font-bold text-on-surface mb-1">رمز دوم پویا (OTP):</label>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-mono text-center" type="password" value="••••••"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm font-bold text-on-surface mb-1">کد CVV2 و انقضا:</label>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest font-mono text-center" type="text" value="۷۸۴ • ۰۵/۰۸"/>
+</div>
+</div>
+</div>
+<!-- Interactive Payment Outcome Triggers -->
+<div class="pt-3 border-t border-outline-variant flex flex-wrap items-center justify-between gap-3">
+<span class="text-label-sm font-label-sm text-outline">شبیه‌سازی نتیجه تراکنش درگاه:</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-xl bg-emerald-700 text-white text-label-sm font-label-sm font-bold hover:bg-emerald-800 transition-all flex items-center gap-1" onclick="setFlow1PaymentResult('success')">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                    پرداخت موفق
+                  </button>
+<button class="px-4 py-2 rounded-xl bg-error text-white text-label-sm font-label-sm font-bold hover:opacity-90 transition-all flex items-center gap-1" onclick="setFlow1PaymentResult('failed')">
+<span class="material-symbols-outlined text-[16px]">cancel</span>
+                    پرداخت ناموفق
+                  </button>
+</div>
+</div>
+</div>
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-3">
+<span class="text-label-lg font-label-lg font-bold text-secondary">استاندارد بازگشت شاپرک</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                پس از پاسخ درگاه، کال‌بک سرور وضعیت را در دیتابیس ثبت کرده و کاربر را به صفحه تایید نهایی سفارش با شماره فاکتور اختصاصی هدایت می‌کند.
+              </p>
+</div>
+</div>
+<!-- Step 1.6: Final Order Result & Success Splash -->
+<div class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6" id="f1-step-view-6">
+<div class="lg:col-span-8 bg-surface-container-lowest border border-emerald-300 rounded-2xl p-8 shadow-sm text-center space-y-4" id="f1-result-box">
+<div class="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto" id="f1-result-icon-wrap">
+<span class="material-symbols-outlined text-[36px]" id="f1-result-icon">check_circle</span>
+</div>
+<div>
+<span class="px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 text-label-sm font-label-sm font-bold" id="f1-result-badge">
+                  سفارش تایید شد • فاکتور #ARM-9021
+                </span>
+<h3 class="text-headline-lg font-headline-lg text-on-surface mt-2" id="f1-result-title">سفارش شما با موفقیت ثبت و ارسال شد</h3>
+<p class="text-body-md font-body-md text-on-surface-variant" id="f1-result-desc">
+                  باریستای کافه آرمانی هم‌اکنون در حال آماده‌سازی آمریکانوی شما با شیر بدون لاکتوز است.
+                </p>
+</div>
+<!-- Live Kitchen Tracker in customer view -->
+<div class="p-4 bg-surface-container-low rounded-xl border border-outline-variant max-w-md mx-auto text-right space-y-2">
+<div class="flex items-center justify-between text-label-sm font-label-sm">
+<span class="font-bold text-on-surface">وضعیت آماده‌سازی:</span>
+<span class="text-secondary font-bold">در حال عصاره‌گیری (مرحله ۲ از ۳)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-2/3 transition-all duration-500"></div>
+</div>
+</div>
+<div class="pt-4 flex items-center justify-center gap-3">
+<button class="px-5 py-2.5 rounded-xl bg-surface-container text-on-surface text-label-md font-label-md hover:bg-secondary-container transition-all" onclick="setFlow1Step(1)">
+                  سفارش مجدد از منو
+                </button>
+<button class="px-5 py-2.5 rounded-xl bg-primary text-on-primary text-label-md font-label-md font-bold hover:bg-primary-container transition-all flex items-center gap-2" onclick="switchFlow(2)">
+<span>مشاهده در میزکار صندوقدار (جریان ۲)</span>
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+</button>
+</div>
+</div>
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-3">
+<span class="text-label-lg font-label-lg font-bold text-secondary">پایان جریان ۱</span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                سفارش به سیستم بلادرنگ وب‌سوکت صندوق و بورد آشپزخانه متصل گردید. اکنون می‌توانید در جریان دوم روند تغییر وضعیت توسط باریستا را دنبال نمایید.
+              </p>
+</div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- FLOW 2 CONTAINER: Cashier Orders & Live Stepper-->
+<!-- ============================================== -->
+<div class="hidden space-y-6" id="flow-stage-2">
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-label-md">۲</span>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">میزکار صندوقدار و استپر وضعیت زنده (/dashboard/orders)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">دریافت وب‌سوکت سفارش آنلاین، تغییر استپر دم‌آوری و تسویه فاکتور</span>
+</div>
+</div>
+<!-- Active Order Switcher -->
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-900 text-label-sm font-label-sm font-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-700 animate-ping"></span>
+                وب‌سوکت متصل
+              </span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Left 7 cols: Orders List Table -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-md font-headline-md text-on-surface">سفارشات زنده روی خط</h3>
+<span class="text-label-sm font-label-sm text-outline">بروزرسانی هر ۵ ثانیه</span>
+</div>
+<!-- Orders Items -->
+<div class="space-y-3">
+<!-- Target Order (Selected) -->
+<div class="p-4 rounded-xl border-2 border-secondary bg-secondary-container/20 space-y-2 cursor-pointer">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-secondary text-label-md">#ARM-9021</span>
+<span class="font-bold text-on-surface">سهراب سپهری (آنلاین)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary text-on-secondary text-label-sm font-label-sm" id="f2-badge-status">
+                      در صف تهیه
+                    </span>
+</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant flex justify-between">
+<span>۱× آمریکانو (شیر بدون لاکتوز + سیروپ وانیل)</span>
+<span class="font-bold text-on-surface">۱۳۰٬۰۰۰ تومان</span>
+</div>
+</div>
+<!-- Order 2 -->
+<div class="p-3.5 rounded-xl border border-outline-variant bg-surface-container-low opacity-75 space-y-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-outline text-label-md">#ARM-9020</span>
+<span class="font-bold text-on-surface">میز شماره ۴ (حضوری)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-label-sm font-label-sm">
+                      آماده تحویل
+                    </span>
+</div>
+<div class="text-body-sm font-body-sm text-outline flex justify-between">
+<span>۲× فلت وایت، ۱× کروسان پسته‌ای</span>
+<span>۳۱۰٬۰۰۰ تومان</span>
+</div>
+</div>
+<!-- Order 3 -->
+<div class="p-3.5 rounded-xl border border-outline-variant bg-surface-container-low opacity-60 space-y-1">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="font-mono font-bold text-outline text-label-md">#ARM-9019</span>
+<span class="font-bold text-on-surface">بیرون‌بر اسنپ‌فود</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm">
+                      تحویل شد
+                    </span>
+</div>
+<div class="text-body-sm font-body-sm text-outline flex justify-between">
+<span>۱× کلدبرو نیتروژن</span>
+<span>۱۳۰٬۰۰۰ تومان</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Right 5 cols: Order Detail & 3-Step Live Kitchen Stepper -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-5">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3">
+<div>
+<span class="text-label-sm font-label-sm text-outline block">فاکتور فعال برای باریستا</span>
+<h4 class="text-headline-md font-headline-md text-on-surface font-mono">سفارش #ARM-9021</h4>
+</div>
+<span class="material-symbols-outlined text-secondary text-[28px]">soup_kitchen</span>
+</div>
+<!-- 3-Phase Stepper -->
+<div class="space-y-2">
+<span class="block text-label-md font-label-md font-bold text-on-surface">استپر گردش کار آشپزخانه (Kitchen Prep Stepper):</span>
+<div class="grid grid-cols-3 gap-2 text-center pt-1">
+<!-- Step 1 -->
+<div class="p-2.5 rounded-xl border-2 border-primary bg-primary text-on-primary transition-all" id="f2-stepper-1">
+<span class="material-symbols-outlined text-[18px] block mx-auto">receipt</span>
+<span class="text-label-sm font-label-sm font-bold block mt-1">۱. در صف تهیه</span>
+</div>
+<!-- Step 2 -->
+<div class="p-2.5 rounded-xl border border-outline-variant bg-surface-container-low text-on-surface-variant transition-all" id="f2-stepper-2">
+<span class="material-symbols-outlined text-[18px] block mx-auto">coffee_maker</span>
+<span class="text-label-sm font-label-sm font-bold block mt-1">۲. دم‌آوری</span>
+</div>
+<!-- Step 3 -->
+<div class="p-2.5 rounded-xl border border-outline-variant bg-surface-container-low text-on-surface-variant transition-all" id="f2-stepper-3">
+<span class="material-symbols-outlined text-[18px] block mx-auto">check_circle</span>
+<span class="text-label-sm font-label-sm font-bold block mt-1">۳. آماده تحویل</span>
+</div>
+</div>
+</div>
+<!-- Stepper Action Triggers -->
+<div class="p-4 rounded-xl bg-surface-container-low border border-outline-variant space-y-3">
+<span class="text-label-sm font-label-sm font-bold text-on-surface block">تغییر وضعیت توسط باریستای شیفت:</span>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+<button class="py-2 px-3 rounded-lg bg-secondary text-on-secondary text-label-sm font-label-sm font-bold hover:opacity-90 transition-all flex items-center justify-center gap-1" onclick="advanceFlow2Stepper(2)">
+<span class="material-symbols-outlined text-[16px]">play_arrow</span>
+                    انتقال به: در حال دم‌آوری
+                  </button>
+<button class="py-2 px-3 rounded-lg bg-emerald-800 text-white text-label-sm font-label-sm font-bold hover:bg-emerald-900 transition-all flex items-center justify-center gap-1" onclick="advanceFlow2Stepper(3)">
+<span class="material-symbols-outlined text-[16px]">done_all</span>
+                    انتقال به: آماده تحویل
+                  </button>
+</div>
+<div class="text-body-sm font-body-sm text-secondary bg-surface-container-lowest p-2 rounded border border-outline-variant" id="f2-status-note">
+                  وضعیت فعلی: سفارش در صف آسیاب و آماده‌سازی اسپرسو قرار دارد.
+                </div>
+</div>
+<!-- Receipt Footer -->
+<div class="pt-2 flex items-center justify-between border-t border-outline-variant">
+<span class="text-label-md font-label-md text-on-surface">وضعیت تسویه مالی:</span>
+<span class="text-label-md font-label-md font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  پرداخت آنلاین شاپرک (تسویه شد)
+                </span>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- FLOW 3 CONTAINER: Product Creation & Recipes   -->
+<!-- ============================================== -->
+<div class="hidden space-y-6" id="flow-stage-3">
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-label-md">۳</span>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">فرم تعریف محصول جدید و رسپی باریستا (/dashboard/products/new)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">انتخاب تصویر از مدیا، تنظیم فرمول کسر موجودی انبار و انتشار در منو</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-label-sm font-label-sm font-bold border border-amber-300" id="f3-publish-badge">
+                وضعیت: پیش‌نویس (Draft)
+              </span>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Product Form (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-sm space-y-5">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-1">نام محصول (فارسی):</label>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-low text-body-md font-body-md text-on-surface" id="f3-name" type="text" value="کورتادو ویژه آرمانی"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-1">دسته‌بندی منو:</label>
+<select class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-low text-body-md font-body-md text-on-surface">
+<option>اسپرسو و قهوه‌های بر پایه شیر</option>
+<option>دم‌آوری دستی</option>
+<option>کوکتل بار و سرد</option>
+</select>
+</div>
+</div>
+<!-- Media Picker Selector Trigger -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface font-bold mb-1">تصویر اصلی محصول:</label>
+<div class="p-3 rounded-xl border border-dashed border-secondary bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary border border-outline-variant">
+<span class="material-symbols-outlined">image</span>
+</div>
+<div>
+<span class="text-label-md font-label-md font-bold text-on-surface block">cortado-special-armani.webp</span>
+<span class="text-label-sm font-label-sm text-outline">انتخاب شده از کتابخانه چندرسانه‌ای (/dashboard/media)</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface text-label-sm font-label-sm hover:bg-secondary-container transition-all">تغییر تصویر</button>
+</div>
+</div>
+<!-- Recipe & Automated Inventory Deduction -->
+<div class="p-4 rounded-xl bg-surface-container border border-outline-variant space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md font-bold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">tune</span>
+                    فرمول رسپی و کسر خودکار موجودی انبار:
+                  </span>
+<span class="text-label-sm font-label-sm text-outline">بر اساس هر فنجان</span>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-body-sm">
+<div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant flex justify-between items-center">
+<div>
+<span class="font-bold block text-on-surface">دانه اسپرسو ترکیبی آرمانی</span>
+<span class="text-outline text-label-sm">کسر از انبار مواد اولیه</span>
+</div>
+<span class="font-mono font-bold text-secondary text-label-md">۱۸ گرم</span>
+</div>
+<div class="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant flex justify-between items-center">
+<div>
+<span class="font-bold block text-on-surface">شیر تازه پاستوریزه</span>
+<span class="text-outline text-label-sm">بخاردهی شده با نسبت ۱:۱</span>
+</div>
+<span class="font-mono font-bold text-secondary text-label-md">۶۰ میلی‌لیتر</span>
+</div>
+</div>
+</div>
+<!-- Action Bar -->
+<div class="pt-2 flex flex-wrap items-center justify-between gap-3 border-t border-outline-variant">
+<span class="text-body-sm font-body-sm text-outline">قیمت نهایی در منو: ۹۵٬۰۰۰ تومان</span>
+<div class="flex items-center gap-2">
+<button class="px-4 py-2 rounded-xl bg-surface-container border border-outline-variant text-label-md font-label-md hover:bg-secondary-container transition-all" onclick="saveDraftFlow3()">
+                    ذخیره پیش‌نویس
+                  </button>
+<button class="px-5 py-2 rounded-xl bg-primary text-on-primary text-label-md font-label-md font-bold hover:bg-primary-container transition-all flex items-center gap-1.5" onclick="publishProductFlow3()">
+<span class="material-symbols-outlined text-[18px]">publish</span>
+                    انتشار رسمی در منو
+                  </button>
+</div>
+</div>
+</div>
+<!-- Recipe Guidance (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-4">
+<span class="text-label-lg font-label-lg font-bold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined">menu_book</span>
+                استاندارد رسپی کافه آرمانی
+              </span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                هر محصول تعریف‌شده در پنل مدیریت مستقیماً به ماژول انبارداری پیوند می‌خورد تا به ازای هر سفارش ثبت‌شده، ۱۸ گرم دانه و ۶۰ میلی‌لیتر شیر در کسری از ثانیه از موجودی کسر گردد.
+              </p>
+<div class="hidden p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-body-sm font-body-sm" id="f3-feedback-box">
+                محصول «کورتادو ویژه آرمانی» با موفقیت در منوی مشتریان فعال شد و کش سیستم بروزرسانی گردید.
+              </div>
+</div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- FLOW 4 CONTAINER: Inventory Alert & Ledger     -->
+<!-- ============================================== -->
+<div class="hidden space-y-6" id="flow-stage-4">
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-label-md">۴</span>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">انبارداری و هشدار کسری دانه گواتمالا (/dashboard/inventory)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">مشاهده بحران موجودی، فاکتور خرید جدید و ثبت دو مرحله‌ای در دفتر کل</span>
+</div>
+</div>
+<span class="px-3 py-1 rounded-full bg-error-container text-on-error-container text-label-sm font-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">emergency</span>
+              هشدار بحرانی انبار فعال
+            </span>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Inventory Detail & Alert Box (7 cols) -->
+<div class="lg:col-span-7 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-sm space-y-5">
+<!-- Critical Card -->
+<div class="p-4 rounded-xl bg-error-container/40 border border-error/30 space-y-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error">warning</span>
+<h4 class="text-label-lg font-label-lg font-bold text-error">موجودی بحرانی: دانه تخصصی گواتمالا آنتیگوا</h4>
+</div>
+<span class="font-mono text-label-md font-bold text-error">SKU-GUA-002</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span>موجودی باقیمانده فعلی:</span>
+<span class="font-bold text-error text-label-md">۱.۲ کیلوگرم (حداقل آستانه: ۳ کیلوگرم)</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-error rounded-full w-1/5"></div>
+</div>
+</div>
+<!-- Restock Entry Form -->
+<div class="space-y-3 pt-2">
+<h4 class="text-headline-md font-headline-md text-on-surface">ثبت فاکتور ورود و شارژ انبار</h4>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<div>
+<label class="block text-label-sm font-label-sm font-bold text-on-surface mb-1">تامین‌کننده مجاز:</label>
+<input class="w-full h-10 px-3 rounded-xl border border-outline-variant bg-surface-container-low text-body-sm text-outline" readonly="" type="text" value="رستری تخصصی تهران (کد تامین: ۹۹۳)"/>
+</div>
+<div>
+<label class="block text-label-sm font-label-sm font-bold text-on-surface mb-1">مقدار ورودی جدید (کیلوگرم):</label>
+<input class="w-full h-10 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-sm font-bold text-on-surface" id="f4-qty" type="number" value="۱۵"/>
+</div>
+</div>
+<div class="p-3 rounded-xl bg-surface-container border border-outline-variant flex items-center justify-between">
+<span class="text-body-sm font-body-sm text-on-surface">تاییدیه دو مرحله‌ای سرپرست ارشد (2-Factor Approval):</span>
+<input checked="" class="rounded text-secondary focus:ring-secondary w-5 h-5" id="f4-supervisor-check" type="checkbox"/>
+</div>
+<button class="w-full py-3 rounded-xl bg-primary text-on-primary text-label-lg font-label-lg font-bold hover:bg-primary-container transition-all flex items-center justify-center gap-2" onclick="commitFlow4ToLedger()">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>ثبت تغییرناپذیر در دفتر کل مالی و انبار (Ledger)</span>
+</button>
+</div>
+</div>
+<!-- Ledger Audit Trail (5 cols) -->
+<div class="lg:col-span-5 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-sm space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-2">
+<span class="text-label-lg font-label-lg font-bold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined">menu_book</span>
+                  دفتر کل لاگ‌های تغییرناپذیر (Audit Log)
+                </span>
+<span class="text-label-sm font-label-sm text-outline">ساعت ۱۶:۴۰</span>
+</div>
+<div class="space-y-2.5 text-body-sm font-body-sm" id="f4-ledger-stream">
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-1">
+<div class="flex justify-between text-label-sm text-outline">
+<span>ثبت اتوماتیک کسر</span>
+<span class="font-mono">۱۶:۲۲:۱۰</span>
+</div>
+<div class="text-on-surface font-bold">-۱۸۰ گرم دانه بلند آرمانی (سفارش #ARM-9020)</div>
+</div>
+<div class="p-2.5 rounded-lg bg-surface-container-low border border-outline-variant space-y-1">
+<div class="flex justify-between text-label-sm text-outline">
+<span>سیستم مونیتورینگ</span>
+<span class="font-mono">۱۶:۰۵:۰۰</span>
+</div>
+<div class="text-error font-bold">فعال‌سازی هشدار آستانه کسری گواتمالا (۱.۲kg)</div>
+</div>
+</div>
+<div class="hidden p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-body-sm font-body-sm space-y-1" id="f4-success-ledger">
+<div class="font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">check_circle</span>
+                  سند شارژ انبار قطعی شد
+                </div>
+<div>+۱۵ کیلوگرم دانه گواتمالا در دفتر کل ثبت شد. موجودی جدید: ۱۶.۲ کیلوگرم.</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ============================================== -->
+<!-- FLOW 5 CONTAINER: Bulk Media Upload & SEO Alt  -->
+<!-- ============================================== -->
+<div class="hidden space-y-6" id="flow-stage-5">
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-secondary text-on-secondary flex items-center justify-center font-bold text-label-md">۵</span>
+<div>
+<span class="text-headline-md font-headline-md text-on-surface block">مدیریت رسانه‌ها و بارگذاری گروهی (/dashboard/media/upload)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">بارگذاری ۳ فایل تصویر، اصلاح خطای سایز، ویرایش Alt Text سئو و تخصیص به دسته‌بندی</span>
+</div>
+</div>
+<button class="px-4 py-2 rounded-xl bg-secondary text-on-secondary text-label-sm font-label-sm font-bold hover:opacity-90 transition-all flex items-center gap-1.5" onclick="simulateFlow5Upload()">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+              بارگذاری مجدد فایل‌های تستی
+            </button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Upload Area & 3 Files (8 cols) -->
+<div class="lg:col-span-8 bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 shadow-sm space-y-5">
+<div class="border-2 border-dashed border-outline-variant rounded-2xl p-6 text-center space-y-2 bg-surface-container-low">
+<span class="material-symbols-outlined text-[42px] text-secondary">cloud_upload</span>
+<h4 class="text-headline-md font-headline-md text-on-surface">آپلود گروهی تصاویر منو و کافه</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">فرمت‌های مجاز: WebP, JPEG, PNG (حداکثر ۱.۵ مگابایت برای هر فایل)</p>
+</div>
+<!-- 3 Files List -->
+<div class="space-y-3">
+<!-- File 1: OK -->
+<div class="p-3.5 rounded-xl border border-outline-variant bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-700">image</span>
+<div>
+<span class="text-label-md font-label-md font-bold text-on-surface block">espresso-single-origin.webp</span>
+<span class="text-label-sm font-label-sm text-outline">۴۸۰ کیلوبایت • ۸۰۰×۸۰۰ پیکسل</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm font-bold">آپلود موفق</span>
+</div>
+<!-- File 2: Size Warning + Auto Compress Action -->
+<div class="p-3.5 rounded-xl border border-amber-300 bg-amber-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3" id="f5-file-2-card">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-amber-700" id="f5-f2-icon">warning</span>
+<div>
+<span class="text-label-md font-label-md font-bold text-on-surface block">v60-geisha-raw-camera.png</span>
+<span class="text-label-sm font-label-sm text-amber-900 font-bold" id="f5-f2-meta">حجم ۲.۴ مگابایت (بیشتر از حد مجاز ۱.۵ مگابایت)</span>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-secondary text-on-secondary text-label-sm font-label-sm font-bold hover:opacity-90 transition-all flex items-center gap-1" id="f5-f2-btn" onclick="autoFixImageSizeFlow5()">
+<span class="material-symbols-outlined text-[16px]">compress</span>
+                    اصلاح خودکار و تبدیل به WebP
+                  </button>
+</div>
+<!-- File 3: OK -->
+<div class="p-3.5 rounded-xl border border-outline-variant bg-surface-container-low flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-emerald-700">image</span>
+<div>
+<span class="text-label-md font-label-md font-bold text-on-surface block">interior-valiasr-coffee-bar.webp</span>
+<span class="text-label-sm font-label-sm text-outline">۹۲۰ کیلوبایت • ۱۲۰۰×۸۰۰ پیکسل</span>
+</div>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-label-sm font-label-sm font-bold">آپلود موفق</span>
+</div>
+</div>
+<!-- SEO Alt Text & Category Binding -->
+<div class="p-4 rounded-xl bg-surface-container border border-outline-variant space-y-3">
+<span class="text-label-md font-label-md font-bold text-on-surface block">ویرایش متادیتا و تگ Alt Text سئو برای فایل شماره ۲:</span>
+<input class="w-full h-11 px-3 rounded-xl border border-outline-variant bg-surface-container-lowest text-body-sm font-body-sm text-on-surface" id="f5-alt-input" type="text" value="عصاره‌گیری قهوه پوراور V60 دانه گیشا کلمبیا با اسیدیته زنده در کافه آرمانی شعبه ولیعصر"/>
+<div class="flex items-center justify-between pt-1">
+<span class="text-label-sm font-label-sm text-outline">تخصیص آنی به دسته‌بندی منو:</span>
+<select class="h-9 px-3 rounded-lg border border-outline-variant bg-surface-container-lowest text-label-sm font-label-sm">
+<option>دم‌آوری دستی و پوراور</option>
+<option>اسپرسو بار</option>
+</select>
+</div>
+</div>
+</div>
+<!-- Flow 5 Guidelines (4 cols) -->
+<div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 space-y-4">
+<span class="text-label-lg font-label-lg font-bold text-secondary flex items-center gap-1.5">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                خط‌مشی سئو و سرعت لود
+              </span>
+<p class="text-body-sm font-body-sm text-on-surface-variant">
+                کافه آرمانی برای جلوگیری از افت سرعت در شبکه موبایل، از فشرده‌سازی خودکار لبه (Edge Image Optimization) استفاده می‌کند. هیچ تصویری بدون تگ Alt Text فارسی غنی در دیتابیس ثبت نمی‌گردد.
+              </p>
+<div class="hidden p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-300 text-body-sm font-body-sm" id="f5-success-toast">
+                فایل شماره ۲ به فرمت بهینه WebP (۳۴۰ کیلوبایت) تبدیل شد و تگ Alt برای موتورهای جستجو ذخیره گردید.
+              </div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- ================= FOOTER (Shared Component) ================= -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant mt-16">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto gap-4">
+<div class="flex items-center gap-3">
+<span class="font-bold text-label-lg font-label-lg text-on-surface">کافه آرمانی</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">
+          © ۱۴۰۳ کافه آرمانی. تمامی حقوق محفوظ است | تهران، خیابان ولیعصر
+        </span>
+</div>
+<div class="flex items-center gap-6 text-body-sm font-body-sm text-on-surface-variant">
+<a class="hover:text-primary transition-colors" href="#audit-section">قوانین و راهنما</a>
+<a class="hover:text-primary transition-colors" href="#compliance-matrix">مستندات دیزاین‌سیستم</a>
+<a class="hover:text-primary transition-colors" href="#simulator-section">ارتباط با پشتیبانی فنی</a>
+</div>
+</div>
+</footer>
+<!-- ================= INTERACTIVE VANILLA JS LOGIC ================= -->
+<script>
+    // ----------------------------------------------------
+    // FLOW SELECTOR LOGIC (5 Flows)
+    // ----------------------------------------------------
+    function switchFlow(flowNumber) {
+      // Hide all stage containers
+      for (let i = 1; i <= 5; i++) {
+        const stage = document.getElementById(`flow-stage-${i}`);
+        const tab = document.getElementById(`flow-tab-${i}`);
+        if (stage) stage.classList.add('hidden');
+        if (tab) {
+          tab.classList.remove('bg-surface-container-lowest', 'border', 'border-secondary', 'shadow-sm');
+          tab.classList.add('hover:bg-surface-container-lowest');
+        }
+      }
+
+      // Show selected stage
+      const activeStage = document.getElementById(`flow-stage-${flowNumber}`);
+      const activeTab = document.getElementById(`flow-tab-${flowNumber}`);
+
+      if (activeStage) activeStage.classList.remove('hidden');
+      if (activeTab) {
+        activeTab.classList.add('bg-surface-container-lowest', 'border', 'border-secondary', 'shadow-sm');
+        activeTab.classList.remove('hover:bg-surface-container-lowest');
+      }
+
+      // Scroll smoothly to simulator
+      document.getElementById('simulator-section').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // ----------------------------------------------------
+    // FLOW 1: Online Store Stepper Logic
+    // ----------------------------------------------------
+    function setFlow1Step(stepNum) {
+      // Hide all 6 step views of Flow 1
+      for (let s = 1; s <= 6; s++) {
+        const view = document.getElementById(`f1-step-view-${s}`);
+        const btn = document.getElementById(`f1-btn-${s}`);
+        if (view) view.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('bg-primary', 'text-on-primary', 'font-bold');
+          btn.classList.add('text-on-surface-variant');
+        }
+      }
+
+      const activeView = document.getElementById(`f1-step-view-${stepNum}`);
+      const activeBtn = document.getElementById(`f1-btn-${stepNum}`);
+
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.add('bg-primary', 'text-on-primary', 'font-bold');
+        activeBtn.classList.remove('text-on-surface-variant');
+      }
+    }
+
+    function setFlow1PaymentResult(status) {
+      const box = document.getElementById('f1-result-box');
+      const iconWrap = document.getElementById('f1-result-icon-wrap');
+      const icon = document.getElementById('f1-result-icon');
+      const badge = document.getElementById('f1-result-badge');
+      const title = document.getElementById('f1-result-title');
+      const desc = document.getElementById('f1-result-desc');
+
+      if (status === 'success') {
+        box.className = "lg:col-span-8 bg-surface-container-lowest border border-emerald-300 rounded-2xl p-8 shadow-sm text-center space-y-4";
+        iconWrap.className = "w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto";
+        icon.innerText = "check_circle";
+        badge.className = "px-3 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-300 text-label-sm font-label-sm font-bold";
+        badge.innerText = "سفارش تایید شد • فاکتور #ARM-9021";
+        title.innerText = "سفارش شما با موفقیت ثبت و ارسال شد";
+        desc.innerText = "باریستای کافه آرمانی هم‌اکنون در حال آماده‌سازی آمریکانوی شما با شیر بدون لاکتوز است.";
+      } else {
+        box.className = "lg:col-span-8 bg-surface-container-lowest border border-error rounded-2xl p-8 shadow-sm text-center space-y-4";
+        iconWrap.className = "w-16 h-16 rounded-full bg-error-container text-error flex items-center justify-center mx-auto";
+        icon.innerText = "cancel";
+        badge.className = "px-3 py-1 rounded-full bg-error-container text-on-error-container border border-error text-label-sm font-label-sm font-bold";
+        badge.innerText = "خطا در اتصال به درگاه شاپرک";
+        title.innerText = "تراکنش پرداخت انجام نشد";
+        desc.innerText = "مبلغی از حساب شما کسر نگردید. لطفاً اتصال اینترنت خود یا موجودی کارت را بررسی و مجدداً تلاش فرمایید.";
+      }
+      setFlow1Step(6);
+    }
+
+    // ----------------------------------------------------
+    // FLOW 2: Cashier Live Prep Stepper Logic
+    // ----------------------------------------------------
+    function advanceFlow2Stepper(targetStep) {
+      const s1 = document.getElementById('f2-stepper-1');
+      const s2 = document.getElementById('f2-stepper-2');
+      const s3 = document.getElementById('f2-stepper-3');
+      const note = document.getElementById('f2-status-note');
+      const badge = document.getElementById('f2-badge-status');
+
+      // reset styles
+      [s1, s2, s3].forEach(el => {
+        el.className = "p-2.5 rounded-xl border border-outline-variant bg-surface-container-low text-on-surface-variant transition-all";
+      });
+
+      if (targetStep === 2) {
+        s2.className = "p-2.5 rounded-xl border-2 border-secondary bg-secondary text-on-secondary transition-all font-bold";
+        badge.innerText = "در حال دم‌آوری";
+        badge.className = "px-2 py-0.5 rounded-full bg-secondary text-on-secondary text-label-sm font-label-sm font-bold";
+        note.innerText = "وضعیت فعلی: عصاره‌گیری دابل شات اسپرسو و فوم شیر بدون لاکتوز در دست اقدام باریستاست.";
+      } else if (targetStep === 3) {
+        s3.className = "p-2.5 rounded-xl border-2 border-emerald-800 bg-emerald-800 text-white transition-all font-bold";
+        badge.innerText = "آماده تحویل";
+        badge.className = "px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 border border-emerald-300 text-label-sm font-label-sm font-bold";
+        note.innerText = "وضعیت فعلی: نوشیدنی آماده است و اعلان پیامکی تحویل به مشتری سهراب سپهری ارسال شد.";
+      }
+    }
+
+    // ----------------------------------------------------
+    // FLOW 3: Product & Recipe Logic
+    // ----------------------------------------------------
+    function saveDraftFlow3() {
+      const badge = document.getElementById('f3-publish-badge');
+      badge.className = "px-3 py-1 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm font-bold border border-outline-variant";
+      badge.innerText = "وضعیت: پیش‌نویس ذخیره شد (آفلاین)";
+      alert('پیش‌نویس محصول کورتادو با رسپی اختصاصی با موفقیت ذخیره شد.');
+    }
+
+    function publishProductFlow3() {
+      const badge = document.getElementById('f3-publish-badge');
+      const feedback = document.getElementById('f3-feedback-box');
+      badge.className = "px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-label-sm font-label-sm font-bold border border-emerald-300";
+      badge.innerText = "وضعیت: منتشر شده در منو (Active)";
+      feedback.classList.remove('hidden');
+    }
+
+    // ----------------------------------------------------
+    // FLOW 4: Inventory & Ledger Logic
+    // ----------------------------------------------------
+    function commitFlow4ToLedger() {
+      const qty = document.getElementById('f4-qty').value;
+      const success = document.getElementById('f4-success-ledger');
+      const stream = document.getElementById('f4-ledger-stream');
+
+      success.classList.remove('hidden');
+      
+      const newEntry = document.createElement('div');
+      newEntry.className = "p-2.5 rounded-lg bg-emerald-50 border border-emerald-300 space-y-1 animate-pulse";
+      newEntry.innerHTML = `
+        <div class="flex justify-between text-label-sm text-emerald-900">
+          <span>ثبت قطعی شارژ انبار</span>
+          <span class="font-mono">الان</span>
+        </div>
+        <div class="text-emerald-950 font-bold">+${qty} کیلوگرم دانه گواتمالا با تایید سرپرست ارشد</div>
+      `;
+      stream.prepend(newEntry);
+    }
+
+    // ----------------------------------------------------
+    // FLOW 5: Bulk Media & Auto Fix
+    // ----------------------------------------------------
+    function autoFixImageSizeFlow5() {
+      const icon = document.getElementById('f5-f2-icon');
+      const meta = document.getElementById('f5-f2-meta');
+      const btn = document.getElementById('f5-f2-btn');
+      const card = document.getElementById('f5-file-2-card');
+      const toast = document.getElementById('f5-success-toast');
+
+      icon.innerText = "check_circle";
+      icon.className = "material-symbols-outlined text-emerald-700";
+      meta.innerText = "۳۴۰ کیلوبایت (تبدیل خودکار به WebP انجام شد)";
+      meta.className = "text-label-sm font-label-sm text-emerald-800 font-bold";
+      card.className = "p-3.5 rounded-xl border border-emerald-300 bg-emerald-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+      btn.style.display = "none";
+      toast.classList.remove('hidden');
+    }
+
+    function simulateFlow5Upload() {
+      const icon = document.getElementById('f5-f2-icon');
+      const meta = document.getElementById('f5-f2-meta');
+      const btn = document.getElementById('f5-f2-btn');
+      const card = document.getElementById('f5-file-2-card');
+      const toast = document.getElementById('f5-success-toast');
+
+      icon.innerText = "warning";
+      icon.className = "material-symbols-outlined text-amber-700";
+      meta.innerText = "حجم ۲.۴ مگابایت (بیشتر از حد مجاز ۱.۵ مگابایت)";
+      meta.className = "text-label-sm font-label-sm text-amber-900 font-bold";
+      card.className = "p-3.5 rounded-xl border border-amber-300 bg-amber-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+      btn.style.display = "flex";
+      toast.classList.add('hidden');
+    }
+  </script>
+</body></html>

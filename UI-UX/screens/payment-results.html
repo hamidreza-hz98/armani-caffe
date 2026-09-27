@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحات نتیجه پرداخت کافه آرمانی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              espresso: '#171411',
+              crema: '#C99A3D',
+              surface: '#FEF9F1',
+              card: '#F8F3EB',
+              border: '#E8E2D8',
+              muted: '#7A7269',
+              darkcard: '#221C17',
+              darkborder: '#362D24',
+              success: '#1B6A3B',
+              successbg: '#EAF6EE',
+              error: '#A32822',
+              errorbg: '#FDF0EE',
+              warning: '#945800',
+              warningbg: '#FFF6E7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #F3EEE7;
+      color: #171411;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .outline-icon {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Mobile frame container */
+    .mobile-frame {
+      width: 390px;
+      height: 844px;
+      box-shadow: 0 25px 60px -15px rgba(23, 20, 17, 0.25), 0 0 0 12px #26211C;
+      border-radius: 48px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background-color: #FEF9F1;
+    }
+    /* Dynamic Island notch */
+    .dynamic-island {
+      width: 120px;
+      height: 32px;
+      background-color: #000;
+      border-radius: 20px;
+      margin: 10px auto 0 auto;
+      z-index: 50;
+    }
+    .tab-active {
+      background-color: #171411;
+      color: #FEF9F1;
+      box-shadow: 0 4px 12px rgba(23, 20, 17, 0.15);
+    }
+    .receipt-cut {
+      background-image: radial-gradient(circle at 10px -5px, transparent 12px, #F8F3EB 13px);
+      background-size: 24px 20px;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen flex flex-col items-center justify-start">
+
+  <!-- Desktop Presentation Bar -->
+  <header class="w-full max-w-7xl mx-auto mb-8 bg-white/90 backdrop-blur border border-brand-border rounded-3xl p-5 md:p-6 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-2xl bg-brand-espresso text-brand-crema flex items-center justify-center font-bold text-xl shadow-md">
+        <span class="material-symbols-outlined text-2xl">receipt_long</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <h1 class="text-xl md:text-2xl font-bold text-brand-espresso">صفحات وضعیت نتیجه پرداخت کافه آرمانی</h1>
+          <span class="text-xs bg-amber-100 text-amber-900 border border-amber-300 font-semibold px-2.5 py-0.5 rounded-full">Mobile Checkout Result</span>
+        </div>
+        <p class="text-sm text-brand-muted mt-1">طراحی متمرکز بر آرامش کاربر، بدون ناوبری گیج‌کننده و با کدهای رهگیری صریح شاپرک و سفارش حضوری</p>
+      </div>
+    </div>
+
+    <!-- Quick Tab Selector for Canvas Preview -->
+    <div class="flex items-center gap-1.5 bg-brand-card p-1.5 rounded-2xl border border-brand-border text-xs md:text-sm font-medium">
+      <button onclick="switchView('success')" id="btn-success" class="tab-btn tab-active px-4 py-2 rounded-xl transition flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+        ۱. پرداخت موفق
+      </button>
+      <button onclick="switchView('failure')" id="btn-failure" class="tab-btn px-4 py-2 rounded-xl text-brand-muted hover:text-brand-espresso transition flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+        ۲. خطای پرداخت
+      </button>
+      <button onclick="switchView('pending')" id="btn-pending" class="tab-btn px-4 py-2 rounded-xl text-brand-muted hover:text-brand-espresso transition flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        ۳. وضعیت در حال بررسی
+      </button>
+      <button onclick="switchView('all')" id="btn-all" class="tab-btn px-4 py-2 rounded-xl text-brand-muted hover:text-brand-espresso transition flex items-center gap-2 border-r border-brand-border pr-3 mr-1">
+        <span class="material-symbols-outlined text-sm">view_carousel</span>
+        نمایش هر ۳ در کنار هم
+      </button>
+    </div>
+  </header>
+
+  <!-- Canvas Container for Screens -->
+  <main id="screens-container" class="w-full max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-8 md:gap-10 pb-16">
+
+    <!-- ========================================================= -->
+    <!-- FRAME 1: PAYMENT SUCCESS (موفقیت‌آمیز) -->
+    <!-- ========================================================= -->
+    <div id="frame-success" class="mobile-frame transition-all duration-300">
+      
+      <!-- Top Mobile Hardware Safe Area -->
+      <div class="w-full pt-3 px-6 flex justify-between items-center z-40 bg-brand-surface">
+        <span class="text-xs font-semibold text-brand-espresso">۱۰:۲۸</span>
+        <div class="dynamic-island"></div>
+        <div class="flex items-center gap-1.5 text-brand-espresso">
+          <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+          <span class="material-symbols-outlined text-sm">wifi</span>
+          <span class="material-symbols-outlined text-sm">battery_full</span>
+        </div>
+      </div>
+
+      <!-- Result Screen Header: Strictly minimal with Top-Right Close Button -->
+      <div class="px-6 pt-3 pb-2 flex items-center justify-between border-b border-brand-border/40">
+        <!-- Close Button (top-right in RTL layout, represented standard right affordance) -->
+        <button type="button" aria-label="بستن صفحه" class="w-9 h-9 rounded-full bg-brand-card hover:bg-stone-200 border border-brand-border flex items-center justify-center text-brand-espresso transition active:scale-95">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <span class="text-xs font-semibold tracking-wider text-brand-muted uppercase">Armani Caffe • Checkout</span>
+        <div class="w-9"></div> <!-- Spacer for optical balance -->
+      </div>
+
+      <!-- Scrollable Main Content -->
+      <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col justify-between">
+        
+        <div>
+          <!-- Hero Success Feedback -->
+          <div class="text-center mt-2 mb-5">
+            <!-- Large Accessible Success Icon with Layered Glow & Pattern -->
+            <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+              <div class="absolute inset-0 bg-emerald-100 rounded-full animate-ping opacity-25"></div>
+              <div class="w-20 h-20 bg-emerald-50 border-2 border-emerald-500 rounded-full flex items-center justify-center text-emerald-700 shadow-sm">
+                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+              </div>
+            </div>
+
+            <!-- Semantic Status Badge -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100/90 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+              تراکنش تایید شد (کد ۰۰)
+            </div>
+
+            <h2 class="text-2xl font-black text-brand-espresso tracking-tight">پرداخت موفق بود</h2>
+            <p class="text-xs text-brand-muted mt-1 px-4 leading-relaxed">
+              سفارش شما در سامانه ثبت گردید و هم‌اکنون به بار اسپرسو ولیعصر ارسال شد.
+            </p>
+          </div>
+
+          <!-- Order & Payment Receipt Card -->
+          <div class="bg-brand-card rounded-2xl border border-brand-border p-4 shadow-sm relative overflow-hidden mb-4">
+            
+            <!-- Order Primary Code Highlight -->
+            <div class="flex items-center justify-between pb-3 border-b border-dashed border-stone-300">
+              <div>
+                <span class="text-[11px] text-brand-muted block">کد پیگیری سفارش</span>
+                <span class="text-lg font-black text-brand-espresso font-mono tracking-wider">AC-0008932</span>
+              </div>
+              <div class="text-left">
+                <span class="text-[11px] text-brand-muted block">نوع سفارش</span>
+                <span class="text-xs font-bold bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded-md inline-block">
+                  تحویل حضوری (Pickup)
+                </span>
+              </div>
+            </div>
+
+            <!-- Receipt Meta Details Grid -->
+            <div class="py-3 space-y-2 text-xs border-b border-stone-200">
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">payments</span>
+                  مبلغ پرداخت شده:
+                </span>
+                <span class="font-black text-brand-espresso text-sm">۵۱۰٬۰۰۰ تومان</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">tag</span>
+                  شماره پیگیری تراکنش (شاپرک):
+                </span>
+                <span class="font-mono font-bold text-stone-800 tracking-wider">۹۴۳۸۲۱۴۷۰۵</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">schedule</span>
+                  زمان و تاریخ پرداخت:
+                </span>
+                <span class="font-medium text-stone-700">۱۴ اردیبهشت ۱۴۰۳ • ۱۰:۲۷</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">credit_card</span>
+                  کارت پرداخت‌کننده:
+                </span>
+                <span class="font-mono text-stone-700">۶۰۳۷-۹۹**-****-۳۱۴۸</span>
+              </div>
+            </div>
+
+            <!-- Compact Order Summary Accordion / Section -->
+            <div class="pt-3">
+              <div class="flex items-center justify-between text-xs mb-2">
+                <span class="font-bold text-brand-espresso flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-brand-crema">local_cafe</span>
+                  خلاصه اقلام سفارش (۳ آیتم):
+                </span>
+                <span class="text-[11px] text-stone-500">آماده‌سازی: ~۱۰ دقیقه</span>
+              </div>
+
+              <div class="space-y-1.5 bg-white/70 p-2.5 rounded-xl border border-stone-200/80 text-[11px]">
+                <div class="flex justify-between items-center text-stone-800">
+                  <span class="font-medium">۱× آمریکانو تازه دم (سیروپ وانیل + شات اضافه)</span>
+                  <span class="font-bold font-mono">۱۷۰٬۰۰۰</span>
+                </div>
+                <div class="flex justify-between items-center text-stone-800">
+                  <span class="font-medium">۲× اسپرسو دوبل تخصصی (دانه اتیوپی)</span>
+                  <span class="font-bold font-mono">۱۹۰٬۰۰۰</span>
+                </div>
+                <div class="flex justify-between items-center text-stone-800">
+                  <span class="font-medium">۱× چیزکیک سن‌سباستین با شکلات</span>
+                  <span class="font-bold font-mono">۱۵۰٬۰۰۰</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Pickup Guidance Note -->
+          <div class="bg-amber-50/80 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5 text-xs text-amber-900 mb-2">
+            <span class="material-symbols-outlined text-base text-amber-700 mt-0.5">storefront</span>
+            <div class="leading-relaxed">
+              جهت تحویل، کد پیگیری <strong class="font-mono">AC-0008932</strong> را به باریستای شعبه ولیعصر اعلام فرمایید.
+            </div>
+          </div>
+        </div>
+
+        <!-- Safe Bottom Actions -->
+        <div class="space-y-2 pt-2 pb-1">
+          <button type="button" class="w-full py-3.5 px-4 bg-brand-espresso hover:bg-stone-800 text-brand-surface font-bold text-sm rounded-2xl flex items-center justify-center gap-2 shadow-md transition active:scale-98">
+            <span class="material-symbols-outlined text-base text-brand-crema">receipt</span>
+            مشاهده و پیگیری سفارش
+          </button>
+          
+          <button type="button" class="w-full py-3 px-4 bg-transparent hover:bg-brand-card text-brand-espresso font-semibold text-xs rounded-2xl border border-brand-border flex items-center justify-center gap-1.5 transition active:scale-98">
+            <span class="material-symbols-outlined text-base">arrow_forward</span>
+            بازگشت به منوی سفارش
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Mobile Bar Indicator (iOS Home Bar) -->
+      <div class="w-full pb-2 flex justify-center bg-brand-surface">
+        <div class="w-32 h-1 bg-stone-300 rounded-full"></div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- FRAME 2: PAYMENT FAILURE (عدم موفقیت) -->
+    <!-- ========================================================= -->
+    <div id="frame-failure" class="mobile-frame transition-all duration-300">
+      
+      <!-- Top Mobile Hardware Safe Area -->
+      <div class="w-full pt-3 px-6 flex justify-between items-center z-40 bg-brand-surface">
+        <span class="text-xs font-semibold text-brand-espresso">۱۰:۲۹</span>
+        <div class="dynamic-island"></div>
+        <div class="flex items-center gap-1.5 text-brand-espresso">
+          <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+          <span class="material-symbols-outlined text-sm">wifi</span>
+          <span class="material-symbols-outlined text-sm">battery_full</span>
+        </div>
+      </div>
+
+      <!-- Result Screen Header with Top-Right Close Button -->
+      <div class="px-6 pt-3 pb-2 flex items-center justify-between border-b border-brand-border/40">
+        <button type="button" aria-label="بستن صفحه" class="w-9 h-9 rounded-full bg-brand-card hover:bg-stone-200 border border-brand-border flex items-center justify-center text-brand-espresso transition active:scale-95">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <span class="text-xs font-semibold tracking-wider text-brand-muted uppercase">Armani Caffe • Checkout</span>
+        <div class="w-9"></div>
+      </div>
+
+      <!-- Scrollable Main Content -->
+      <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col justify-between">
+        
+        <div>
+          <!-- Hero Failure Feedback -->
+          <div class="text-center mt-2 mb-5">
+            <!-- Large Accessible Error Icon with High Contrast -->
+            <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+              <div class="w-20 h-20 bg-rose-50 border-2 border-rose-500 rounded-full flex items-center justify-center text-rose-700 shadow-sm">
+                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">error</span>
+              </div>
+            </div>
+
+            <!-- Semantic Status Badge -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-800 border border-rose-300 rounded-full text-xs font-bold mb-2">
+              <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
+              تراکنش ناموفق (خطای درگاه شاپرک)
+            </div>
+
+            <h2 class="text-2xl font-black text-brand-espresso tracking-tight">پرداخت انجام نشد</h2>
+            <p class="text-xs text-brand-muted mt-1 px-3 leading-relaxed">
+              هیچ مبلغی از حساب شما کسر نگردید. چنانچه وجهی از حسابتان کم شده باشد، نهایتاً طی ۷۲ ساعت کاری توسط بانک عودت می‌گردد.
+            </p>
+          </div>
+
+          <!-- Transaction Reference & Failure Details Card -->
+          <div class="bg-brand-card rounded-2xl border border-brand-border p-4 shadow-sm mb-4">
+            
+            <div class="flex items-center justify-between pb-3 border-b border-stone-200">
+              <div>
+                <span class="text-[11px] text-brand-muted block">علت عدم تایید</span>
+                <span class="text-xs font-bold text-rose-800">انصراف کاربر / اتمام زمان نشست بانکی</span>
+              </div>
+              <span class="text-[11px] bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded-md font-medium">کد ۵۱</span>
+            </div>
+
+            <div class="py-3 space-y-2 text-xs border-b border-stone-200">
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">payments</span>
+                  مبلغ سفارش:
+                </span>
+                <span class="font-bold text-brand-espresso">۵۱۰٬۰۰۰ تومان</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">tag</span>
+                  شناسه ارجاع شاپرک (RRN):
+                </span>
+                <span class="font-mono font-bold text-stone-800 tracking-wider">TRX-74820199</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted flex items-center gap-1">
+                  <span class="material-symbols-outlined text-sm text-stone-500">schedule</span>
+                  زمان ثبت خطا:
+                </span>
+                <span class="font-medium text-stone-700">۱۴ اردیبهشت ۱۴۰۳ • ۱۰:۲۹</span>
+              </div>
+            </div>
+
+            <!-- Items Intact Reassurance -->
+            <div class="pt-3 flex items-center gap-2 text-[11px] text-stone-600">
+              <span class="material-symbols-outlined text-sm text-amber-700">shopping_bag</span>
+              <span>اقلام انتخابی شما در سبد خرید محفوظ مانده‌اند.</span>
+            </div>
+
+          </div>
+
+          <!-- Support Contact Channel Box -->
+          <div class="bg-stone-100/80 border border-stone-200 rounded-xl p-3 flex items-center justify-between text-xs mb-2">
+            <div class="flex items-center gap-2 text-stone-700">
+              <span class="material-symbols-outlined text-base text-stone-500">headset_mic</span>
+              <span>نیاز به راهنمایی در پرداخت دارید؟</span>
+            </div>
+            <a href="tel:02188654321" class="font-bold text-brand-espresso hover:underline flex items-center gap-1">
+              <span>پشتیبانی کافه</span>
+              <span class="material-symbols-outlined text-xs">call</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Safe Bottom Actions -->
+        <div class="space-y-2 pt-2 pb-1">
+          <!-- Primary: Re-attempt -->
+          <button type="button" class="w-full py-3.5 px-4 bg-brand-espresso hover:bg-stone-800 text-brand-surface font-bold text-sm rounded-2xl flex items-center justify-center gap-2 shadow-md transition active:scale-98">
+            <span class="material-symbols-outlined text-base text-brand-crema">refresh</span>
+            تلاش دوباره برای پرداخت
+          </button>
+          
+          <!-- Secondary: Back to Cart -->
+          <button type="button" class="w-full py-3 px-4 bg-transparent hover:bg-brand-card text-brand-espresso font-semibold text-xs rounded-2xl border border-brand-border flex items-center justify-center gap-1.5 transition active:scale-98">
+            <span class="material-symbols-outlined text-base">shopping_cart</span>
+            بازگشت به سبد خرید و ویرایش
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Mobile Bar Indicator (iOS Home Bar) -->
+      <div class="w-full pb-2 flex justify-center bg-brand-surface">
+        <div class="w-32 h-1 bg-stone-300 rounded-full"></div>
+      </div>
+    </div>
+
+
+    <!-- ========================================================= -->
+    <!-- FRAME 3: PAYMENT PENDING / AMBIGUOUS (در حال بررسی) -->
+    <!-- ========================================================= -->
+    <div id="frame-pending" class="mobile-frame transition-all duration-300">
+      
+      <!-- Top Mobile Hardware Safe Area -->
+      <div class="w-full pt-3 px-6 flex justify-between items-center z-40 bg-brand-surface">
+        <span class="text-xs font-semibold text-brand-espresso">۱۰:۳۰</span>
+        <div class="dynamic-island"></div>
+        <div class="flex items-center gap-1.5 text-brand-espresso">
+          <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+          <span class="material-symbols-outlined text-sm">wifi</span>
+          <span class="material-symbols-outlined text-sm">battery_full</span>
+        </div>
+      </div>
+
+      <!-- Result Screen Header with Top-Right Close Button -->
+      <div class="px-6 pt-3 pb-2 flex items-center justify-between border-b border-brand-border/40">
+        <button type="button" aria-label="بستن صفحه" class="w-9 h-9 rounded-full bg-brand-card hover:bg-stone-200 border border-brand-border flex items-center justify-center text-brand-espresso transition active:scale-95">
+          <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+        <span class="text-xs font-semibold tracking-wider text-brand-muted uppercase">Armani Caffe • Checkout</span>
+        <div class="w-9"></div>
+      </div>
+
+      <!-- Scrollable Main Content -->
+      <div class="flex-1 overflow-y-auto px-6 py-4 flex flex-col justify-between">
+        
+        <div>
+          <!-- Hero Pending Feedback -->
+          <div class="text-center mt-2 mb-4">
+            <!-- Large Accessible Pending / Clock Icon with Pulse -->
+            <div class="relative w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+              <div class="absolute inset-0 bg-amber-100 rounded-full animate-pulse opacity-50"></div>
+              <div class="w-20 h-20 bg-amber-50 border-2 border-amber-500 rounded-full flex items-center justify-center text-amber-700 shadow-sm">
+                <span class="material-symbols-outlined text-4xl">hourglass_top</span>
+              </div>
+            </div>
+
+            <!-- Semantic Status Badge -->
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 text-amber-900 border border-amber-300 rounded-full text-xs font-bold mb-2">
+              <span class="w-2 h-2 rounded-full bg-amber-600 animate-ping"></span>
+              در انتظار تایید سوئیچ بانکی
+            </div>
+
+            <h2 class="text-2xl font-black text-brand-espresso tracking-tight">وضعیت پرداخت در حال بررسی است</h2>
+            <p class="text-xs text-brand-muted mt-1 px-2 leading-relaxed">
+              اطلاعات تراکنش از درگاه بانک دریافت شده و سیستم در حال استعلام نهایی تاییدیه است.
+            </p>
+          </div>
+
+          <!-- Strict Warning to Discourage Duplicate Payments -->
+          <div class="bg-amber-50 border-2 border-amber-300/80 rounded-2xl p-3.5 mb-4 shadow-xs">
+            <div class="flex items-start gap-2.5">
+              <span class="material-symbols-outlined text-xl text-amber-700 mt-0.5">warning</span>
+              <div>
+                <h4 class="text-xs font-black text-amber-950">لطفاً پرداخت مجدد انجام ندهید!</h4>
+                <p class="text-[11px] text-amber-900 mt-0.5 leading-relaxed">
+                  جهت جلوگیری از کسر دوباره وجه از حسابتان، چند لحظه منتظر بمانید یا دکمه بروزرسانی وضعیت را لمس فرمایید.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Transaction Details Card -->
+          <div class="bg-brand-card rounded-2xl border border-brand-border p-4 shadow-sm mb-4">
+            <div class="space-y-2.5 text-xs">
+              <div class="flex justify-between items-center pb-2 border-b border-stone-200">
+                <span class="text-brand-muted">مبلغ تراکنش:</span>
+                <span class="font-black text-brand-espresso text-sm">۵۱۰٬۰۰۰ تومان</span>
+              </div>
+
+              <div class="flex justify-between items-center pb-2 border-b border-stone-200">
+                <span class="text-brand-muted">شناسه پیگیری موقت:</span>
+                <span class="font-mono font-bold text-stone-800">TRX-PENDING-9904</span>
+              </div>
+
+              <div class="flex justify-between items-center pb-2 border-b border-stone-200">
+                <span class="text-brand-muted">درگاه پرداخت:</span>
+                <span class="font-medium text-stone-700">به‌پرداخت ملت (شاپرک)</span>
+              </div>
+
+              <div class="flex justify-between items-center">
+                <span class="text-brand-muted">آخرین بروزرسانی:</span>
+                <span class="font-medium text-stone-700">هم‌اکنون (۱۰:۳۰)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Support & SMS Note -->
+          <div class="bg-white/70 border border-brand-border rounded-xl p-3 flex items-center gap-2 text-[11px] text-stone-600 mb-2">
+            <span class="material-symbols-outlined text-sm text-stone-500">sms</span>
+            <span>نتیجه نهایی به‌محض تایید بانک از طریق پیامک اطلاع‌رسانی خواهد شد.</span>
+          </div>
+        </div>
+
+        <!-- Safe Bottom Actions -->
+        <div class="space-y-2 pt-2 pb-1">
+          <!-- Primary: Refresh Status -->
+          <button type="button" class="w-full py-3.5 px-4 bg-brand-espresso hover:bg-stone-800 text-brand-surface font-bold text-sm rounded-2xl flex items-center justify-center gap-2 shadow-md transition active:scale-98">
+            <span class="material-symbols-outlined text-base text-brand-crema animate-spin">sync</span>
+            بروزرسانی استعلام وضعیت
+          </button>
+          
+          <!-- Secondary: Back to Home / Orders -->
+          <button type="button" class="w-full py-3 px-4 bg-transparent hover:bg-brand-card text-brand-espresso font-semibold text-xs rounded-2xl border border-brand-border flex items-center justify-center gap-1.5 transition active:scale-98">
+            <span class="material-symbols-outlined text-base">dashboard</span>
+            رفتن به پیگیری سفارش‌ها
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Bottom Mobile Bar Indicator (iOS Home Bar) -->
+      <div class="w-full pb-2 flex justify-center bg-brand-surface">
+        <div class="w-32 h-1 bg-stone-300 rounded-full"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Interactive Switching Script -->
+  <script>
+    function switchView(view) {
+      const successFrame = document.getElementById('frame-success');
+      const failureFrame = document.getElementById('frame-failure');
+      const pendingFrame = document.getElementById('frame-pending');
+
+      const buttons = document.querySelectorAll('.tab-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('text-brand-muted');
+      });
+
+      if (view === 'success') {
+        document.getElementById('btn-success').classList.add('tab-active');
+        document.getElementById('btn-success').classList.remove('text-brand-muted');
+        successFrame.style.display = 'flex';
+        failureFrame.style.display = 'none';
+        pendingFrame.style.display = 'none';
+      } else if (view === 'failure') {
+        document.getElementById('btn-failure').classList.add('tab-active');
+        document.getElementById('btn-failure').classList.remove('text-brand-muted');
+        successFrame.style.display = 'none';
+        failureFrame.style.display = 'flex';
+        pendingFrame.style.display = 'none';
+      } else if (view === 'pending') {
+        document.getElementById('btn-pending').classList.add('tab-active');
+        document.getElementById('btn-pending').classList.remove('text-brand-muted');
+        successFrame.style.display = 'none';
+        failureFrame.style.display = 'none';
+        pendingFrame.style.display = 'flex';
+      } else {
+        document.getElementById('btn-all').classList.add('tab-active');
+        document.getElementById('btn-all').classList.remove('text-brand-muted');
+        successFrame.style.display = 'flex';
+        failureFrame.style.display = 'flex';
+        pendingFrame.style.display = 'flex';
+      }
+    }
+
+    // Default to 'all' on desktop width, or 'success' if small screen
+    if (window.innerWidth < 1200) {
+      switchView('success');
+    } else {
+      switchView('all');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منو و سفارش آنلاین — کافه آرمانی</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              primary: '#171411',
+              dark: '#3A2418',
+              warm: '#B9855A',
+              gold: '#C99A3D',
+              canvas: '#F7F2EA',
+              surface: '#FFFCF7',
+              'surface-variant': '#EEE4D7',
+              text: '#211A16',
+              secondary: '#6F6259',
+              border: '#D8CABB',
+              success: '#2E7D5B',
+              warning: '#B26A00',
+              error: '#B3261E',
+              info: '#356A8A',
+            }
+          },
+          boxShadow: {
+            'warm-sm': '0 2px 8px rgba(23, 20, 17, 0.05)',
+            'warm-md': '0 6px 18px rgba(23, 20, 17, 0.08)',
+            'warm-float': '0 10px 25px -4px rgba(23, 20, 17, 0.12), 0 4px 10px -2px rgba(23, 20, 17, 0.06)',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #ECE5DC;
+      color: #211A16;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 24px 16px;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      line-height: 1;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .material-symbols-outlined.filled {
+      font-variation-settings: 'FILL' 1;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    /* Tabular Persian Numerals */
+    .num-tabular {
+      font-feature-settings: "tnum" 1;
+    }
+    /* Mobile frame styling */
+    .mobile-frame {
+      width: 100%;
+      max-width: 412px;
+      height: 844px;
+      border-radius: 40px;
+      box-shadow: 0 25px 60px -15px rgba(23, 20, 17, 0.25), 0 0 0 10px #1E1B18, 0 0 0 12px #3A2418;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      background-color: #F7F2EA;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8 flex flex-col items-center">
+
+  <!-- Header Banner Explaining Presentation & Variants -->
+  <div class="w-full max-w-7xl mb-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-brand-surface p-6 rounded-2xl border border-brand-border shadow-warm-sm">
+    <div class="flex items-center gap-4">
+      <div class="w-12 h-12 rounded-xl bg-brand-primary text-brand-gold flex items-center justify-center font-bold text-xl shadow-inner">
+        <span class="material-symbols-outlined text-2xl">menu_book</span>
+      </div>
+      <div>
+        <h1 class="text-xl md:text-2xl font-black text-brand-text flex items-center gap-2">
+          <span>منوی دیجیتال و سفارش سریع موبایل کافه آرمانی</span>
+          <span class="text-xs bg-brand-gold/15 text-brand-gold font-bold px-2.5 py-1 rounded-full border border-brand-gold/30">نسخه موبایل ۳۹۰×۸۴۴</span>
+        </h1>
+        <p class="text-sm text-brand-secondary mt-1">
+          طراحی بهینه‌شده برای سفارش در کمتر از ۳۰ ثانیه، تب‌بار چسبنده RTL، استپرهای تعاملی، نوار سبد شناور، حالت لودینگ و خطا
+        </p>
+      </div>
+    </div>
+
+    <!-- Variant Switcher Tab Pills (for visual toggling and presentation) -->
+    <div class="flex items-center gap-1.5 p-1.5 bg-brand-canvas rounded-xl border border-brand-border text-xs font-semibold self-stretch md:self-auto overflow-x-auto no-scrollbar">
+      <button onclick="switchView('active')" id="btn-active" class="px-3.5 py-2 rounded-lg bg-brand-primary text-white shadow-sm flex items-center gap-1.5 transition-all">
+        <span class="w-2 h-2 rounded-full bg-brand-gold"></span>
+        <span>سبد خرید فعال (۳ آیتم)</span>
+      </button>
+      <button onclick="switchView('empty')" id="btn-empty" class="px-3.5 py-2 rounded-lg text-brand-secondary hover:text-brand-text transition-all flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-stone-300"></span>
+        <span>سبد خرید خالی</span>
+      </button>
+      <button onclick="switchView('skeleton')" id="btn-skeleton" class="px-3.5 py-2 rounded-lg text-brand-secondary hover:text-brand-text transition-all flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+        <span>اسکلتون در حال بارگذاری</span>
+      </button>
+      <button onclick="switchView('error')" id="btn-error" class="px-3.5 py-2 rounded-lg text-brand-secondary hover:text-brand-text transition-all flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-brand-error"></span>
+        <span>خطای بارگذاری منو</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Multi-Device Comparison Grid -->
+  <div class="w-full max-w-7xl flex flex-wrap justify-center items-start gap-8">
+
+    <!-- ======================================================== -->
+    <!-- FRAME 1: PRIMARY ACTIVE STATE (Active Cart with 3 Items) -->
+    <!-- ======================================================== -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center justify-between w-full px-2 text-xs font-bold text-brand-secondary">
+        <span class="flex items-center gap-1 text-brand-text">
+          <span class="material-symbols-outlined text-sm text-brand-gold">shopping_bag</span>
+          حالت اصلی: سبد فعال با ۳ قلم محصول
+        </span>
+        <span class="font-mono text-[11px] text-brand-secondary/70">390×844 px</span>
+      </div>
+
+      <div class="mobile-frame bg-brand-canvas" id="frame-main">
+        
+        <!-- Status Bar -->
+        <div class="w-full h-11 bg-brand-surface border-b border-brand-border/40 px-6 flex items-center justify-between text-xs font-semibold text-brand-text shrink-0 z-40">
+          <span class="font-mono text-[11px] tracking-tight font-bold">۱۰:۲۴</span>
+          <div class="w-28 h-4 bg-brand-primary rounded-full mx-auto self-center -mt-1.5 opacity-95"></div>
+          <div class="flex items-center gap-1.5 text-brand-text">
+            <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+            <span class="material-symbols-outlined text-sm">wifi</span>
+            <span class="material-symbols-outlined text-sm">battery_full</span>
+          </div>
+        </div>
+
+        <!-- Sticky Shared Storefront Header (Established from Prompt 01) -->
+        <header class="sticky top-0 w-full bg-brand-surface/95 backdrop-blur-md border-b border-brand-border z-30 px-4 py-2.5 flex items-center justify-between shrink-0 shadow-warm-sm">
+          <!-- Logo & Wordmark (Right) -->
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-brand-primary text-brand-gold flex items-center justify-center shadow-inner">
+              <span class="material-symbols-outlined text-lg">local_cafe</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-black text-sm tracking-tight text-brand-text leading-tight">کافه آرمانی</span>
+              <span class="text-[10px] text-brand-warm font-medium">اسپشالتی کافی تهران</span>
+            </div>
+          </div>
+
+          <!-- Controls: Contact Sheet + Account + Cart Badge (Left) -->
+          <div class="flex items-center gap-2">
+            <!-- CTA ارتباط با ما -->
+            <button onclick="toggleContactModal(true)" class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-brand-canvas hover:bg-brand-surface-variant border border-brand-border text-brand-text text-[11px] font-bold transition-all active:scale-95">
+              <span class="material-symbols-outlined text-sm text-brand-warm">contact_support</span>
+              <span>ارتباط با ما</span>
+            </button>
+
+            <!-- Signed-in Account Avatar -->
+            <div class="w-8 h-8 rounded-full bg-brand-surface-variant border border-brand-border flex items-center justify-center text-brand-text hover:border-brand-warm cursor-pointer transition-colors" title="سهراب اخوان">
+              <span class="material-symbols-outlined text-base">person</span>
+            </div>
+
+            <!-- Cart Icon with Dynamic Badge (3 items) -->
+            <div class="relative w-8 h-8 rounded-full bg-brand-surface-variant border border-brand-border flex items-center justify-center text-brand-text cursor-pointer hover:border-brand-gold transition-colors" id="cart-header-icon">
+              <span class="material-symbols-outlined text-base">shopping_cart</span>
+              <span id="header-cart-badge" class="absolute -top-1 -left-1 w-4 h-4 rounded-full bg-brand-gold text-brand-primary font-black text-[10px] flex items-center justify-center shadow-sm">۳</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Main Scrollable Content Container -->
+        <main class="flex-1 overflow-y-auto overflow-x-hidden no-scrollbar scroll-smooth" id="menu-scroll-container">
+          
+          <!-- Compact Welcome & Ambient Strip -->
+          <div class="px-4 pt-3 pb-2 bg-gradient-to-b from-brand-surface to-brand-canvas border-b border-brand-border/40">
+            <div class="flex items-center justify-between">
+              <div>
+                <span class="text-xs text-brand-secondary font-medium">سلام سهراب عزیز 👋</span>
+                <p class="text-sm font-black text-brand-text mt-0.5">امروز هوس چه طعمی کردی؟</p>
+              </div>
+              <div class="flex items-center gap-1 text-[11px] text-brand-success bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-success animate-pulse"></span>
+                <span>بار اسپرسو آماده سفارش</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sticky Category Tab Bar (RTL Order) -->
+          <nav class="sticky top-0 bg-brand-canvas/95 backdrop-blur-md z-20 py-2.5 px-3 border-b border-brand-border/80 shadow-sm">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5" id="category-tabs-container">
+              
+              <!-- Tab 1: قهوه گرم (Active by default) -->
+              <button onclick="scrollToCat('cat-hot-coffee', this)" class="cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-dark text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all">
+                <span class="w-1.5 h-1.5 rounded-full bg-brand-gold"></span>
+                <span>قهوه گرم</span>
+                <span class="text-[10px] opacity-75 mr-0.5 font-mono">۴</span>
+              </button>
+
+              <!-- Tab 2: قهوه سرد -->
+              <button onclick="scrollToCat('cat-cold-coffee', this)" class="cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all">
+                <span>قهوه سرد</span>
+                <span class="text-[10px] text-brand-secondary/70 font-mono">۳</span>
+              </button>
+
+              <!-- Tab 3: چای و دمنوش -->
+              <button onclick="scrollToCat('cat-tea', this)" class="cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all">
+                <span>چای و دمنوش</span>
+                <span class="text-[10px] text-brand-secondary/70 font-mono">۲</span>
+              </button>
+
+              <!-- Tab 4: نوشیدنی سرد -->
+              <button onclick="scrollToCat('cat-cold-drinks', this)" class="cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all">
+                <span>نوشیدنی سرد</span>
+                <span class="text-[10px] text-brand-secondary/70 font-mono">۲</span>
+              </button>
+
+              <!-- Tab 5: کیک و دسر -->
+              <button onclick="scrollToCat('cat-dessert', this)" class="cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all">
+                <span>کیک و دسر</span>
+                <span class="text-[10px] text-brand-secondary/70 font-mono">۳</span>
+              </button>
+            </div>
+          </nav>
+
+          <!-- MENU CONTENT SECTIONS -->
+          <div class="px-3.5 py-3 space-y-6">
+
+            <!-- SECTION 1: قهوه گرم (Hot Coffee) -->
+            <section id="cat-hot-coffee" class="menu-section pt-1">
+              <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-1.5 h-4 bg-brand-warm rounded-full"></span>
+                  <h2 class="font-extrabold text-base text-brand-text">قهوه گرم اسپشالتی</h2>
+                </div>
+                <span class="text-[11px] font-bold text-brand-secondary bg-brand-surface-variant/80 px-2 py-0.5 rounded-md border border-brand-border">۴ انتخاب</span>
+              </div>
+
+              <div class="space-y-2.5">
+                
+                <!-- Product 1: اسپرسو دوبل (Quantity: 2 in cart) -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <!-- Right: 88x88 Product Image -->
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZTxMN2TyYireL_4Ed3Q-AQns94eBDUd9Wq57ZjIYG41ZzaCl3LiQwieH7BPVAXz-MjMnp44WrFB52fJ43s96YF9L5_YnTC2Pn1zssMB4LfQfpl33VLAnnQ8m2ChuBxaUeSY9oE8L6Za7q62kSBwFplJV8xd_3iJ8xug2RTRyfVoBYSnlVHW_E0Fgu3mRMNnYCMo2r27GkU1bdlRAK0Er-ZTl5l_wt4xMLmwbjVtYb_pOswG9SCU" alt="اسپرسو دوبل کافه آرمانی" class="w-full h-full object-cover">
+                    <span class="absolute bottom-1 right-1 bg-brand-primary/85 text-brand-gold text-[9px] font-bold px-1.5 py-0.5 rounded">۱۰۰٪ عربیکا</span>
+                  </div>
+                  
+                  <!-- Left: Info, Price, and Cart Stepper -->
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <div class="flex items-baseline justify-between gap-1">
+                        <h3 class="font-bold text-sm text-brand-text truncate">اسپرسو دوبل (Double Shot)</h3>
+                      </div>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">دانه اتیوپی یرگاچف، نت‌های میوه‌ای و اسیدیته شفاف و کرمای فشرده</p>
+                      <button onclick="openCustomization('اسپرسو دوبل')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها (سیروپ، عصاره)</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۹۵٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <!-- Stepper with Quantity = 2 -->
+                      <div class="flex items-center bg-brand-surface-variant rounded-xl border border-brand-border p-0.5 shadow-sm">
+                        <!-- Plus button -->
+                        <button onclick="updateQty(this, 1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-brand-canvas text-brand-text flex items-center justify-center font-bold active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-sm">add</span>
+                        </button>
+                        <!-- Quantity Value -->
+                        <span class="w-7 text-center font-black text-xs text-brand-text num-tabular">۲</span>
+                        <!-- Minus button (decreases to 1, or remove if 1) -->
+                        <button onclick="updateQty(this, -1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-brand-canvas text-brand-text flex items-center justify-center font-bold active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-sm">remove</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product 2: آمریکانو (Not yet added) -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZTxMN2TyYireL_4Ed3Q-AQns94eBDUd9Wq57ZjIYG41ZzaCl3LiQwieH7BPVAXz-MjMnp44WrFB52fJ43s96YF9L5_YnTC2Pn1zssMB4LfQfpl33VLAnnQ8m2ChuBxaUeSY9oE8L6Za7q62kSBwFplJV8xd_3iJ8xug2RTRyfVoBYSnlVHW_E0Fgu3mRMNnYCMo2r27GkU1bdlRAK0Er-ZTl5l_wt4xMLmwbjVtYb_pOswG9SCU" alt="آمریکانو کافه آرمانی" class="w-full h-full object-cover brightness-95">
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">آمریکانو تازه دم</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">دوشات اسپرسو تخصصی با آب تصفیه جوش، تلخی دلپذیر و ملایم</p>
+                      <button onclick="openCustomization('آمریکانو')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۱۰٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <!-- Initial Add Button: افزودن with Plus Icon -->
+                      <button onclick="addToCart(this, 'آمریکانو', 110000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product 3: لاته آرمانی (Quantity: 1 in cart) -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZTxMN2TyYireL_4Ed3Q-AQns94eBDUd9Wq57ZjIYG41ZzaCl3LiQwieH7BPVAXz-MjMnp44WrFB52fJ43s96YF9L5_YnTC2Pn1zssMB4LfQfpl33VLAnnQ8m2ChuBxaUeSY9oE8L6Za7q62kSBwFplJV8xd_3iJ8xug2RTRyfVoBYSnlVHW_E0Fgu3mRMNnYCMo2r27GkU1bdlRAK0Er-ZTl5l_wt4xMLmwbjVtYb_pOswG9SCU" alt="لاته کافه آرمانی" class="w-full h-full object-cover">
+                    <span class="absolute bottom-1 right-1 bg-amber-900/90 text-amber-200 text-[9px] font-bold px-1.5 py-0.5 rounded">شیر بخارپز</span>
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">کافه لاته با بافت مخملی</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">شیر میکروفوم تازه با اسپرسو متعادل ترکیب اختصاصی آرمانی</p>
+                      <button onclick="openCustomization('لاته')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها (شیر جو دوسر، بادام)</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۴۵٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <!-- Stepper with Quantity = 1 (Trash icon on decrement) -->
+                      <div class="flex items-center bg-brand-surface-variant rounded-xl border border-brand-border p-0.5 shadow-sm">
+                        <button onclick="updateQty(this, 1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-brand-canvas text-brand-text flex items-center justify-center font-bold active:scale-90 transition-transform">
+                          <span class="material-symbols-outlined text-sm">add</span>
+                        </button>
+                        <span class="w-7 text-center font-black text-xs text-brand-text num-tabular">۱</span>
+                        <button onclick="updateQty(this, -1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-rose-50 text-brand-error flex items-center justify-center font-bold active:scale-90 transition-transform" title="حذف از سبد">
+                          <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product 4: کورتادو (Unavailable / Sold Out) -->
+                <div class="bg-brand-surface/60 rounded-2xl p-2.5 border border-brand-border/60 shadow-none flex items-center gap-3 relative overflow-hidden opacity-75">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative grayscale">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZTxMN2TyYireL_4Ed3Q-AQns94eBDUd9Wq57ZjIYG41ZzaCl3LiQwieH7BPVAXz-MjMnp44WrFB52fJ43s96YF9L5_YnTC2Pn1zssMB4LfQfpl33VLAnnQ8m2ChuBxaUeSY9oE8L6Za7q62kSBwFplJV8xd_3iJ8xug2RTRyfVoBYSnlVHW_E0Fgu3mRMNnYCMo2r27GkU1bdlRAK0Er-ZTl5l_wt4xMLmwbjVtYb_pOswG9SCU" alt="کورتادو" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+                      <span class="bg-brand-error text-white text-[10px] font-bold px-2 py-0.5 rounded-full">ناموجود</span>
+                    </div>
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-sm text-stone-500 truncate">کورتادو دوبل اسپانیایی</h3>
+                      </div>
+                      <p class="text-xs text-stone-400 line-clamp-1 mt-0.5">نسبت برابر اسپرسو و شیر با فوم ابریشمی در گیلاس شیشه‌ای</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-bold text-stone-400">
+                        <span class="text-sm font-semibold num-tabular">۱۳۰٬۰۰۰</span>
+                        <span class="text-[10px] font-normal mr-0.5">تومان</span>
+                      </div>
+
+                      <!-- Disabled Button -->
+                      <button disabled class="px-3.5 py-1.5 rounded-xl bg-stone-200 text-stone-400 text-xs font-semibold flex items-center gap-1 cursor-not-allowed">
+                        <span class="material-symbols-outlined text-sm">block</span>
+                        <span>ناموجود</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- SECTION 2: قهوه سرد (Cold Coffee) -->
+            <section id="cat-cold-coffee" class="menu-section pt-1">
+              <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-1.5 h-4 bg-brand-gold rounded-full"></span>
+                  <h2 class="font-extrabold text-base text-brand-text">قهوه سرد و باریستایی</h2>
+                </div>
+                <span class="text-[11px] font-bold text-brand-secondary bg-brand-surface-variant/80 px-2 py-0.5 rounded-md border border-brand-border">۳ انتخاب</span>
+              </div>
+
+              <div class="space-y-2.5">
+                
+                <!-- Product 5: آیس کارامل ماکیاتو (Hero beverage) -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxQaYPBYmY-cVW4IMrGBt0LvQcne-lgT4Zv1YWFS1eCDRQQL01pvoqScg1Xf6XOnTazdw5EYiMlz6HaMrEbX50NXuhCWvW4n4NrLdbk_zmJyeC8pqOoq4Ah0nlh57AsgltaPsvnuAO7iXobDtes_pZN7tzEkMYCC2UtKjxXvxiiDNG7j6alwN__Pio4yxwGIi--12zOs-HIRBZvRIO0qSMR4T73VasdSnr-gwm7xhnl4wDnfP-AWA" alt="آیس کارامل ماکیاتو" class="w-full h-full object-cover">
+                    <span class="absolute bottom-1 right-1 bg-amber-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded shadow-sm">محبوب‌ترین</span>
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">آیس کارامل ماکیاتو</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">سیروپ وانیل خانگی، شیر سرد، یخ قالبی و سس کارامل شور دست‌ساز</p>
+                      <button onclick="openCustomization('آیس کارامل ماکیاتو')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها (سس دوتایی، خامه)</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۵۰٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <button onclick="addToCart(this, 'آیس کارامل ماکیاتو', 150000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Product 6: کلدبرو نیتروژنه -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxQaYPBYmY-cVW4IMrGBt0LvQcne-lgT4Zv1YWFS1eCDRQQL01pvoqScg1Xf6XOnTazdw5EYiMlz6HaMrEbX50NXuhCWvW4n4NrLdbk_zmJyeC8pqOoq4Ah0nlh57AsgltaPsvnuAO7iXobDtes_pZN7tzEkMYCC2UtKjxXvxiiDNG7j6alwN__Pio4yxwGIi--12zOs-HIRBZvRIO0qSMR4T73VasdSnr-gwm7xhnl4wDnfP-AWA" alt="کلدبرو کافه آرمانی" class="w-full h-full object-cover hue-rotate-15">
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">کلدبرو دم‌آوری ۲۴ ساعته</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">عصاره‌گیری سرد قطره‌ای با دانه کلمبیا، شیرینی طبیعی و ماندگاری بالا</p>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۶۵٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <button onclick="addToCart(this, 'کلدبرو ۲۴ ساعته', 165000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </section>
+
+            <!-- SECTION 3: چای و دمنوش (Tea & Tisanes) -->
+            <section id="cat-tea" class="menu-section pt-1">
+              <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-1.5 h-4 bg-amber-700 rounded-full"></span>
+                  <h2 class="font-extrabold text-base text-brand-text">چای تخصصی و لاته ادویه‌ای</h2>
+                </div>
+                <span class="text-[11px] font-bold text-brand-secondary bg-brand-surface-variant/80 px-2 py-0.5 rounded-md border border-brand-border">۲ انتخاب</span>
+              </div>
+
+              <div class="space-y-2.5">
+                <!-- Product 7: چای ماسالا اصیل -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfzjajr4M7KcgpSTWE7p3QzSRBvNT9YaHZJf0lxELfOogFEKCZjRjWou2CC1DnNzsv-_7FXqFW-EBYsO_iwHaZ_5Lf0uAx6ETt7UkErzeaCUBmkE-OTXr-BSa5SotVc7T2C10MhlIuI4BXRT2cSmpfKd3GqtAVBX15LOsd02wPo6mBlSqEOa6W3rOLdfAL-ht5IZX7gEWymagRfcKCm_ZrM6KnCb0IQjga6p8idLeMuWSwpKBIlks" alt="چای ماسالا دست‌ساز" class="w-full h-full object-cover">
+                    <span class="absolute bottom-1 right-1 bg-brand-dark text-amber-200 text-[9px] font-bold px-1.5 py-0.5 rounded">ادویه هندی</span>
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">چای ماسالا سنتی با شیر تازه</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">هل سیاه، دارچین سیلان، زنجبیل تازه، فلفل سیاه و چای آسام</p>
+                      <button onclick="openCustomization('چای ماسالا')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها (عسل طبیعی)</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۳۵٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <button onclick="addToCart(this, 'چای ماسالا', 135000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- SECTION 4: کیک و دسر (Cakes & Dessert) -->
+            <section id="cat-dessert" class="menu-section pt-1">
+              <div class="flex items-center justify-between mb-3 px-1">
+                <div class="flex items-center gap-2">
+                  <span class="w-1.5 h-4 bg-orange-700 rounded-full"></span>
+                  <h2 class="font-extrabold text-base text-brand-text">کیک و شیرینی تازه روز</h2>
+                </div>
+                <span class="text-[11px] font-bold text-brand-secondary bg-brand-surface-variant/80 px-2 py-0.5 rounded-md border border-brand-border">۳ انتخاب</span>
+              </div>
+
+              <div class="space-y-2.5">
+                <!-- Product 8: چیزکیک سن‌سباستین -->
+                <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3 relative overflow-hidden transition-all hover:border-brand-warm/60">
+                  <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border relative">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsRcqxwca893rmF0uGZZLCoaaQnn2CfIGAA_2x2rLfjeUIvLO3X0ZCfz-mkj5aWMZLIdlKPcoEySoAx2eYYW_NvImUJG5scTk_8FN9DIQcfk10Iptmleu5K_ltJCN7oC3K-arn-gi432WjiXhkHc2LmFO_W-u4XCM8Y9zXyhZug2wLmCyohsNFmF0m8L18x9-z6PfBsosuCSh82CTvIyp_KrqUhOiWAFfXrcjT7nRo04yfa9rEZnA" alt="چیزکیک سن سباستین" class="w-full h-full object-cover">
+                    <span class="absolute bottom-1 right-1 bg-amber-800 text-amber-100 text-[9px] font-bold px-1.5 py-0.5 rounded">پخت امروز</span>
+                  </div>
+                  
+                  <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+                    <div>
+                      <h3 class="font-bold text-sm text-brand-text truncate">چیزکیک سن‌سباستین (Basque)</h3>
+                      <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">بافت کرمی مذاب با رویه کاراملیزه طلایی همراه سس شکلات بلژیکی</p>
+                      <button onclick="openCustomization('چیزکیک سن‌سباستین')" class="text-[11px] text-brand-warm font-semibold mt-0.5 hover:underline flex items-center gap-0.5">
+                        <span class="material-symbols-outlined text-xs">tune</span>
+                        <span>انتخاب افزودنی‌ها (سس توت‌فرنگی یا نوتلا)</span>
+                      </button>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                      <div class="text-xs font-black text-brand-text">
+                        <span class="text-sm font-black num-tabular">۱۵۰٬۰۰۰</span>
+                        <span class="text-[10px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                      </div>
+
+                      <button onclick="addToCart(this, 'چیزکیک سن‌سباستین', 150000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+                        <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                        <span>افزودن</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+
+          <!-- Bottom spacing buffer so sticky cart does NOT cover last item (Minimum 96px) -->
+          <div class="h-28 w-full"></div>
+
+          <!-- Minimal Footer (Prompt 01 requirement) -->
+          <footer class="w-full py-6 px-4 bg-brand-surface border-t border-brand-border text-center text-xs text-brand-secondary space-y-1.5">
+            <p class="font-medium">تمامی حقوق برای کافه آرمانی محفوظ است.</p>
+            <p class="text-[11px] text-brand-secondary/80">
+              طراحی و توسعه: 
+              <a href="https://instagram.com/hamidreza_hz98" target="_blank" class="text-brand-warm hover:text-brand-dark font-bold underline decoration-brand-warm/40">حمیدرضا حسن‌زاده (@hamidreza_hz98)</a>
+            </p>
+          </footer>
+        </main>
+
+        <!-- Fixed Bottom Cart Summary Bar (Prompt Requirement: 3 items, 485,000 Toman, Above Safe Area) -->
+        <div id="sticky-cart-summary" class="absolute bottom-0 inset-x-0 bg-brand-surface/95 backdrop-blur-md border-t border-brand-border p-3.5 shadow-warm-float z-30 transition-all duration-300">
+          <div class="flex items-center justify-between gap-3">
+            <!-- Left Info: Item count & Total Price -->
+            <div class="flex items-center gap-3">
+              <div class="relative w-10 h-10 rounded-xl bg-brand-primary text-brand-gold flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-xl">shopping_bag</span>
+                <span id="floating-cart-count-badge" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-brand-gold text-brand-primary text-[11px] font-black flex items-center justify-center border-2 border-brand-surface">۳</span>
+              </div>
+              <div class="flex flex-col">
+                <div class="flex items-center gap-1 text-[11px] text-brand-secondary font-medium">
+                  <span id="floating-cart-count-text">۳ آیتم انتخاب‌شده</span>
+                  <span>•</span>
+                  <span class="text-brand-success font-semibold">تخفیف باشگاه VIP</span>
+                </div>
+                <div class="text-sm font-black text-brand-text">
+                  <span class="text-base font-black num-tabular" id="floating-total-price">۴۸۵٬۰۰۰</span>
+                  <span class="text-[11px] text-brand-secondary font-medium mr-0.5">تومان</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary Action CTA -->
+            <button onclick="alert('انتقال به صفحه ثبت نهایی فاکتور و پرداخت')" class="px-5 py-2.5 rounded-xl bg-brand-primary hover:bg-brand-dark text-brand-surface text-xs font-bold flex items-center gap-1.5 shadow-md active:scale-95 transition-all">
+              <span>مشاهده سبد خرید</span>
+              <span class="material-symbols-outlined text-sm text-brand-gold">arrow_back</span>
+            </button>
+          </div>
+          <!-- Safe area bottom spacer -->
+          <div class="h-2 w-full"></div>
+        </div>
+
+        <!-- CONTACT MODAL BOTTOM SHEET (Prompt 01 Integration) -->
+        <div id="contact-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex-col justify-end transition-opacity">
+          <div class="w-full bg-brand-surface rounded-t-3xl border-t border-brand-border p-5 space-y-4 shadow-2xl animate-in slide-in-from-bottom duration-200">
+            <div class="w-12 h-1.5 bg-brand-border rounded-full mx-auto"></div>
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-brand-warm">support_agent</span>
+                <h3 class="font-extrabold text-base text-brand-text">ارتباط با کافه آرمانی</h3>
+              </div>
+              <button onclick="toggleContactModal(false)" class="w-7 h-7 rounded-full bg-brand-canvas flex items-center justify-center text-brand-secondary">
+                <span class="material-symbols-outlined text-base">close</span>
+              </button>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <a href="tel:02188654321" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">call</span>
+                <div>
+                  <div class="font-bold text-brand-text">تماس ثابت</div>
+                  <div class="text-[10px] text-brand-secondary font-mono">۰۲۱-۸۸۶۵۴۳۲۱</div>
+                </div>
+              </a>
+              <a href="tel:09123456789" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">smartphone</span>
+                <div>
+                  <div class="font-bold text-brand-text">پشتیبانی همراه</div>
+                  <div class="text-[10px] text-brand-secondary font-mono">۰۹۱۲-۳۴۵۶۷۸۹</div>
+                </div>
+              </a>
+              <a href="https://instagram.com/armani.caffe" target="_blank" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">photo_camera</span>
+                <div>
+                  <div class="font-bold text-brand-text">اینستاگرام</div>
+                  <div class="text-[10px] text-brand-secondary">armani.caffe@</div>
+                </div>
+              </a>
+              <a href="https://t.me/armani_support" target="_blank" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">send</span>
+                <div>
+                  <div class="font-bold text-brand-text">تلگرام</div>
+                  <div class="text-[10px] text-brand-secondary">armani_support@</div>
+                </div>
+              </a>
+              <a href="https://wa.me/989123456789" target="_blank" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">chat</span>
+                <div>
+                  <div class="font-bold text-brand-text">واتساپ</div>
+                  <div class="text-[10px] text-brand-secondary">سفارش چت آنلاین</div>
+                </div>
+              </a>
+              <a href="#map" class="p-3 bg-brand-canvas rounded-xl border border-brand-border flex items-center gap-2.5">
+                <span class="material-symbols-outlined text-brand-primary">location_on</span>
+                <div>
+                  <div class="font-bold text-brand-text">نقشه و مسیریابی</div>
+                  <div class="text-[10px] text-brand-secondary">خیابان ولیعصر</div>
+                </div>
+              </a>
+            </div>
+
+            <button onclick="toggleContactModal(false)" class="w-full py-2.5 bg-brand-surface-variant text-brand-text font-bold text-xs rounded-xl">
+              بستن
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- FRAME 2: EMPTY CART STATE (Zero items, no sticky bar)    -->
+    <!-- ======================================================== -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center justify-between w-full px-2 text-xs font-bold text-brand-secondary">
+        <span class="flex items-center gap-1 text-brand-text">
+          <span class="material-symbols-outlined text-sm text-stone-400">remove_shopping_cart</span>
+          حالت ۲: سبد خرید خالی (بدون نوار شناور)
+        </span>
+        <span class="font-mono text-[11px] text-brand-secondary/70">Cart Badge: ۰</span>
+      </div>
+
+      <div class="mobile-frame bg-brand-canvas" id="frame-empty">
+        <!-- Status Bar -->
+        <div class="w-full h-11 bg-brand-surface border-b border-brand-border/40 px-6 flex items-center justify-between text-xs font-semibold text-brand-text shrink-0">
+          <span class="font-mono text-[11px] font-bold">۱۰:۲۴</span>
+          <div class="w-28 h-4 bg-brand-primary rounded-full mx-auto self-center -mt-1.5 opacity-95"></div>
+          <div class="flex items-center gap-1.5 text-brand-text">
+            <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+            <span class="material-symbols-outlined text-sm">wifi</span>
+            <span class="material-symbols-outlined text-sm">battery_full</span>
+          </div>
+        </div>
+
+        <!-- Header with 0 cart count -->
+        <header class="w-full bg-brand-surface border-b border-brand-border px-4 py-2.5 flex items-center justify-between shrink-0 shadow-warm-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-brand-primary text-brand-gold flex items-center justify-center">
+              <span class="material-symbols-outlined text-lg">local_cafe</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-black text-sm text-brand-text leading-tight">کافه آرمانی</span>
+              <span class="text-[10px] text-brand-warm font-medium">سفارش مستقیم آنلاین</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button class="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-brand-canvas border border-brand-border text-brand-text text-[11px] font-bold">
+              <span class="material-symbols-outlined text-sm text-brand-warm">contact_support</span>
+              <span>ارتباط با ما</span>
+            </button>
+            <div class="w-8 h-8 rounded-full bg-brand-surface-variant border border-brand-border flex items-center justify-center text-brand-text">
+              <span class="material-symbols-outlined text-base">person</span>
+            </div>
+            <!-- Cart Icon with 0 -->
+            <div class="relative w-8 h-8 rounded-full bg-brand-surface-variant border border-brand-border flex items-center justify-center text-stone-400">
+              <span class="material-symbols-outlined text-base">shopping_cart</span>
+              <span class="absolute -top-1 -left-1 w-4 h-4 rounded-full bg-stone-300 text-stone-600 font-black text-[10px] flex items-center justify-center">۰</span>
+            </div>
+          </div>
+        </header>
+
+        <!-- Category bar -->
+        <nav class="bg-brand-canvas py-2.5 px-3 border-b border-brand-border/80">
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <div class="px-3.5 py-1.5 rounded-full bg-brand-dark text-white font-bold text-xs flex items-center gap-1.5 shrink-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-brand-gold"></span>
+              <span>قهوه گرم</span>
+            </div>
+            <div class="px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary border border-brand-border text-xs shrink-0">قهوه سرد</div>
+            <div class="px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary border border-brand-border text-xs shrink-0">چای و دمنوش</div>
+            <div class="px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary border border-brand-border text-xs shrink-0">کیک و دسر</div>
+          </div>
+        </nav>
+
+        <!-- Products without steppers (clean add state) -->
+        <div class="flex-1 overflow-y-auto p-3.5 space-y-3 no-scrollbar">
+          <div class="bg-amber-50/80 border border-amber-200/80 rounded-xl p-3 flex items-center gap-2.5 text-xs text-amber-900">
+            <span class="material-symbols-outlined text-brand-gold text-lg">info</span>
+            <span>سبد خرید شما در حال حاضر خالی است. آیتم‌های مورد علاقه خود را اضافه کنید.</span>
+          </div>
+
+          <!-- Product Item with Default "افزودن" -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLZTxMN2TyYireL_4Ed3Q-AQns94eBDUd9Wq57ZjIYG41ZzaCl3LiQwieH7BPVAXz-MjMnp44WrFB52fJ43s96YF9L5_YnTC2Pn1zssMB4LfQfpl33VLAnnQ8m2ChuBxaUeSY9oE8L6Za7q62kSBwFplJV8xd_3iJ8xug2RTRyfVoBYSnlVHW_E0Fgu3mRMNnYCMo2r27GkU1bdlRAK0Er-ZTl5l_wt4xMLmwbjVtYb_pOswG9SCU" alt="اسپرسو" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+              <div>
+                <h3 class="font-bold text-sm text-brand-text truncate">اسپرسو دوبل تخصصی</h3>
+                <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">دانه اتیوپی یرگاچف، نت‌های میوه‌ای و اسیدیته شفاف</p>
+                <span class="text-[11px] text-brand-warm font-medium">انتخاب افزودنی‌ها</span>
+              </div>
+              <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                <span class="text-sm font-black num-tabular text-brand-text">۹۵٬۰۰۰ تومان</span>
+                <button class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas text-xs font-bold flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                  <span>افزودن</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Item 2 -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxQaYPBYmY-cVW4IMrGBt0LvQcne-lgT4Zv1YWFS1eCDRQQL01pvoqScg1Xf6XOnTazdw5EYiMlz6HaMrEbX50NXuhCWvW4n4NrLdbk_zmJyeC8pqOoq4Ah0nlh57AsgltaPsvnuAO7iXobDtes_pZN7tzEkMYCC2UtKjxXvxiiDNG7j6alwN__Pio4yxwGIi--12zOs-HIRBZvRIO0qSMR4T73VasdSnr-gwm7xhnl4wDnfP-AWA" alt="آیس کارامل" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+              <div>
+                <h3 class="font-bold text-sm text-brand-text truncate">آیس کارامل ماکیاتو</h3>
+                <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">سیروپ وانیل خانگی، شیر سرد، سس کارامل شور دست‌ساز</p>
+                <span class="text-[11px] text-brand-warm font-medium">انتخاب افزودنی‌ها</span>
+              </div>
+              <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                <span class="text-sm font-black num-tabular text-brand-text">۱۵۰٬۰۰۰ تومان</span>
+                <button class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas text-xs font-bold flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                  <span>افزودن</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Item 3 -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border shadow-warm-sm flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl overflow-hidden shrink-0 bg-stone-200 border border-brand-border">
+              <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsRcqxwca893rmF0uGZZLCoaaQnn2CfIGAA_2x2rLfjeUIvLO3X0ZCfz-mkj5aWMZLIdlKPcoEySoAx2eYYW_NvImUJG5scTk_8FN9DIQcfk10Iptmleu5K_ltJCN7oC3K-arn-gi432WjiXhkHc2LmFO_W-u4XCM8Y9zXyhZug2wLmCyohsNFmF0m8L18x9-z6PfBsosuCSh82CTvIyp_KrqUhOiWAFfXrcjT7nRo04yfa9rEZnA" alt="چیزکیک" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 flex flex-col justify-between self-stretch min-w-0 py-0.5">
+              <div>
+                <h3 class="font-bold text-sm text-brand-text truncate">چیزکیک سن‌سباستین</h3>
+                <p class="text-xs text-brand-secondary line-clamp-1 mt-0.5">بافت مذاب کاراملیزه همراه سس شکلات بلژیکی</p>
+              </div>
+              <div class="flex items-center justify-between pt-1.5 border-t border-brand-border/40 mt-1">
+                <span class="text-sm font-black num-tabular text-brand-text">۱۵۰٬۰۰۰ تومان</span>
+                <button class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas text-xs font-bold flex items-center gap-1 shadow-sm">
+                  <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+                  <span>افزودن</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-6 text-center text-xs text-brand-secondary/60">
+            برای ثبت سفارش حداقل ۱ نوشیدنی یا دسر انتخاب کنید.
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- FRAME 3: SKELETON LOADING STATE                          -->
+    <!-- ======================================================== -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center justify-between w-full px-2 text-xs font-bold text-brand-secondary">
+        <span class="flex items-center gap-1 text-brand-text">
+          <span class="material-symbols-outlined text-sm text-amber-500 animate-spin">progress_activity</span>
+          حالت ۳: اسکلتون لودینگ (Skeleton State)
+        </span>
+        <span class="font-mono text-[11px] text-brand-secondary/70">در حال دریافت منو</span>
+      </div>
+
+      <div class="mobile-frame bg-brand-canvas" id="frame-skeleton">
+        <!-- Status Bar -->
+        <div class="w-full h-11 bg-brand-surface border-b border-brand-border/40 px-6 flex items-center justify-between shrink-0">
+          <div class="w-10 h-3 bg-stone-200 rounded animate-pulse"></div>
+          <div class="w-28 h-4 bg-brand-primary rounded-full mx-auto self-center -mt-1.5"></div>
+          <div class="w-12 h-3 bg-stone-200 rounded animate-pulse"></div>
+        </div>
+
+        <!-- Header skeleton -->
+        <div class="w-full bg-brand-surface border-b border-brand-border px-4 py-2.5 flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-stone-200 animate-pulse"></div>
+            <div class="space-y-1">
+              <div class="w-20 h-3.5 bg-stone-200 rounded animate-pulse"></div>
+              <div class="w-14 h-2.5 bg-stone-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-20 h-7 rounded-full bg-stone-200 animate-pulse"></div>
+            <div class="w-8 h-8 rounded-full bg-stone-200 animate-pulse"></div>
+            <div class="w-8 h-8 rounded-full bg-stone-200 animate-pulse"></div>
+          </div>
+        </div>
+
+        <!-- Category Skeleton Pills -->
+        <div class="bg-brand-canvas py-2.5 px-3 border-b border-brand-border/80 flex items-center gap-2">
+          <div class="w-24 h-7 rounded-full bg-stone-300 animate-pulse shrink-0"></div>
+          <div class="w-20 h-7 rounded-full bg-stone-200 animate-pulse shrink-0"></div>
+          <div class="w-24 h-7 rounded-full bg-stone-200 animate-pulse shrink-0"></div>
+          <div class="w-20 h-7 rounded-full bg-stone-200 animate-pulse shrink-0"></div>
+        </div>
+
+        <!-- Skeleton Rows with Staggered Shimmer -->
+        <div class="flex-1 p-3.5 space-y-3 overflow-hidden">
+          <div class="flex items-center justify-between px-1">
+            <div class="w-32 h-4 bg-stone-300 rounded animate-pulse"></div>
+            <div class="w-12 h-3 bg-stone-200 rounded animate-pulse"></div>
+          </div>
+
+          <!-- Repeated Skeleton Card 1 -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl bg-stone-200 animate-pulse shrink-0"></div>
+            <div class="flex-1 flex flex-col justify-between self-stretch py-0.5 space-y-2">
+              <div class="space-y-1.5">
+                <div class="w-3/4 h-3.5 bg-stone-300 rounded animate-pulse"></div>
+                <div class="w-full h-2.5 bg-stone-200 rounded animate-pulse"></div>
+                <div class="w-1/2 h-2.5 bg-stone-200 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-brand-border/40">
+                <div class="w-20 h-3.5 bg-stone-200 rounded animate-pulse"></div>
+                <div class="w-16 h-7 bg-stone-300 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skeleton Card 2 -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl bg-stone-200 animate-pulse shrink-0"></div>
+            <div class="flex-1 flex flex-col justify-between self-stretch py-0.5 space-y-2">
+              <div class="space-y-1.5">
+                <div class="w-2/3 h-3.5 bg-stone-300 rounded animate-pulse"></div>
+                <div class="w-5/6 h-2.5 bg-stone-200 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-brand-border/40">
+                <div class="w-20 h-3.5 bg-stone-200 rounded animate-pulse"></div>
+                <div class="w-16 h-7 bg-stone-300 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Skeleton Card 3 -->
+          <div class="bg-brand-surface rounded-2xl p-2.5 border border-brand-border flex items-center gap-3">
+            <div class="w-[88px] h-[88px] rounded-xl bg-stone-200 animate-pulse shrink-0"></div>
+            <div class="flex-1 flex flex-col justify-between self-stretch py-0.5 space-y-2">
+              <div class="space-y-1.5">
+                <div class="w-3/5 h-3.5 bg-stone-300 rounded animate-pulse"></div>
+                <div class="w-4/5 h-2.5 bg-stone-200 rounded animate-pulse"></div>
+              </div>
+              <div class="flex items-center justify-between pt-1 border-t border-brand-border/40">
+                <div class="w-20 h-3.5 bg-stone-200 rounded animate-pulse"></div>
+                <div class="w-16 h-7 bg-stone-300 rounded-xl animate-pulse"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 bg-brand-surface border-t border-brand-border text-center text-xs text-brand-secondary">
+          در حال هماهنگ‌سازی موجودی بار اسپرسو...
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ======================================================== -->
+    <!-- FRAME 4: MENU LOAD ERROR STATE                           -->
+    <!-- ======================================================== -->
+    <div class="flex flex-col items-center gap-3">
+      <div class="flex items-center justify-between w-full px-2 text-xs font-bold text-brand-secondary">
+        <span class="flex items-center gap-1 text-brand-text">
+          <span class="material-symbols-outlined text-sm text-brand-error">error_outline</span>
+          حالت ۴: خطای بارگذاری منو (Error State)
+        </span>
+        <span class="font-mono text-[11px] text-brand-error font-bold">Network / 503</span>
+      </div>
+
+      <div class="mobile-frame bg-brand-canvas" id="frame-error">
+        <!-- Status Bar -->
+        <div class="w-full h-11 bg-brand-surface border-b border-brand-border/40 px-6 flex items-center justify-between text-xs font-semibold text-brand-text shrink-0">
+          <span class="font-mono text-[11px] font-bold">۱۰:۲۴</span>
+          <div class="w-28 h-4 bg-brand-primary rounded-full mx-auto self-center -mt-1.5 opacity-95"></div>
+          <div class="flex items-center gap-1.5 text-brand-text">
+            <span class="material-symbols-outlined text-sm">signal_cellular_connected_no_internet_0_bar</span>
+            <span class="material-symbols-outlined text-sm">wifi_off</span>
+            <span class="material-symbols-outlined text-sm">battery_full</span>
+          </div>
+        </div>
+
+        <!-- Header -->
+        <header class="w-full bg-brand-surface border-b border-brand-border px-4 py-2.5 flex items-center justify-between shrink-0 shadow-warm-sm">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-brand-primary text-brand-gold flex items-center justify-center">
+              <span class="material-symbols-outlined text-lg">local_cafe</span>
+            </div>
+            <div class="flex flex-col">
+              <span class="font-black text-sm text-brand-text leading-tight">کافه آرمانی</span>
+              <span class="text-[10px] text-brand-secondary font-medium">سفارش آنلاین</span>
+            </div>
+          </div>
+          <button class="px-2.5 py-1.5 rounded-full bg-brand-canvas border border-brand-border text-brand-text text-[11px] font-bold flex items-center gap-1">
+            <span class="material-symbols-outlined text-sm text-brand-warm">contact_support</span>
+            <span>ارتباط با ما</span>
+          </button>
+        </header>
+
+        <!-- Error Body -->
+        <div class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+          <div class="w-20 h-20 rounded-3xl bg-rose-50 border-2 border-rose-200 text-brand-error flex items-center justify-center shadow-warm-sm mb-4">
+            <span class="material-symbols-outlined text-4xl">cloud_off</span>
+          </div>
+
+          <h3 class="font-black text-lg text-brand-text">اختلال در ارتباط با شعبه مرکزی</h3>
+          <p class="text-xs text-brand-secondary max-w-xs mt-2 leading-relaxed">
+            دریافت لیست اقلام و موجودی لحظه‌ای بار کافه با خطا مواجه شد. لطفاً اتصال اینترنت خود را بررسی کنید یا مجدداً تلاش نمایید.
+          </p>
+
+          <div class="mt-6 flex flex-col gap-2.5 w-full max-w-xs">
+            <button onclick="switchView('active')" class="w-full py-3 rounded-xl bg-brand-primary text-brand-surface text-xs font-bold flex items-center justify-center gap-2 shadow-md active:scale-95 transition-transform">
+              <span class="material-symbols-outlined text-base text-brand-gold">refresh</span>
+              <span>تلاش دوباره برای دریافت منو</span>
+            </button>
+
+            <a href="tel:02188654321" class="w-full py-2.5 rounded-xl bg-brand-surface text-brand-text border border-brand-border text-xs font-semibold flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-base text-brand-warm">call</span>
+              <span>ثبت سفارش تلفنی مستقیم (۰۲۱-۸۸۶۵۴۳۲۱)</span>
+            </a>
+          </div>
+
+          <div class="mt-8 p-3 rounded-xl bg-brand-surface-variant/60 border border-brand-border/60 text-[11px] text-brand-secondary">
+            کد خطای سامانه: <span class="font-mono font-bold text-brand-error">ERR_CAFFE_MENU_DISCONNECTED</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-brand-surface border-t border-brand-border text-center text-xs text-brand-secondary">
+          ساعت کاری باریستاها: همه‌روزه از ۸ صبح تا ۲۴ شب
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Interactive Client-side Script for Demo/Testing -->
+  <script>
+    // State management for cart
+    let cartCount = 3;
+    let totalPrice = 485000;
+
+    function formatToman(val) {
+      return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "٬");
+    }
+
+    // Scroll to specific category and update active tab pill
+    function scrollToCat(id, btnElem) {
+      const container = document.getElementById('menu-scroll-container');
+      const target = document.getElementById(id);
+      if (target && container) {
+        const topPos = target.offsetTop - 110;
+        container.scrollTo({ top: topPos, behavior: 'smooth' });
+      }
+
+      // Update pill styling
+      document.querySelectorAll('.cat-tab-btn').forEach(btn => {
+        btn.className = "cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all";
+      });
+      btnElem.className = "cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-dark text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all";
+    }
+
+    // Stepper updates
+    function updateQty(btn, change) {
+      const stepper = btn.closest('div');
+      const qtySpan = stepper.querySelector('span');
+      let current = parseInt(qtySpan.innerText.replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))) || parseInt(qtySpan.innerText) || 1;
+      let next = current + change;
+
+      if (next <= 0) {
+        // Replace with Add button
+        const parent = stepper.parentElement;
+        parent.innerHTML = `
+          <button onclick="addToCart(this, 'محصول', 120000)" class="px-3.5 py-1.5 rounded-xl bg-brand-primary text-brand-canvas hover:bg-brand-dark text-xs font-bold flex items-center gap-1 shadow-sm active:scale-95 transition-all">
+            <span class="material-symbols-outlined text-sm text-brand-gold">add</span>
+            <span>افزودن</span>
+          </button>
+        `;
+        cartCount = Math.max(0, cartCount - 1);
+        totalPrice = Math.max(0, totalPrice - 120000);
+      } else {
+        qtySpan.innerText = next;
+        // If 1, show delete icon on left minus button
+        const minusBtn = stepper.children[2];
+        if (next === 1) {
+          minusBtn.innerHTML = '<span class="material-symbols-outlined text-sm">delete</span>';
+          minusBtn.className = "w-7 h-7 rounded-lg bg-brand-surface hover:bg-rose-50 text-brand-error flex items-center justify-center font-bold active:scale-90 transition-transform";
+        } else {
+          minusBtn.innerHTML = '<span class="material-symbols-outlined text-sm">remove</span>';
+          minusBtn.className = "w-7 h-7 rounded-lg bg-brand-surface hover:bg-brand-canvas text-brand-text flex items-center justify-center font-bold active:scale-90 transition-transform";
+        }
+        if (change > 0) {
+          cartCount += 1;
+          totalPrice += 120000;
+        } else {
+          cartCount = Math.max(0, cartCount - 1);
+          totalPrice = Math.max(0, totalPrice - 120000);
+        }
+      }
+      refreshCartUI();
+    }
+
+    // Transform Add button to RTL stepper
+    function addToCart(btn, title, price) {
+      const parent = btn.parentElement;
+      parent.innerHTML = `
+        <div class="flex items-center bg-brand-surface-variant rounded-xl border border-brand-border p-0.5 shadow-sm">
+          <button onclick="updateQty(this, 1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-brand-canvas text-brand-text flex items-center justify-center font-bold active:scale-90 transition-transform">
+            <span class="material-symbols-outlined text-sm">add</span>
+          </button>
+          <span class="w-7 text-center font-black text-xs text-brand-text num-tabular">۱</span>
+          <button onclick="updateQty(this, -1)" class="w-7 h-7 rounded-lg bg-brand-surface hover:bg-rose-50 text-brand-error flex items-center justify-center font-bold active:scale-90 transition-transform" title="حذف از سبد">
+            <span class="material-symbols-outlined text-sm">delete</span>
+          </button>
+        </div>
+      `;
+      cartCount += 1;
+      totalPrice += price;
+      refreshCartUI();
+    }
+
+    function refreshCartUI() {
+      const badge = document.getElementById('header-cart-badge');
+      const floatBadge = document.getElementById('floating-cart-count-badge');
+      const floatText = document.getElementById('floating-cart-count-text');
+      const floatTotal = document.getElementById('floating-total-price');
+      const cartSummary = document.getElementById('sticky-cart-summary');
+
+      if (badge) badge.innerText = cartCount;
+      if (floatBadge) floatBadge.innerText = cartCount;
+      if (floatText) floatText.innerText = `${cartCount} آیتم انتخاب‌شده`;
+      if (floatTotal) floatTotal.innerText = formatToman(totalPrice);
+
+      if (cartSummary) {
+        if (cartCount === 0) {
+          cartSummary.style.transform = 'translateY(120%)';
+        } else {
+          cartSummary.style.transform = 'translateY(0%)';
+        }
+      }
+    }
+
+    function toggleContactModal(show) {
+      const modal = document.getElementById('contact-modal');
+      if (modal) {
+        if (show) modal.classList.remove('hidden'), modal.classList.add('flex');
+        else modal.classList.add('hidden'), modal.classList.remove('flex');
+      }
+    }
+
+    function openCustomization(name) {
+      alert(`تنظیمات باریستایی برای «${name}»:\n• درجه آسیاب و عصاره‌گیری\n• نوع شیر (کم‌چرب، پرچرب، جودوسر، بادام)\n• سیروپ طبیعی (وانیل، کارامل، فندق)\n• شات اضافه اسپرسو`);
+    }
+
+    // Variant switcher for presentation
+    function switchView(type) {
+      const frames = ['active', 'empty', 'skeleton', 'error'];
+      frames.forEach(f => {
+        const elem = document.getElementById(`frame-${f === 'active' ? 'main' : f}`);
+        const btn = document.getElementById(`btn-${f}`);
+        if (f === type) {
+          elem?.closest('div.flex-col')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          btn?.classList.add('bg-brand-primary', 'text-white', 'shadow-sm');
+          btn?.classList.remove('text-brand-secondary');
+        } else {
+          btn?.classList.remove('bg-brand-primary', 'text-white', 'shadow-sm');
+          btn?.classList.add('text-brand-secondary');
+        }
+      });
+    }
+
+    // Scroll spy for sticky tabs
+    document.addEventListener("DOMContentLoaded", () => {
+      const scrollArea = document.getElementById('menu-scroll-container');
+      const sections = document.querySelectorAll('.menu-section');
+      const tabs = document.querySelectorAll('.cat-tab-btn');
+
+      if (scrollArea) {
+        scrollArea.addEventListener('scroll', () => {
+          let currentSectionId = '';
+          sections.forEach(sec => {
+            const top = sec.offsetTop - scrollArea.scrollTop;
+            if (top <= 140) {
+              currentSectionId = sec.getAttribute('id');
+            }
+          });
+
+          if (currentSectionId) {
+            tabs.forEach(tab => {
+              const onClickAttr = tab.getAttribute('onclick') || '';
+              if (onClickAttr.includes(currentSectionId)) {
+                tab.className = "cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-dark text-white font-bold text-xs flex items-center gap-1.5 shadow-sm transition-all";
+              } else {
+                tab.className = "cat-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-full bg-brand-surface text-brand-secondary hover:text-brand-text border border-brand-border font-medium text-xs flex items-center gap-1.5 transition-all";
+              }
+            });
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>

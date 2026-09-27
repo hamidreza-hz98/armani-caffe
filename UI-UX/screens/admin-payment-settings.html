@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>تنظیمات درگاه‌های پرداخت | کافه آرمانی</title>
+<!-- Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#5b4133",
+            "on-surface": "#1d1c17",
+            "inverse-on-surface": "#f5f0e8",
+            "on-error-container": "#93000a",
+            "tertiary-fixed": "#ffdcc2",
+            "outline-variant": "#cfc5bd",
+            "tertiary-container": "#2e1500",
+            "surface-container-low": "#f8f3eb",
+            "surface-tint": "#625d59",
+            "surface-container-lowest": "#ffffff",
+            "primary-fixed": "#e9e1dc",
+            "on-tertiary-container": "#ab794f",
+            "tertiary-fixed-dim": "#f5bb8b",
+            "on-primary": "#ffffff",
+            "secondary-fixed-dim": "#e4bfad",
+            "secondary-fixed": "#ffdbca",
+            "on-error": "#ffffff",
+            "tertiary": "#000000",
+            "surface-container": "#f2ede5",
+            "surface": "#fef9f1",
+            "outline": "#7d766f",
+            "error-container": "#ffdad6",
+            "surface-dim": "#ded9d2",
+            "surface-container-high": "#ece8e0",
+            "surface-container-highest": "#e7e2da",
+            "surface-bright": "#fef9f1",
+            "inverse-surface": "#32302b",
+            "on-primary-container": "#89837e",
+            "on-secondary": "#ffffff",
+            "on-primary-fixed": "#1e1b18",
+            "on-secondary-container": "#795c4e",
+            "primary": "#000000",
+            "background": "#fef9f1",
+            "secondary-container": "#fed8c5",
+            "surface-variant": "#e7e2da",
+            "on-secondary-fixed": "#2a170c",
+            "on-primary-fixed-variant": "#4a4642",
+            "primary-fixed-dim": "#ccc5c0",
+            "on-background": "#1d1c17",
+            "error": "#ba1a1a",
+            "on-tertiary-fixed-variant": "#653d19",
+            "inverse-primary": "#ccc5c0",
+            "secondary": "#75584a",
+            "on-tertiary-fixed": "#2e1500",
+            "primary-container": "#1e1b18",
+            "on-tertiary": "#ffffff",
+            "on-surface-variant": "#4c4640"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "space-xl": "2rem",
+            "space-lg": "1.5rem",
+            "margin": "1.25rem",
+            "space-sm": "0.5rem"
+          },
+          "fontFamily": {
+            "headline-xl": ["Vazirmatn", "sans-serif"],
+            "headline-lg": ["Vazirmatn", "sans-serif"],
+            "label-sm": ["Vazirmatn", "sans-serif"],
+            "label-md": ["Vazirmatn", "sans-serif"],
+            "headline-md": ["Vazirmatn", "sans-serif"],
+            "body-sm": ["Vazirmatn", "sans-serif"],
+            "headline-xl-mobile": ["Vazirmatn", "sans-serif"],
+            "body-lg": ["Vazirmatn", "sans-serif"],
+            "body-md": ["Vazirmatn", "sans-serif"],
+            "label-lg": ["Vazirmatn", "sans-serif"]
+          },
+          "fontSize": {
+            "headline-xl": ["36px", { "lineHeight": "52px", "fontWeight": "800" }],
+            "headline-lg": ["26px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "500" }],
+            "label-md": ["12px", { "lineHeight": "18px", "fontWeight": "600" }],
+            "headline-md": ["20px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "body-sm": ["12px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-xl-mobile": ["28px", { "lineHeight": "42px", "fontWeight": "800" }],
+            "body-lg": ["16px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "22px", "fontWeight": "600" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #fef9f1;
+      color: #1d1c17;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    .font-num {
+      font-feature-settings: "tnum" 1;
+    }
+    /* Ambient Custom Shadow Tokens */
+    .shadow-ambient-sm {
+      box-shadow: 0 2px 8px rgba(58, 36, 24, 0.04);
+    }
+    .shadow-ambient-md {
+      box-shadow: 0 6px 16px rgba(58, 36, 24, 0.08);
+    }
+    .shadow-ambient-lg {
+      box-shadow: 0 12px 32px rgba(23, 20, 17, 0.12);
+    }
+    .drag-over {
+      outline: 2px dashed #75584a;
+      background-color: #f8f3eb;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen flex flex-col justify-between selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TOP NAV BAR (Shared Component JSON) -->
+<header class="bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline shadow-sm dark:shadow-none docked full-width top sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+<div class="flex items-center gap-6">
+<a class="text-headline-md font-headline-md text-on-surface dark:text-inverse-on-surface flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">local_cafe</span>
+          کافه آرمانی
+        </a>
+<nav class="hidden md:flex items-center gap-5 text-label-lg font-label-lg">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">میز کار و سفارشات</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">منوی تخصصی</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">مشتریان و وفاداری</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">انبار و رستری</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">گزارشات مالی</a>
+</nav>
+</div>
+<div class="flex items-center gap-3">
+<div class="relative hidden sm:block">
+<input class="bg-surface-container-lowest border border-outline-variant rounded-xl text-body-sm font-body-sm px-3 py-1.5 pr-9 pl-3 w-56 focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary text-right" placeholder="جستجو در تنظیمات و تراکنش‌ها..." type="text"/>
+<span class="material-symbols-outlined absolute right-2.5 top-2 text-outline text-[18px]">search</span>
+</div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-lg hover:bg-surface-container-high relative" title="اعلان‌ها">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-lg hover:bg-surface-container-high" title="فروشگاه زنده">
+<span class="material-symbols-outlined">storefront</span>
+</button>
+<button class="hidden lg:flex items-center gap-1.5 text-label-md font-label-md bg-surface-container-high text-on-surface px-3 py-1.5 rounded-xl border border-outline-variant hover:bg-surface-container-highest transition-colors active:scale-95 duration-150">
+<span class="material-symbols-outlined text-[18px]">table_bar</span>
+          میزهای فعال
+        </button>
+<button class="bg-primary text-on-primary text-label-md font-label-md px-4 py-2 rounded-xl flex items-center gap-1.5 hover:bg-primary-container active:scale-95 transition-all duration-150 shadow-ambient-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+          سفارش جدید
+        </button>
+</div>
+</div>
+</header>
+<!-- MAIN WRAPPER WITH FIXED SIDEBAR INTEGRATION -->
+<div class="flex-1 w-full max-w-7xl mx-auto flex flex-col md:flex-row relative">
+<!-- SIDE NAV BAR (Shared Component JSON - persistent drawer pattern) -->
+<aside class="w-full md:w-64 shrink-0 bg-surface-container-low dark:bg-surface-container-high border-l border-outline-variant dark:border-outline flex flex-col justify-between p-4">
+<div>
+<!-- Profile / Brand Header -->
+<div class="flex items-center gap-3 p-3 mb-6 bg-surface-container-lowest rounded-xl border border-outline-variant shadow-ambient-sm">
+<div class="w-10 h-10 rounded-lg bg-primary-container text-surface flex items-center justify-center font-bold text-headline-sm">
+<span class="material-symbols-outlined text-tertiary-fixed">coffee</span>
+</div>
+<div class="overflow-hidden">
+<h2 class="text-label-lg font-label-lg text-on-surface truncate">کافه آرمانی</h2>
+<p class="text-body-sm font-body-sm text-on-surface-variant truncate">شعبه مرکزی ولیعصر</p>
+</div>
+</div>
+<!-- Navigation Tabs -->
+<nav class="space-y-1 text-label-md font-label-md">
+<a class="text-on-surface-variant dark:text-surface-variant px-4 py-3 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest dark:hover:bg-inverse-surface transition-colors duration-150 active:scale-98" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+            داشبورد عملیاتی
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant px-4 py-3 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest dark:hover:bg-inverse-surface transition-colors duration-150 active:scale-98" href="#">
+<span class="material-symbols-outlined">local_cafe</span>
+            سفارشات زنده
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant px-4 py-3 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest dark:hover:bg-inverse-surface transition-colors duration-150 active:scale-98" href="#">
+<span class="material-symbols-outlined">menu_book</span>
+            مدیریت منو و رسیپی
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant px-4 py-3 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest dark:hover:bg-inverse-surface transition-colors duration-150 active:scale-98" href="#">
+<span class="material-symbols-outlined">groups</span>
+            باشگاه مشتریان
+          </a>
+<a class="text-on-surface-variant dark:text-surface-variant px-4 py-3 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest dark:hover:bg-inverse-surface transition-colors duration-150 active:scale-98" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+            موجودی دانه و انبار
+          </a>
+<!-- Active Tab: تنظیمات شعبه / درگاه‌ها -->
+<a class="bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-secondary-container transition-colors duration-150 active:scale-98 shadow-ambient-sm" href="/dashboard/settings/payment">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">tune</span>
+            تنظیمات شعبه
+          </a>
+</nav>
+</div>
+<!-- Footer Actions of SideNav -->
+<div class="pt-6 border-t border-outline-variant space-y-3">
+<button class="w-full bg-secondary text-on-secondary text-label-md font-label-md py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 hover:bg-opacity-95 transition-all active:scale-98 shadow-ambient-sm">
+<span class="material-symbols-outlined text-[18px]">receipt_long</span>
+          ثبت فاکتور سریع
+        </button>
+<div class="space-y-1 text-label-md font-label-md">
+<a class="text-on-surface-variant px-4 py-2 flex items-center gap-3 rounded-xl hover:bg-surface-container-highest transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">help_center</span>
+            پشتیبانی سیستم
+          </a>
+<a class="text-error px-4 py-2 flex items-center gap-3 rounded-xl hover:bg-error-container hover:text-on-error-container transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+            خروج از حساب
+          </a>
+</div>
+</div>
+</aside>
+<!-- CONTENT CANVAS -->
+<main class="flex-1 p-4 md:p-8 overflow-y-auto">
+<!-- 1. BREADCRUMB & HEADER -->
+<section class="mb-8">
+<nav class="flex items-center gap-2 text-body-sm font-body-sm text-on-surface-variant mb-3">
+<a class="hover:text-primary transition-colors" href="#">داشبورد</a>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<a class="hover:text-primary transition-colors" href="#">تنظیمات سیستم</a>
+<span class="material-symbols-outlined text-[14px]">chevron_left</span>
+<span class="text-primary font-medium">تنظیمات درگاه‌های پرداخت</span>
+<span class="px-2 py-0.5 rounded text-[10px] bg-surface-container-high border border-outline-variant font-mono text-on-surface-variant select-all mr-2" dir="ltr">/dashboard/settings/payment</span>
+</nav>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-outline-variant pb-6">
+<div>
+<div class="flex items-center gap-3">
+<h1 class="text-headline-lg font-headline-lg text-on-surface">تنظیمات درگاه‌های پرداخت و تسویه الکترونیک</h1>
+<span class="bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded-full text-label-sm font-label-sm font-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">shield</span>
+                Multi-Provider Fallback
+              </span>
+</div>
+<p class="text-body-md font-body-md text-on-surface-variant mt-1.5 max-w-3xl">
+              مدیریت درگاه‌های اینترنتی (IPG) و پایانه‌های بانکی کافه آرمانی. سامانه به صورت خودکار در زمان بروز اختلال یا کندی شبکه شاپرک، ترافیک خرید را به اولویت بعدی هدایت می‌کند.
+            </p>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<button class="bg-surface-container-lowest text-on-surface border border-outline-variant px-4 py-2.5 rounded-xl text-label-md font-label-md flex items-center gap-2 hover:bg-surface-container-high transition-colors active:scale-95 shadow-ambient-sm" id="save-priority-btn">
+<span class="material-symbols-outlined text-[18px]">low_priority</span>
+              ذخیره اولویت‌ها
+            </button>
+<button class="bg-primary text-on-primary px-5 py-2.5 rounded-xl text-label-md font-label-md flex items-center gap-2 hover:bg-primary-container active:scale-95 transition-all shadow-ambient-md" onclick="openModal()">
+<span class="material-symbols-outlined text-[20px]">add</span>
+              افزودن درگاه جدید
+            </button>
+</div>
+</div>
+</section>
+<!-- 2. KPI / HEALTH OVERVIEW CARDS (Bento Grid) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<!-- KPI 1 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant shadow-ambient-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant">درگاه‌های فعال</span>
+<span class="p-2 rounded-xl bg-surface-container-low text-secondary">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg font-num">۳</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">درگاه متصل</span>
+</div>
+<p class="text-label-sm font-label-sm text-secondary mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+              ۲ زنده (Live) + ۱ سندباکس
+            </p>
+</div>
+</div>
+<!-- KPI 2 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant shadow-ambient-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant">درگاه پیش‌فرض فعال</span>
+<span class="p-2 rounded-xl bg-secondary-container text-on-secondary-container">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">star</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="text-headline-md font-headline-md text-on-surface truncate">به‌پرداخت ملت</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">sync_alt</span>
+              ترمینال اختصاصی با سوئیچ آنی
+            </p>
+</div>
+</div>
+<!-- KPI 3 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant shadow-ambient-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant">پایداری اتصال شاپرک</span>
+<span class="p-2 rounded-xl bg-[#e6f4ea] text-[#137333]">
+<span class="material-symbols-outlined">speed</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-2">
+<span class="text-headline-lg font-headline-lg font-num text-[#137333]">۹۹.۲٪</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Uptime</span>
+</div>
+<p class="text-label-sm font-label-sm text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-[#137333] animate-pulse"></span>
+              پایش سلامت هر ۳۰ ثانیه
+            </p>
+</div>
+</div>
+<!-- KPI 4 -->
+<div class="bg-surface-container-lowest rounded-2xl p-5 border border-outline-variant shadow-ambient-sm flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant">تراکنش‌های موفق امروز</span>
+<span class="p-2 rounded-xl bg-surface-container-high text-on-surface">
+<span class="material-symbols-outlined">credit_score</span>
+</span>
+</div>
+<div class="mt-4">
+<div class="flex items-baseline gap-1.5">
+<span class="text-headline-lg font-headline-lg font-num">۱۴۹</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">تراکنش</span>
+</div>
+<p class="text-label-sm font-label-sm text-secondary font-bold font-num mt-1">
+              ۳۴,۸۰۰,۰۰۰ تومان تسویه‌شده
+            </p>
+</div>
+</div>
+</section>
+<!-- SYSTEM EDGE NOTIFICATIONS & ALERTS SHOWCASE -->
+<section class="mb-8 space-y-3">
+<!-- Success Ping Notification Banner -->
+<div class="bg-[#f0f9f4] border border-[#a8dab5] rounded-xl p-4 flex items-center justify-between transition-all" id="alert-success-banner">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#1e7e34] text-[22px]">task_alt</span>
+<div>
+<p class="text-label-md font-label-md text-[#1e7e34]">پینگ درگاه موفقیت‌آمیز بود</p>
+<p class="text-body-sm font-body-sm text-[#2e5b38]">پاسخ سرویس به‌پرداخت ملت تایید شد (کد وضعیت ۲۰۰ - زمان پاسخ ۱۲۰ میلی‌ثانیه).</p>
+</div>
+</div>
+<button class="text-[#2e5b38] hover:text-[#1e7e34] p-1" onclick="document.getElementById('alert-success-banner').remove()">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Failure Test Notification Banner (Simulated Error) -->
+<div class="bg-error-container/60 border border-error/30 rounded-xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-error text-[22px]">error</span>
+<div>
+<p class="text-label-md font-label-md text-error">خطای احراز هویت درگاه تست زرین‌پال</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">کد خطا ۴۰۱ شاپرک: Merchant ID یا Private Key نامعتبر است. درخواست تراکنش با شکست مواجه خواهد شد.</p>
+</div>
+</div>
+<button class="text-on-error-container hover:underline text-label-sm font-label-sm px-2 py-1">
+            بررسی لاگ فنی
+          </button>
+</div>
+</section>
+<!-- 3. FALLBACK PRIORITY LIST & DRAGGABLE CARDS -->
+<section class="mb-12">
+<!-- Technical Banner Notice -->
+<div class="bg-surface-container-high border border-outline-variant rounded-xl p-4 mb-4 flex items-start gap-3">
+<span class="material-symbols-outlined text-secondary mt-0.5">info</span>
+<div class="text-body-sm font-body-sm text-on-surface-variant">
+<span class="font-bold text-on-surface">راهنمای سیستم سوئیچینگ خودکار:</span>
+            سیستم فقط از درگاه‌هایی پشتیبانی می‌کند که آداپتور بک‌اند آن‌ها پیاده‌سازی شده باشد. اولویت شماره ۱ همواره به عنوان پذیرنده اولیه استفاده می‌شود. در صورت بروز هرگونه Timeout بیش از ۲.۵ ثانیه یا پاسخ خطای شاپرک، تسویه بلافاصله بدون توقف به اولویت دوم منتقل می‌گردد. می‌توانید ترتیب اولویت‌ها را با نگه داشتن و کشیدن دستگیره (<span class="font-mono">⠿</span>) جابجا کنید.
+          </div>
+</div>
+<!-- Cards Container -->
+<div class="space-y-4" id="gateway-list">
+<!-- CARD 1: MELLAT (Priority 1 / Default) -->
+<div class="gateway-card bg-surface-container-lowest border-2 border-secondary/40 rounded-2xl p-5 shadow-ambient-sm hover:shadow-ambient-md transition-all relative" data-id="mellat">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<!-- Drag Handle -->
+<div class="cursor-grab active:cursor-grabbing text-outline hover:text-primary p-1.5 rounded-lg hover:bg-surface-container" title="تغییر اولویت">
+<span class="material-symbols-outlined text-[24px]">drag_indicator</span>
+</div>
+<!-- Priority Badge -->
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-bold text-label-md font-num shrink-0">
+                  ۱
+                </div>
+<!-- Provider Logo / Graphic -->
+<div class="w-12 h-12 rounded-xl bg-error-container/40 text-error flex items-center justify-center font-bold shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-[28px]">payments</span>
+</div>
+<!-- Details -->
+<div>
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="text-headline-md font-headline-md text-on-surface">به‌پرداخت ملت (Mellat IPG)</h3>
+<span class="bg-[#e6f4ea] text-[#137333] border border-[#ceead6] px-2.5 py-0.5 rounded-full text-label-sm font-label-sm font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#137333]"></span>
+                      درگاه پیش‌فرض
+                    </span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-label-sm font-label-sm">
+                      عملیاتی (Live)
+                    </span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mt-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Terminal ID:</span> 591****2
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Merchant ID:</span> 89400291
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="text-[#137333] flex items-center gap-1 font-num">
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+                      متصل و پایدار (Latency: 140ms)
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="font-num text-outline">آخرین تایید: ۳ دقیقه پیش</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 self-end md:self-center shrink-0">
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-outline-variant hover:bg-surface-container text-on-surface flex items-center gap-1.5 transition-colors" onclick="testPing(this, 'به‌پرداخت ملت')">
+<span class="material-symbols-outlined text-[16px]">network_ping</span>
+                  تست اتصال
+                </button>
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-outline-variant hover:bg-surface-container text-on-surface flex items-center gap-1.5 transition-colors" onclick="openModal('mellat')">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+                  ویرایش
+                </button>
+<button class="p-2 text-outline hover:text-error hover:bg-error-container/30 rounded-xl transition-colors" onclick="showDisableDefaultWarning()" title="غیرفعال‌سازی">
+<span class="material-symbols-outlined text-[18px]">power_settings_new</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CARD 2: SAMAN KISH (Priority 2 / Fallback 1) -->
+<div class="gateway-card bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-ambient-sm hover:shadow-ambient-md transition-all relative" data-id="sep">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="cursor-grab active:cursor-grabbing text-outline hover:text-primary p-1.5 rounded-lg hover:bg-surface-container" title="تغییر اولویت">
+<span class="material-symbols-outlined text-[24px]">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-label-md font-num shrink-0">
+                  ۲
+                </div>
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed/50 text-secondary flex items-center justify-center font-bold shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-[28px]">account_balance</span>
+</div>
+<div>
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="text-headline-md font-headline-md text-on-surface">سامان‌کیش (SEP - Saman Electronic Payment)</h3>
+<span class="bg-surface-container-highest text-on-surface-variant px-2.5 py-0.5 rounded-full text-label-sm font-label-sm">
+                      فال‌بک اول (Fallback 1)
+                    </span>
+<span class="bg-surface-container-highest text-on-surface-variant px-2 py-0.5 rounded text-label-sm font-label-sm">
+                      عملیاتی (Live)
+                    </span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mt-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Terminal ID:</span> 108****4
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Merchant ID:</span> 12093411
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="text-[#137333] flex items-center gap-1 font-num">
+<span class="material-symbols-outlined text-[16px]">wifi</span>
+                      متصل و پایدار (Latency: 195ms)
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="font-num text-outline">آخرین تایید: ۵ دقیقه پیش</span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 self-end md:self-center shrink-0">
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-secondary text-secondary hover:bg-secondary-container/40 flex items-center gap-1.5 transition-colors" onclick="setAsDefault('sep')">
+<span class="material-symbols-outlined text-[16px]">star</span>
+                  انتخاب به عنوان پیش‌فرض
+                </button>
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-outline-variant hover:bg-surface-container text-on-surface flex items-center gap-1.5 transition-colors" onclick="testPing(this, 'سامان‌کیش')">
+<span class="material-symbols-outlined text-[16px]">network_ping</span>
+                  تست
+                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-colors" onclick="openModal('sep')">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error hover:bg-error-container/30 rounded-xl transition-colors" onclick="confirmDelete('سامان‌کیش')">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CARD 3: SADAD (Priority 3 / Test Sandbox) -->
+<div class="gateway-card bg-surface-container-lowest border border-outline-variant rounded-2xl p-5 shadow-ambient-sm hover:shadow-ambient-md transition-all relative" data-id="sadad">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="cursor-grab active:cursor-grabbing text-outline hover:text-primary p-1.5 rounded-lg hover:bg-surface-container" title="تغییر اولویت">
+<span class="material-symbols-outlined text-[24px]">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-label-md font-num shrink-0">
+                  ۳
+                </div>
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-[28px]">domain</span>
+</div>
+<div>
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="text-headline-md font-headline-md text-on-surface">سداد / بانک ملی (Sadad)</h3>
+<span class="bg-[#fef7e0] text-[#7a5800] border border-[#fce8b2] px-2 py-0.5 rounded text-label-sm font-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">science</span>
+                      حالت تستی (Sandbox / Test Mode)
+                    </span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mt-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Terminal:</span> SANDBOX_0049
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="text-[#7a5800] flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                      مناسب برای شبیه‌سازی و محیط آزمایشی (بدون جابجایی وجه واقعی)
+                    </span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 self-end md:self-center shrink-0">
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-outline-variant hover:bg-surface-container text-on-surface flex items-center gap-1.5 transition-colors" onclick="testPing(this, 'سداد')">
+<span class="material-symbols-outlined text-[16px]">network_ping</span>
+                  تست اتصال
+                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-colors" onclick="openModal('sadad')">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error hover:bg-error-container/30 rounded-xl transition-colors" onclick="confirmDelete('سداد')">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- CARD 4: ZARINPAL (Priority 4 / Degraded State) -->
+<div class="gateway-card bg-surface-container-lowest border border-error/30 rounded-2xl p-5 shadow-ambient-sm hover:shadow-ambient-md transition-all relative" data-id="zarinpal">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="cursor-grab active:cursor-grabbing text-outline hover:text-primary p-1.5 rounded-lg hover:bg-surface-container" title="تغییر اولویت">
+<span class="material-symbols-outlined text-[24px]">drag_indicator</span>
+</div>
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface flex items-center justify-center font-bold text-label-md font-num shrink-0">
+                  ۴
+                </div>
+<div class="w-12 h-12 rounded-xl bg-[#fff3e0] text-[#e65100] flex items-center justify-center font-bold shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-[28px]">swap_horiz</span>
+</div>
+<div>
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="text-headline-md font-headline-md text-on-surface">زرین‌پال / وندار (واسط پرداخت)</h3>
+<span class="bg-[#fce8e6] text-[#c5221f] border border-[#fad2cf] px-2 py-0.5 rounded text-label-sm font-label-sm font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">error_outline</span>
+                      اتصال تضعیف‌شده (Degraded - 820ms)
+                    </span>
+</div>
+<div class="flex flex-wrap items-center gap-4 mt-2 text-body-sm font-body-sm text-on-surface-variant">
+<span class="flex items-center gap-1 font-mono text-on-surface" dir="ltr">
+<span class="text-outline">Merchant ID:</span> zarin_live_caffe
+                    </span>
+<span class="text-outline-variant">•</span>
+<span class="text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+                      هشدار اختلال موقت در سوئیچینگ (عدم قرارگیری در اولویت ۱ توصیه می‌شود)
+                    </span>
+</div>
+</div>
+</div>
+<!-- Actions -->
+<div class="flex items-center gap-2 self-end md:self-center shrink-0">
+<button class="px-3 py-1.5 text-label-sm font-label-sm rounded-xl border border-outline-variant hover:bg-surface-container text-on-surface flex items-center gap-1.5 transition-colors" onclick="testPing(this, 'زرین‌پال')">
+<span class="material-symbols-outlined text-[16px]">network_ping</span>
+                  تست مجدد
+                </button>
+<button class="p-2 text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-colors" onclick="openModal('zarinpal')">
+<span class="material-symbols-outlined text-[18px]">edit</span>
+</button>
+<button class="p-2 text-outline hover:text-error hover:bg-error-container/30 rounded-xl transition-colors" onclick="confirmDelete('زرین‌پال')">
+<span class="material-symbols-outlined text-[18px]">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- EMPTY STATE PREVIEW (Hidden by default, can be toggled) -->
+<section class="hidden my-8 p-12 bg-surface-container-lowest rounded-2xl border-2 border-dashed border-outline-variant text-center" id="empty-state-preview">
+<div class="w-16 h-16 mx-auto rounded-full bg-surface-container-high flex items-center justify-center text-outline mb-4">
+<span class="material-symbols-outlined text-[36px]">credit_card_off</span>
+</div>
+<h4 class="text-headline-md font-headline-md text-on-surface">هیچ درگاه پرداختی پیکربندی نشده است</h4>
+<p class="text-body-md font-body-md text-on-surface-variant max-w-md mx-auto mt-2">
+          برای پذیرش سفارش‌های آنلاین و تسویه از طریق کارت‌های عضو شتاب، حداقل یک درگاه پرداخت شاپرک به سیستم اضافه کنید.
+        </p>
+<button class="mt-6 bg-primary text-on-primary px-6 py-2.5 rounded-xl text-label-md font-label-md inline-flex items-center gap-2 hover:bg-primary-container" onclick="openModal()">
+<span class="material-symbols-outlined">add</span>
+          افزودن نخستین درگاه بانکی
+        </button>
+</section>
+</main>
+</div>
+<!-- FLOATING / STICKY UNSAVED CHANGES WARNING BAR -->
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 w-11/12 max-w-3xl bg-inverse-surface text-inverse-on-surface p-4 rounded-2xl shadow-ambient-lg flex items-center justify-between z-50 transition-all duration-300 translate-y-32 opacity-0 pointer-events-none" id="unsaved-bar">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-secondary-fixed text-[24px]">published_with_changes</span>
+<div>
+<p class="text-label-md font-label-md font-bold">تغییرات در اولویت‌بندی درگاه‌ها ثبت نشده است</p>
+<p class="text-body-sm font-body-sm text-surface-variant">ترتیب اولویت‌های سوئیچینگ با موفقیت جابجا شد، برای اعمال روی سرور اصلی ذخیره کنید.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-2 text-label-sm font-label-sm text-inverse-on-surface hover:bg-white/10 rounded-xl transition-colors" onclick="hideUnsavedBar()">
+        انصراف
+      </button>
+<button class="px-4 py-2 text-label-sm font-label-sm bg-secondary-container text-on-secondary-container font-bold rounded-xl hover:brightness-105 active:scale-95 transition-all" onclick="saveChangesAction()">
+        ذخیره فوری اولویت‌ها
+      </button>
+</div>
+</div>
+<!-- 4. SCHEMA-DRIVEN ADD/EDIT PROVIDER MODAL DIALOG (Material 3 Modal) -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200" id="provider-modal">
+<div class="bg-surface-container-lowest border border-outline-variant w-full max-w-2xl rounded-2xl shadow-ambient-lg overflow-hidden flex flex-col max-h-[90vh] transition-transform duration-200 scale-95" id="modal-card">
+<!-- Modal Header -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface-container-low">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-secondary">tune</span>
+<h3 class="text-headline-md font-headline-md text-on-surface" id="modal-title">پیکربندی درگاه پرداخت جدید</h3>
+</div>
+<button class="text-outline hover:text-on-surface p-1 rounded-lg hover:bg-surface-container transition-colors" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Modal Body (Form Fields) -->
+<form class="p-6 overflow-y-auto space-y-5" id="provider-form" onsubmit="event.preventDefault(); submitForm();">
+<!-- Field 1: Provider Selection Dropdown -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">ارائه‌دهنده خدمات پرداخت (PSP Shaparok Adapter)</label>
+<div class="relative">
+<select class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-3 text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary appearance-none" id="psp-select">
+<option value="mellat">به‌پپرداخت ملت (Mellat IPG Adapter v2.4)</option>
+<option value="sep">پرداخت الکترونیک سامان - سپ (SEP Unified Gateway)</option>
+<option value="sadad">سداد - داده‌ورزی سداد بانک ملی (Sadad Engine)</option>
+<option value="ap">آسان پرداخت - آپ (Asan Pardakht IPG)</option>
+<option value="irankish">کارت اعتباری ایران کیش (Iran Kish KIC)</option>
+<option value="zarinpal">زرین‌پال (ZarinPal REST API v4)</option>
+</select>
+<span class="material-symbols-outlined absolute left-3 top-3.5 text-outline pointer-events-none">expand_more</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">فقط پروتکل‌هایی قابل انتخاب هستند که ماژول اعتبارسنجی خودکار در هسته فعال باشد.</p>
+</div>
+<!-- Field 2: Display Name -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">عنوان نمایشی درگاه (Display Name)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 text-body-md font-body-md text-on-surface focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" id="display-name" placeholder="مثلاً: به‌پرداخت ملت - شعبه ولیعصر" type="text" value="به‌پرداخت ملت - شعبه ولیعصر"/>
+</div>
+<!-- Row: Terminal ID & Merchant ID -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">شماره ترمینال (Terminal ID)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 text-body-md font-body-md font-mono text-left focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" dir="ltr" id="terminal-id" placeholder="8-digit Terminal ID" type="text" value="59182092"/>
+</div>
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">شناسه پذیرنده (Merchant ID)</label>
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 text-body-md font-body-md font-mono text-left focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" dir="ltr" id="merchant-id" placeholder="Shaparok Merchant ID" type="text" value="89400291"/>
+</div>
+</div>
+<!-- Field: Secret Key / Password with Toggle Mask -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">کلید محرمانه / پسورد درگاه (Secret Key / Terminal Password)</label>
+<div class="relative">
+<input class="w-full bg-surface-container-lowest border border-outline-variant rounded-xl px-4 py-2.5 pl-10 text-body-md font-body-md font-mono text-left focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary" dir="ltr" id="secret-key" type="password" value="secret_pass_token_991823901"/>
+<button class="absolute left-3 top-3 text-outline hover:text-primary" onclick="togglePasswordVisibility('secret-key', this)" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+<div class="mt-1.5 p-2 bg-[#fdf6e2] border border-[#f5df9a] rounded-lg text-body-sm font-body-sm text-[#73510d] flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] shrink-0">lock</span>
+<span><strong>توجه امنیتی:</strong> کلیدهای محرمانه پس از ذخیره نهایی به هیچ وجه مجدداً به صورت خام در فرانت‌اند نمایش داده نخواهند شد.</span>
+</div>
+</div>
+<!-- Field: Callback URL (Read-only with 1-click copy) -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-1.5">آدرس بازگشت تراکنش (Callback URL)</label>
+<div class="flex items-center gap-2">
+<input class="flex-1 bg-surface-container-high border border-outline-variant rounded-xl px-4 py-2.5 text-body-sm font-body-sm font-mono text-left text-on-surface-variant select-all cursor-text" dir="ltr" id="callback-url" readonly="" type="text" value="https://armani-caffe.ir/api/v1/payments/verify"/>
+<button class="bg-surface-container text-on-surface px-4 py-2.5 rounded-xl border border-outline-variant hover:bg-surface-container-highest transition-colors text-label-md font-label-md flex items-center gap-1.5 shrink-0" onclick="copyCallbackUrl()" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+              کپی لینک بازگشت
+            </button>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">این آدرس را عینا در بخش تنظیمات پذیرنده پنل شاپرک ثبت نمایید.</p>
+</div>
+<!-- Radio: Mode Selection (Live vs Sandbox) -->
+<div>
+<label class="block text-label-md font-label-md text-on-surface mb-2">محیط کاری درگاه</label>
+<div class="grid grid-cols-2 gap-3">
+<label class="border border-outline-variant p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:border-primary has-[:checked]:bg-secondary-container/20">
+<input checked="" class="text-primary focus:ring-secondary" name="gateway_mode" type="radio" value="live"/>
+<div>
+<p class="text-label-md font-label-md font-bold text-on-surface">محیط عملیاتی (Live Mode)</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">تراکنش واقعی شاپرک و کسر از حساب</p>
+</div>
+</label>
+<label class="border border-outline-variant p-3 rounded-xl flex items-center gap-3 cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:border-primary has-[:checked]:bg-secondary-container/20">
+<input class="text-primary focus:ring-secondary" name="gateway_mode" type="radio" value="sandbox"/>
+<div>
+<p class="text-label-md font-label-md font-bold text-on-surface">محیط آزمایشی (Sandbox)</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">بدون جابجایی وجه جهت شبیه‌سازی</p>
+</div>
+</label>
+</div>
+</div>
+<!-- Toggle: Active Switch -->
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant">
+<div>
+<p class="text-label-md font-label-md text-on-surface">درگاه فعال باشد</p>
+<p class="text-body-sm font-body-sm text-on-surface-variant">درگاه در چرخه توزیع ترافیک قرار گیرد</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-secondary"></div>
+</label>
+</div>
+</form>
+<!-- Modal Footer Actions -->
+<div class="px-6 py-4 border-t border-outline-variant bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3">
+<button class="w-full sm:w-auto px-4 py-2 border border-outline-variant text-on-surface hover:bg-surface-container-highest rounded-xl text-label-md font-label-md flex items-center justify-center gap-1.5 transition-colors" onclick="testModalConnection(this)" type="button">
+<span class="material-symbols-outlined text-[18px]">cable</span>
+          آزمایش اتصال (Test Connection)
+        </button>
+<div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+<button class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:text-primary hover:bg-surface-container rounded-xl transition-colors" onclick="closeModal()" type="button">
+            انصراف
+          </button>
+<button class="px-5 py-2 text-label-md font-label-md bg-primary text-on-primary hover:bg-primary-container rounded-xl transition-all shadow-ambient-sm active:scale-95" onclick="submitForm()" type="button">
+            ثبت و ذخیره تنظیمات
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- 5. DIALOG: DISABLE DEFAULT WARNING MODAL -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200" id="disable-warning-dialog">
+<div class="bg-surface-container-lowest border border-outline-variant w-full max-w-md rounded-2xl shadow-ambient-lg p-6">
+<div class="w-12 h-12 rounded-full bg-[#fef7e0] text-[#7a5800] flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[28px]">warning</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">غیرفعال‌سازی درگاه پیش‌فرض مجاز نیست</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2 leading-relaxed">
+        این درگاه در حال حاضر به عنوان درگاه پیش‌فرض سیستم فعال است. پیش از غیرفعال‌سازی، لطفاً یکی از درگاه‌های فعال دیگر را به عنوان پیش‌فرض تعیین کنید.
+      </p>
+<div class="mt-6 flex justify-end gap-2">
+<button class="bg-primary text-on-primary px-5 py-2 rounded-xl text-label-md font-label-md hover:bg-primary-container" onclick="hideDisableDefaultWarning()">
+          متوجه شدم
+        </button>
+</div>
+</div>
+</div>
+<!-- 6. DIALOG: CONFIRM DELETE MODAL -->
+<div class="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200" id="delete-confirm-dialog">
+<div class="bg-surface-container-lowest border border-outline-variant w-full max-w-md rounded-2xl shadow-ambient-lg p-6">
+<div class="w-12 h-12 rounded-full bg-error-container text-error flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-[28px]">delete_forever</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">تایید حذف اتصال درگاه بانکی</h3>
+<p class="text-body-md font-body-md text-on-surface-variant mt-2" id="delete-dialog-text">
+        آیا از حذف اطلاعات اتصال این درگاه اطمینان دارید؟ اطلاعات احراز هویت به صورت دائم از روی سرور پاک خواهند شد.
+      </p>
+<div class="mt-6 flex justify-end gap-2">
+<button class="px-4 py-2 text-label-md font-label-md text-on-surface-variant hover:bg-surface-container rounded-xl" onclick="hideDeleteDialog()">
+          انصراف
+        </button>
+<button class="bg-error text-on-error px-5 py-2 rounded-xl text-label-md font-label-md hover:brightness-110 active:scale-95 transition-all" onclick="executeDelete()">
+          حذف نهایی درگاه
+        </button>
+</div>
+</div>
+</div>
+<!-- FOOTER (Shared Component JSON) -->
+<footer class="bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline docked full-width bottom mt-auto">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto gap-4">
+<div class="flex items-center gap-3">
+<span class="text-label-md font-label-md font-bold text-on-surface dark:text-inverse-on-surface">کافه آرمانی</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant dark:text-surface-variant">
+          © ۱۴۰۳ کافه آرمانی. تمامی حقوق محفوظ است | تهران، خیابان ولیعصر
+        </span>
+</div>
+<div class="flex items-center gap-5 text-label-sm font-label-sm">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">قوانین و راهنما</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">مستندات دیزاین‌سیستم</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">ارتباط با پشتیبانی فنی</a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-inverse-primary transition-colors duration-150" href="#">درباره آرمانی</a>
+</div>
+</div>
+</footer>
+<!-- SCRIPT: MICRO-INTERACTIONS, DRAG-N-DROP, TESTING LOGIC -->
+<script>
+    // Password visibility toggle
+    function togglePasswordVisibility(fieldId, btn) {
+      const input = document.getElementById(fieldId);
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = 'visibility_off';
+      } else {
+        input.type = 'password';
+        icon.textContent = 'visibility';
+      }
+    }
+
+    // Copy Callback URL
+    function copyCallbackUrl() {
+      const copyText = document.getElementById("callback-url");
+      navigator.clipboard.writeText(copyText.value);
+      
+      const notification = document.createElement("div");
+      notification.className = "fixed top-5 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-4 py-2 rounded-xl text-label-sm font-label-sm shadow-ambient-lg z-50 transition-all";
+      notification.textContent = "آدرس بازگشت با موفقیت در کلیپ‌بورد کپی شد.";
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 2500);
+    }
+
+    // Modal Opening & Closing
+    function openModal(providerId = null) {
+      const modal = document.getElementById('provider-modal');
+      const title = document.getElementById('modal-title');
+      const nameInput = document.getElementById('display-name');
+      
+      if (providerId === 'mellat') {
+        title.textContent = 'ویرایش تنظیمات درگاه به‌پرداخت ملت';
+        nameInput.value = 'به‌پرداخت ملت - شعبه ولیعصر';
+      } else if (providerId === 'sep') {
+        title.textContent = 'ویرایش تنظیمات درگاه سامان‌کیش';
+        nameInput.value = 'سامان‌کیش - درگاه رزرو';
+      } else if (providerId === 'sadad') {
+        title.textContent = 'ویرایش تنظیمات درگاه سداد';
+        nameInput.value = 'سداد بانک ملی - محیط تستی';
+      } else if (providerId === 'zarinpal') {
+        title.textContent = 'ویرایش تنظیمات واسط زرین‌پال';
+        nameInput.value = 'زرین‌پال اختصاصی آرمانی';
+      } else {
+        title.textContent = 'پیکربندی درگاه پرداخت جدید';
+        nameInput.value = '';
+      }
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      document.getElementById('modal-card').classList.remove('scale-95');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('provider-modal');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      document.getElementById('modal-card').classList.add('scale-95');
+    }
+
+    function submitForm() {
+      closeModal();
+      showUnsavedBar();
+    }
+
+    // Warning / Delete dialogs
+    function showDisableDefaultWarning() {
+      const dialog = document.getElementById('disable-warning-dialog');
+      dialog.classList.remove('opacity-0', 'pointer-events-none');
+    }
+    function hideDisableDefaultWarning() {
+      const dialog = document.getElementById('disable-warning-dialog');
+      dialog.classList.add('opacity-0', 'pointer-events-none');
+    }
+
+    let itemToDelete = null;
+    function confirmDelete(name) {
+      itemToDelete = name;
+      document.getElementById('delete-dialog-text').textContent = `آیا از حذف کامل درگاه «${name}» اطمینان دارید؟ تمام توکن‌ها و دسترسی به درگاه غیرفعال خواهد شد.`;
+      const dialog = document.getElementById('delete-confirm-dialog');
+      dialog.classList.remove('opacity-0', 'pointer-events-none');
+    }
+    function hideDeleteDialog() {
+      const dialog = document.getElementById('delete-confirm-dialog');
+      dialog.classList.add('opacity-0', 'pointer-events-none');
+    }
+    function executeDelete() {
+      hideDeleteDialog();
+      showUnsavedBar();
+    }
+
+    // Ping Testing Micro-interaction
+    function testPing(btn, providerName) {
+      const originalHtml = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[16px] animate-spin">refresh</span> در حال تست...`;
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerHTML = `<span class="material-symbols-outlined text-[16px] text-[#137333]">check</span> پایدار (125ms)`;
+        btn.disabled = false;
+        setTimeout(() => {
+          btn.innerHTML = originalHtml;
+        }, 2200);
+      }, 1000);
+    }
+
+    function testModalConnection(btn) {
+      const originalText = btn.innerHTML;
+      btn.innerHTML = `<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> در حال اعتبارسنجی با شاپرک...`;
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.innerHTML = `<span class="material-symbols-outlined text-[18px] text-[#137333]">verified</span> اتصال برقرار شد (Status 200)`;
+        btn.disabled = false;
+        setTimeout(() => {
+          btn.innerHTML = originalText;
+        }, 2000);
+      }, 1200);
+    }
+
+    // Unsaved Changes Bar Management
+    function showUnsavedBar() {
+      const bar = document.getElementById('unsaved-bar');
+      bar.classList.remove('translate-y-32', 'opacity-0', 'pointer-events-none');
+    }
+    function hideUnsavedBar() {
+      const bar = document.getElementById('unsaved-bar');
+      bar.classList.add('translate-y-32', 'opacity-0', 'pointer-events-none');
+    }
+    function saveChangesAction() {
+      hideUnsavedBar();
+      const notification = document.createElement("div");
+      notification.className = "fixed top-5 left-1/2 -translate-x-1/2 bg-[#1b4332] text-white px-5 py-2.5 rounded-xl text-label-md font-label-md shadow-ambient-lg z-50 flex items-center gap-2";
+      notification.innerHTML = `<span class="material-symbols-outlined text-[18px]">verified</span> اولویت‌های پرداخت با موفقیت روی سرور اعمال شدند.`;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 2500);
+    }
+
+    // Set As Default Action
+    function setAsDefault(providerId) {
+      showUnsavedBar();
+    }
+
+    // Simple Drag & Reorder Simulation for Fallback priority
+    const list = document.getElementById('gateway-list');
+    let draggedItem = null;
+
+    list.querySelectorAll('.gateway-card').forEach(card => {
+      card.setAttribute('draggable', true);
+      
+      card.addEventListener('dragstart', (e) => {
+        draggedItem = card;
+        setTimeout(() => card.classList.add('opacity-40'), 0);
+      });
+
+      card.addEventListener('dragend', () => {
+        draggedItem.classList.remove('opacity-40');
+        draggedItem = null;
+        list.querySelectorAll('.gateway-card').forEach(c => c.classList.remove('drag-over'));
+        showUnsavedBar();
+      });
+
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        card.classList.add('drag-over');
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('drag-over');
+      });
+
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('drag-over');
+        if (draggedItem && draggedItem !== card) {
+          const allCards = Array.from(list.children);
+          const draggedIndex = allCards.indexOf(draggedItem);
+          const targetIndex = allCards.indexOf(card);
+
+          if (draggedIndex < targetIndex) {
+            list.insertBefore(draggedItem, card.nextSibling);
+          } else {
+            list.insertBefore(draggedItem, card);
+          }
+          updatePriorityNumbers();
+        }
+      });
+    });
+
+    function updatePriorityNumbers() {
+      const cards = list.querySelectorAll('.gateway-card');
+      const persianDigits = ['۱', '۲', '۳', '۴', '۵'];
+      cards.forEach((c, idx) => {
+        const badge = c.querySelector('.font-num');
+        if (badge) badge.textContent = persianDigits[idx] || (idx + 1);
+      });
+    }
+
+    document.getElementById('save-priority-btn').addEventListener('click', saveChangesAction);
+  </script>
+</body></html>

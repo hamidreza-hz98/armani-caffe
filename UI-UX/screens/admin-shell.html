@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>پوسته مدیریت و سیستم ناوبری پنل کافه آرمانی | Armani Caffe Admin Shell</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'sans-serif'],
+            en: ['Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            caffe: {
+              espresso: '#171411',
+              dark: '#241c16',
+              wood: '#3e2c21',
+              amber: '#b67a3d',
+              gold: '#c99a3d',
+              cream: '#fef9f1',
+              card: '#ffffff',
+              border: '#eedecb',
+              muted: '#7d6f65',
+              surfaceDim: '#f4ede2',
+              danger: '#b3261e',
+              success: '#1b6a3b',
+              warning: '#c27803'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-1 {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f4ede2;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #eedecb;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #b67a3d;
+    }
+  </style>
+</head>
+<body class="bg-[#e9e3da] text-caffe-espresso font-sans antialiased p-4 md:p-8 min-h-screen">
+
+  <!-- Master Canvas Container -->
+  <div class="max-w-[1920px] mx-auto space-y-8">
+
+    <!-- Top Canvas Bar / Header -->
+    <header class="bg-white rounded-2xl shadow-sm border border-caffe-border/70 p-5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-caffe-espresso text-caffe-gold flex items-center justify-center font-bold text-xl shadow-inner">
+          <span class="material-symbols-outlined text-2xl">coffee_maker</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-black text-caffe-espresso tracking-tight">پوسته و معماری ناوبری مدیریت کافه آرمانی</h1>
+            <span class="text-xs bg-caffe-gold/20 text-[#845618] border border-caffe-gold/40 px-2 py-0.5 rounded-full font-semibold">نسخه پنل v2.4</span>
+            <span class="text-xs bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-0.5 rounded-full font-semibold">ریسپانسیو کامل (Desktop + Mobile)</span>
+          </div>
+          <p class="text-xs md:text-sm text-caffe-muted mt-1">نمایش مقایسه‌ای هم‌زمان فریم دسکتاپ (۱۴۴۰×۱۰۲۴) و فریم موبایل (۳۹۰×۸۴۴) همراه با سناریوهای خطای ۴۰۳، اسکلتون، دیالوگ تایید و اسنک‌بار</p>
+        </div>
+      </div>
+
+      <!-- Quick Interactive Switchers / Status Tags -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="toggleGlobalState('default')" id="btn-state-default" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-caffe-espresso text-caffe-gold shadow-sm flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">dashboard</span>
+          داشبورد عادی
+        </button>
+        <button onclick="toggleGlobalState('loading')" id="btn-state-loading" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white border border-caffe-border hover:bg-caffe-surfaceDim text-caffe-espresso flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">hourglass_empty</span>
+          حالت لودینگ (Skeleton)
+        </button>
+        <button onclick="toggleGlobalState('error')" id="btn-state-error" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white border border-caffe-border hover:bg-caffe-surfaceDim text-caffe-espresso flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">error</span>
+          خطای اتصال (Retry)
+        </button>
+        <button onclick="toggleGlobalState('forbidden')" id="btn-state-forbidden" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white border border-caffe-border hover:bg-caffe-surfaceDim text-caffe-espresso flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">lock</span>
+          عدم دسترسی (403)
+        </button>
+        <button onclick="toggleGlobalState('empty')" id="btn-state-empty" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-white border border-caffe-border hover:bg-caffe-surfaceDim text-caffe-espresso flex items-center gap-1.5">
+          <span class="material-symbols-outlined text-base">inventory_2</span>
+          داده خالی (Empty)
+        </button>
+      </div>
+    </header>
+
+    <!-- Side-by-Side Presentation Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+
+      <!-- ========================================================================= -->
+      <!-- 1. DESKTOP FRAME: 1440 x 1024 Simulated Viewport (Spans 8 Cols) -->
+      <!-- ========================================================================= -->
+      <section class="xl:col-span-8 flex flex-col">
+        <!-- Frame Label Header -->
+        <div class="flex items-center justify-between mb-3 px-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-emerald-500 ring-4 ring-emerald-100"></span>
+            <span class="text-sm font-bold text-caffe-espresso">فریم دسکتاپ مدیریت (Desktop Viewport: 1440×1024px)</span>
+            <span class="text-xs bg-caffe-surfaceDim text-caffe-muted px-2 py-0.5 rounded border border-caffe-border/80">RTL Permanent Drawer</span>
+          </div>
+          <div class="text-xs text-caffe-muted flex items-center gap-3">
+            <span>کافه آرمانی • شعبه مرکزی ولیعصر</span>
+            <span class="hidden sm:inline">|</span>
+            <span class="hidden sm:inline">کاربر: سهراب اخوان (مدیر ارشد سیستم)</span>
+          </div>
+        </div>
+
+        <!-- Simulated Desktop Window Container -->
+        <div class="w-full bg-white rounded-2xl shadow-xl border border-caffe-border overflow-hidden flex flex-col h-[940px] relative">
+
+          <!-- Desktop App Window Top Bar -->
+          <div class="bg-[#171411] text-white px-4 py-2.5 flex items-center justify-between text-xs border-b border-[#352a20]">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ff5f56]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#27c93f]"></span>
+              <span class="mr-3 text-caffe-cream/70 font-mono text-[11px]">admin.armanicaffe.ir/dashboard</span>
+            </div>
+            <div class="flex items-center gap-3 text-caffe-gold/90 font-medium">
+              <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> همگام با صندوق مرکزی بار اسپرسو</span>
+              <span class="text-caffe-cream/40">|</span>
+              <span class="font-en text-[11px]">1403/02/14 — 10:30 AM</span>
+            </div>
+          </div>
+
+          <!-- Main Desktop Layout (RTL: Permanent Drawer on the RIGHT, Main on LEFT) -->
+          <div class="flex-1 flex overflow-hidden bg-caffe-cream">
+
+            <!-- 1.1 PERMANENT RIGHT DRAWER (Desktop) -->
+            <aside id="desktop-sidebar" class="w-72 bg-caffe-espresso text-white flex flex-col justify-between border-l border-[#2e2319] shrink-0 transition-all duration-300 select-none z-10">
+
+              <!-- Drawer Header (Brand & Branch) -->
+              <div class="p-5 border-b border-white/10">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[#2e2319] border border-caffe-gold/40 flex items-center justify-center text-caffe-gold font-black text-lg shadow-inner">
+                      آ
+                    </div>
+                    <div>
+                      <h2 class="font-bold text-base tracking-wide text-caffe-cream flex items-center gap-1.5">
+                        کافه آرمانی
+                        <span class="text-[10px] bg-caffe-gold text-caffe-espresso px-1.5 py-0.2 rounded font-extrabold">PRO</span>
+                      </h2>
+                      <p class="text-xs text-caffe-gold/80 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-xs">store</span>
+                        شعبه مرکزی تهران (ولیعصر)
+                      </p>
+                    </div>
+                  </div>
+                  <!-- Collapse Sidebar Affordance -->
+                  <button title="جمع کردن منو" class="text-white/40 hover:text-white p-1 rounded-lg hover:bg-white/5 transition">
+                    <span class="material-symbols-outlined text-lg">first_page</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Navigation Items List -->
+              <div class="flex-1 overflow-y-auto py-3 px-3 space-y-1">
+
+                <!-- Item 1: داشبورد (Active) -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-caffe-gold text-caffe-espresso font-bold text-sm shadow-md transition-all">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl fill-1">dashboard</span>
+                    <span>داشبورد مدیریتی</span>
+                  </div>
+                  <span class="w-2 h-2 rounded-full bg-caffe-espresso"></span>
+                </a>
+
+                <!-- Item 2: سفارش‌ها (With Badge) -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">receipt_long</span>
+                    <span>سفارش‌ها و فاکتورها</span>
+                  </div>
+                  <span class="text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">۷ زنده</span>
+                </a>
+
+                <!-- Item 3: محصولات -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">local_cafe</span>
+                    <span>محصولات و بار قهوه</span>
+                  </div>
+                  <span class="text-xs text-white/40">۳۸ قلم</span>
+                </a>
+
+                <!-- Item 4: دسته‌بندی‌ها -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">category</span>
+                    <span>دسته‌بندی‌های منو</span>
+                  </div>
+                </a>
+
+                <!-- Item 5: موجودی انبار (With Warning Badge) -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">inventory_2</span>
+                    <span>موجودی دانه و انبار</span>
+                  </div>
+                  <span class="text-[11px] bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+                    ۲ کسری
+                  </span>
+                </a>
+
+                <!-- Item 6: رسانه‌ها -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">photo_library</span>
+                    <span>رسانه‌ها و گالری</span>
+                  </div>
+                </a>
+
+                <!-- Item 7: مشتریان -->
+                <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/80 hover:bg-white/5 hover:text-white text-sm font-medium transition-all group">
+                  <div class="flex items-center gap-3">
+                    <span class="material-symbols-outlined text-xl text-caffe-cream/60 group-hover:text-caffe-gold">group</span>
+                    <span>مشتریان و وفاداری</span>
+                  </div>
+                  <span class="text-xs text-white/40">VIP</span>
+                </a>
+
+                <!-- Item 8: مدیران (Permissions Controlled) -->
+                <div class="relative group/perm">
+                  <a href="javascript:void(0)" class="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-caffe-cream/50 bg-black/20 hover:bg-black/40 text-sm font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-xl text-caffe-cream/40">admin_panel_settings</span>
+                      <span>مدیران و دسترسی‌ها</span>
+                    </div>
+                    <span class="material-symbols-outlined text-xs text-caffe-gold/70" title="دارای مجوز سطح ادمین کل">lock</span>
+                  </a>
+                  <!-- Permission hint tooltip -->
+                  <div class="hidden group-hover/perm:block absolute left-full top-0 mr-2 z-30 bg-black/90 text-caffe-cream text-[11px] rounded-lg p-2 shadow-xl whitespace-nowrap border border-white/10">
+                    مختص مدیر ارشد سیستم (Super Admin)
+                  </div>
+                </div>
+
+                <!-- Group 9: تنظیمات و زیرمجموعه‌ها (Accordion Expanded) -->
+                <div class="pt-2">
+                  <div class="flex items-center justify-between px-3.5 py-2 rounded-xl text-caffe-cream/90 text-sm font-semibold hover:bg-white/5 cursor-pointer">
+                    <div class="flex items-center gap-3">
+                      <span class="material-symbols-outlined text-xl text-caffe-gold">settings</span>
+                      <span>تنظیمات سیستم</span>
+                    </div>
+                    <span class="material-symbols-outlined text-xs text-white/50">expand_less</span>
+                  </div>
+
+                  <!-- Settings Children (Indented) -->
+                  <div class="mr-6 ml-2 my-1 space-y-1 border-r-2 border-caffe-gold/30 pr-3">
+                    <a href="javascript:void(0)" class="block py-1.5 px-2 rounded-lg text-xs text-caffe-cream/80 hover:text-caffe-gold hover:bg-white/5 transition flex items-center justify-between">
+                      <span>درگاه پرداخت و شاپرک</span>
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    </a>
+                    <a href="javascript:void(0)" class="block py-1.5 px-2 rounded-lg text-xs text-caffe-cream/80 hover:text-caffe-gold hover:bg-white/5 transition flex items-center justify-between">
+                      <span>تماس و شبکه‌های اجتماعی</span>
+                    </a>
+                    <a href="javascript:void(0)" class="block py-1.5 px-2 rounded-lg text-xs text-caffe-cream/80 hover:text-caffe-gold hover:bg-white/5 transition flex items-center justify-between">
+                      <span>سئو و اطلاعات پایه</span>
+                    </a>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Drawer Footer (User Profile, Role, Logout, Collapse) -->
+              <div class="p-3 border-t border-white/10 bg-black/30">
+                <div class="flex items-center justify-between p-2 rounded-xl bg-white/5 hover:bg-white/10 transition">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-9 h-9 rounded-xl bg-caffe-gold text-caffe-espresso font-black flex items-center justify-center text-sm shrink-0">
+                      SA
+                    </div>
+                    <div class="truncate">
+                      <p class="text-xs font-bold text-caffe-cream truncate">سهراب اخوان</p>
+                      <p class="text-[11px] text-caffe-gold truncate">مدیر سیستم (Super Admin)</p>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button onclick="showLogoutDialog()" title="خروج از حساب" class="text-caffe-cream/50 hover:text-red-400 p-1.5 rounded-lg hover:bg-white/5 transition">
+                      <span class="material-symbols-outlined text-lg">logout</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+            </aside>
+
+            <!-- 1.2 MAIN APPLICATION AREA (Desktop) -->
+            <main class="flex-1 flex flex-col overflow-hidden bg-caffe-cream">
+
+              <!-- Compact Top App Bar -->
+              <header class="h-16 bg-white border-b border-caffe-border/80 px-6 flex items-center justify-between gap-4 shrink-0 shadow-sm">
+                <!-- Breadcrumbs & Title -->
+                <div class="flex items-center gap-3 min-w-0">
+                  <div class="flex items-center gap-2 text-xs text-caffe-muted">
+                    <span class="hover:text-caffe-espresso cursor-pointer">پنل مدیریت</span>
+                    <span class="material-symbols-outlined text-xs">chevron_left</span>
+                    <span class="text-caffe-espresso font-bold">داشبورد و سفارشات روز</span>
+                  </div>
+                  <span class="text-caffe-border hidden md:inline">|</span>
+                  <div class="hidden lg:flex items-center gap-1.5 text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full font-medium">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    شعبه فعال: ولیعصر (سفارش حضوری و بیرون‌بر)
+                  </div>
+                </div>
+
+                <!-- Global Order Search Bar -->
+                <div class="flex-1 max-w-md mx-4">
+                  <div class="relative">
+                    <span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-caffe-muted text-lg">search</span>
+                    <input type="text" placeholder="جستجوی سریع سفارش (کد AC-، شماره موبایل، نام مشتری)..." class="w-full bg-caffe-surfaceDim/60 border border-caffe-border/80 rounded-xl pr-9 pl-12 py-1.5 text-xs text-caffe-espresso placeholder-caffe-muted focus:outline-none focus:ring-2 focus:ring-caffe-gold focus:bg-white transition-all">
+                    <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-[10px] bg-white border border-caffe-border px-1.5 py-0.5 rounded text-caffe-muted font-mono font-bold">⌘K</span>
+                  </div>
+                </div>
+
+                <!-- Right Action Icons (Notifications + Quick Status) -->
+                <div class="flex items-center gap-3">
+                  <!-- Notification Bell with Low-Stock / Order Badge -->
+                  <div class="relative">
+                    <button onclick="triggerSnackbar('۲ قلم قهوه اسپشیالتی به حداقل آستانه موجودی رسیده‌اند!')" class="w-9 h-9 rounded-xl border border-caffe-border flex items-center justify-center text-caffe-espresso hover:bg-caffe-surfaceDim transition relative">
+                      <span class="material-symbols-outlined text-xl">notifications</span>
+                      <!-- Order & Low-stock Multi-Badge -->
+                      <span class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-caffe-danger text-white text-[10px] font-bold flex items-center justify-center ring-2 ring-white">
+                        ۳
+                      </span>
+                    </button>
+                  </div>
+
+                  <!-- Quick Pos Button -->
+                  <button class="bg-caffe-espresso hover:bg-caffe-dark text-caffe-cream text-xs font-bold px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition shadow-sm">
+                    <span class="material-symbols-outlined text-base text-caffe-gold">add</span>
+                    سفارش حضوری جدید
+                  </button>
+
+                  <!-- Admin Mini Avatar -->
+                  <div class="flex items-center gap-2 pr-2 border-r border-caffe-border/70">
+                    <div class="w-8 h-8 rounded-full bg-caffe-wood text-caffe-gold font-bold flex items-center justify-center text-xs">
+                      س.ا
+                    </div>
+                  </div>
+                </div>
+              </header>
+
+              <!-- Dynamic Content Area -->
+              <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+                <!-- Dynamic State Container (Controlled via Interactive Switchers) -->
+                <div id="desktop-state-content">
+
+                  <!-- DEFAULT VIEW: Active Stats, Live Dense Order Table, Stock Alerts -->
+                  <div id="view-default" class="space-y-6">
+
+                    <!-- Top KPI Summary Cards -->
+                    <div class="grid grid-cols-4 gap-4">
+                      <!-- Card 1 -->
+                      <div class="bg-white rounded-2xl p-4 border border-caffe-border/70 shadow-sm flex items-center justify-between">
+                        <div>
+                          <p class="text-xs text-caffe-muted font-medium">فروش امروز بار اسپرسو</p>
+                          <h3 class="text-xl font-black text-caffe-espresso mt-1">۸٬۴۵۰٬۰۰۰ <span class="text-xs font-normal text-caffe-muted">تومان</span></h3>
+                          <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-bold mt-1">
+                            <span class="material-symbols-outlined text-xs">trending_up</span> ۱۸٪ رشد نسبت به دیروز
+                          </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-50 text-caffe-amber flex items-center justify-center">
+                          <span class="material-symbols-outlined text-2xl">payments</span>
+                        </div>
+                      </div>
+
+                      <!-- Card 2 -->
+                      <div class="bg-white rounded-2xl p-4 border border-caffe-border/70 shadow-sm flex items-center justify-between">
+                        <div>
+                          <p class="text-xs text-caffe-muted font-medium">سفارش‌های فعال در صف</p>
+                          <h3 class="text-xl font-black text-caffe-espresso mt-1">۷ <span class="text-xs font-normal text-caffe-muted">سفارش</span></h3>
+                          <span class="inline-flex items-center gap-1 text-[11px] text-caffe-gold font-bold mt-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-caffe-gold animate-ping"></span> میانگین آماده‌سازی: ۶ دقیقه
+                          </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-700 flex items-center justify-center">
+                          <span class="material-symbols-outlined text-2xl">hourglass_top</span>
+                        </div>
+                      </div>
+
+                      <!-- Card 3 -->
+                      <div class="bg-white rounded-2xl p-4 border border-caffe-border/70 shadow-sm flex items-center justify-between">
+                        <div>
+                          <p class="text-xs text-caffe-muted font-medium">تعداد فنجان قهوه سرو شده</p>
+                          <h3 class="text-xl font-black text-caffe-espresso mt-1">۱۴۲ <span class="text-xs font-normal text-caffe-muted">شات / فنجان</span></h3>
+                          <span class="text-[11px] text-caffe-muted mt-1 block">پرفروش: آمریکانو تازه دم</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-stone-100 text-caffe-espresso flex items-center justify-center">
+                          <span class="material-symbols-outlined text-2xl">coffee</span>
+                        </div>
+                      </div>
+
+                      <!-- Card 4 (Alert: Low Stock) -->
+                      <div class="bg-amber-50/70 rounded-2xl p-4 border border-amber-200 shadow-sm flex items-center justify-between">
+                        <div>
+                          <p class="text-xs text-amber-900 font-bold">هشدار کسری انبار دانه</p>
+                          <h3 class="text-xl font-black text-amber-950 mt-1">۲ قلم</h3>
+                          <span class="inline-flex items-center gap-1 text-[11px] text-amber-800 font-medium mt-1">
+                            اتیوپی یرگاچف کمتر از ۲ کیلوگرم
+                          </span>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-200/80 text-amber-900 flex items-center justify-center">
+                          <span class="material-symbols-outlined text-2xl">warning</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Main Dense Table: Recent Orders -->
+                    <div class="bg-white rounded-2xl border border-caffe-border/80 shadow-sm overflow-hidden">
+                      <!-- Table Header & Controls -->
+                      <div class="p-4 border-b border-caffe-border/70 flex items-center justify-between flex-wrap gap-3">
+                        <div class="flex items-center gap-3">
+                          <h4 class="font-bold text-sm text-caffe-espresso flex items-center gap-2">
+                            <span class="material-symbols-outlined text-caffe-gold">list_alt</span>
+                            صف زنده‌ی سفارشات و تحویل حضوری بار
+                          </h4>
+                          <span class="text-xs bg-caffe-surfaceDim px-2.5 py-0.5 rounded-full text-caffe-muted font-medium">به‌روزرسانی خودکار هر ۱۰ ثانیه</span>
+                        </div>
+
+                        <!-- Filters & Quick Actions -->
+                        <div class="flex items-center gap-2">
+                          <button class="px-3 py-1.5 rounded-lg border border-caffe-border text-xs text-caffe-espresso hover:bg-caffe-surfaceDim flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">filter_list</span> فیلتر وضعیت
+                          </button>
+                          <button class="px-3 py-1.5 rounded-lg border border-caffe-border text-xs text-caffe-espresso hover:bg-caffe-surfaceDim flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">download</span> خروجی اکسل
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Dense Table (RTL Order) -->
+                      <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                          <thead class="bg-caffe-surfaceDim/50 text-caffe-muted border-b border-caffe-border/60">
+                            <tr>
+                              <th class="p-3 pr-4 font-bold">شناسه سفارش</th>
+                              <th class="p-3 font-bold">مشتری</th>
+                              <th class="p-3 font-bold">اقلام سفارش</th>
+                              <th class="p-3 font-bold">مبلغ کل</th>
+                              <th class="p-3 font-bold">نوع تحویل</th>
+                              <th class="p-3 font-bold">وضعیت سفارش</th>
+                              <th class="p-3 font-bold">زمان ثبت</th>
+                              <th class="p-3 pl-4 text-center font-bold">عملیات باریستا</th>
+                            </tr>
+                          </thead>
+                          <tbody class="divide-y divide-caffe-border/40">
+                            <!-- Row 1 -->
+                            <tr class="hover:bg-amber-50/40 transition">
+                              <td class="p-3 pr-4 font-bold text-caffe-espresso font-en">AC-0008932</td>
+                              <td class="p-3">
+                                <div class="font-bold text-caffe-espresso">سهراب اخوان</div>
+                                <div class="text-[10px] text-caffe-muted font-en">۰۹۱۲۳۴۵۶۷۸۹</div>
+                              </td>
+                              <td class="p-3">
+                                <span class="font-medium text-caffe-espresso">۱× آمریکانو (وانیل + دبل شات)، ۱× چیزکیک</span>
+                              </td>
+                              <td class="p-3 font-bold text-caffe-espresso">۵۱۰٬۰۰۰ تومان</td>
+                              <td class="p-3">
+                                <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[11px] font-semibold">تحویل حضوری (بار)</span>
+                              </td>
+                              <td class="p-3">
+                                <span class="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
+                                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> پرداخت موفق
+                                </span>
+                              </td>
+                              <td class="p-3 text-caffe-muted">۱۰:۲۷ (۳ دقیقه پیش)</td>
+                              <td class="p-3 pl-4 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                  <button title="چاپ فیش بار" class="p-1 rounded hover:bg-caffe-surfaceDim text-caffe-muted hover:text-caffe-espresso">
+                                    <span class="material-symbols-outlined text-base">print</span>
+                                  </button>
+                                  <button title="آماده تحویل شد" class="px-2.5 py-1 rounded-lg bg-caffe-espresso text-caffe-gold hover:bg-caffe-wood font-bold text-[11px] transition">
+                                    آماده تحویل
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+
+                            <!-- Row 2 -->
+                            <tr class="hover:bg-amber-50/40 transition">
+                              <td class="p-3 pr-4 font-bold text-caffe-espresso font-en">AC-0008931</td>
+                              <td class="p-3">
+                                <div class="font-bold text-caffe-espresso">نیلوفر راد</div>
+                                <div class="text-[10px] text-caffe-muted font-en">۰۹۳۵۱۲۳۴۵۶۷</div>
+                              </td>
+                              <td class="p-3">
+                                <span class="font-medium text-caffe-espresso">۲× آیس کارامل ماکیاتو، ۱× تارت میوه</span>
+                              </td>
+                              <td class="p-3 font-bold text-caffe-espresso">۴۴۰٬۰۰۰ تومان</td>
+                              <td class="p-3">
+                                <span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded text-[11px] font-semibold">تحویل حضوری</span>
+                              </td>
+                              <td class="p-3">
+                                <span class="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
+                                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> در حال عصاره‌گیری
+                                </span>
+                              </td>
+                              <td class="p-3 text-caffe-muted">۱۰:۲۱ (۹ دقیقه پیش)</td>
+                              <td class="p-3 pl-4 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                  <button title="چاپ فیش" class="p-1 rounded hover:bg-caffe-surfaceDim text-caffe-muted hover:text-caffe-espresso">
+                                    <span class="material-symbols-outlined text-base">print</span>
+                                  </button>
+                                  <button class="px-2.5 py-1 rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 font-bold text-[11px] transition">
+                                    تحویل داده شد
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+
+                            <!-- Row 3 -->
+                            <tr class="hover:bg-amber-50/40 transition">
+                              <td class="p-3 pr-4 font-bold text-caffe-espresso font-en">AC-0008930</td>
+                              <td class="p-3">
+                                <div class="font-bold text-caffe-espresso">امیرحسین پارسا</div>
+                                <div class="text-[10px] text-caffe-muted font-en">۰۹۱۲۹۸۷۶۵۴۳</div>
+                              </td>
+                              <td class="p-3">
+                                <span class="font-medium text-caffe-espresso">۱× کورتادو اسپشیال، ۱× چای ماسالا هندی</span>
+                              </td>
+                              <td class="p-3 font-bold text-caffe-espresso">۲۳۵٬۰۰۰ تومان</td>
+                              <td class="p-3">
+                                <span class="bg-stone-100 text-stone-800 px-2 py-0.5 rounded text-[11px] font-semibold">سرو سر میز ۴</span>
+                              </td>
+                              <td class="p-3">
+                                <span class="inline-flex items-center gap-1 bg-stone-100 text-stone-700 px-2.5 py-0.5 rounded-full font-bold text-[11px]">
+                                  <span class="w-1.5 h-1.5 rounded-full bg-stone-500"></span> تکمیل شده
+                                </span>
+                              </td>
+                              <td class="p-3 text-caffe-muted">۱۰:۰۸</td>
+                              <td class="p-3 pl-4 text-center">
+                                <button class="text-xs text-caffe-muted hover:text-caffe-espresso font-medium underline">
+                                  مشاهده فاکتور
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+
+                      <!-- Pagination -->
+                      <div class="p-3 bg-caffe-surfaceDim/30 border-t border-caffe-border/60 flex items-center justify-between text-xs text-caffe-muted">
+                        <span>نمایش ۱ تا ۳ از مجموع ۴۲ سفارش امروز</span>
+                        <div class="flex items-center gap-1">
+                          <button class="p-1 rounded border border-caffe-border bg-white hover:bg-caffe-surfaceDim disabled:opacity-40" disabled><span class="material-symbols-outlined text-sm">chevron_right</span></button>
+                          <span class="px-2 py-0.5 font-bold text-caffe-espresso bg-white border border-caffe-gold rounded">۱</span>
+                          <span class="px-2 py-0.5 hover:bg-white rounded cursor-pointer">۲</span>
+                          <span class="px-2 py-0.5 hover:bg-white rounded cursor-pointer">۳</span>
+                          <button class="p-1 rounded border border-caffe-border bg-white hover:bg-caffe-surfaceDim"><span class="material-symbols-outlined text-sm">chevron_left</span></button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- STATE 2: LOADING SKELETON (Controlled Dynamically) -->
+                  <div id="view-loading" class="hidden space-y-6 animate-pulse">
+                    <div class="grid grid-cols-4 gap-4">
+                      <div class="h-24 bg-stone-200/80 rounded-2xl"></div>
+                      <div class="h-24 bg-stone-200/80 rounded-2xl"></div>
+                      <div class="h-24 bg-stone-200/80 rounded-2xl"></div>
+                      <div class="h-24 bg-stone-200/80 rounded-2xl"></div>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-caffe-border/70 p-6 space-y-4">
+                      <div class="h-6 w-1/4 bg-stone-200 rounded"></div>
+                      <div class="h-10 bg-stone-100 rounded"></div>
+                      <div class="space-y-2">
+                        <div class="h-12 bg-stone-100 rounded"></div>
+                        <div class="h-12 bg-stone-100 rounded"></div>
+                        <div class="h-12 bg-stone-100 rounded"></div>
+                        <div class="h-12 bg-stone-100 rounded"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- STATE 3: FULL-PAGE ERROR WITH RETRY -->
+                  <div id="view-error" class="hidden">
+                    <div class="bg-white rounded-2xl border border-red-200 p-12 text-center max-w-lg mx-auto my-12 shadow-sm">
+                      <div class="w-16 h-16 rounded-full bg-red-50 text-red-600 mx-auto flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl">wifi_off</span>
+                      </div>
+                      <h3 class="text-lg font-bold text-caffe-espresso mb-1">خطا در دریافت لیست سفارشات و وضعیت بار</h3>
+                      <p class="text-xs text-caffe-muted mb-6">ارتباط با سوئیچ سفارشات شعبه مرکزی برقرار نشد. لطفاً اتصال شبکه را بررسی نموده و دوباره امتحان فرمایید.</p>
+                      <div class="flex items-center justify-center gap-3">
+                        <button onclick="toggleGlobalState('default')" class="px-5 py-2.5 rounded-xl bg-caffe-espresso text-caffe-gold text-xs font-bold hover:bg-caffe-wood transition flex items-center gap-2">
+                          <span class="material-symbols-outlined text-sm">refresh</span> تلاش دوباره (Retry)
+                        </button>
+                        <button class="px-4 py-2.5 rounded-xl border border-caffe-border text-xs text-caffe-espresso hover:bg-caffe-surfaceDim transition">
+                          گزارش به پشتیبانی فنی
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- STATE 4: 403 FORBIDDEN STATE -->
+                  <div id="view-forbidden" class="hidden">
+                    <div class="bg-white rounded-2xl border border-amber-200 p-12 text-center max-w-lg mx-auto my-12 shadow-sm">
+                      <div class="w-16 h-16 rounded-full bg-amber-50 text-amber-700 mx-auto flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl">lock_person</span>
+                      </div>
+                      <span class="text-xs font-mono font-bold bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full">Error 403 • Forbidden</span>
+                      <h3 class="text-lg font-bold text-caffe-espresso mt-3 mb-1">دسترسی به بخش مدیریت و امور مالی محدود است</h3>
+                      <p class="text-xs text-caffe-muted mb-6">نقش کاربری فعلی شما «باریستای شیفت» می‌باشد و دسترسی به درگاه‌های پرداخت و گزارشات محرمانه فقط برای مدیر ارشد مقدور است.</p>
+                      <button onclick="toggleGlobalState('default')" class="px-5 py-2.5 rounded-xl bg-caffe-espresso text-caffe-cream text-xs font-bold hover:bg-caffe-wood transition">
+                        بازگشت به داشبورد مجاز
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- STATE 5: NO-DATA EMPTY STATE -->
+                  <div id="view-empty" class="hidden">
+                    <div class="bg-white rounded-2xl border border-caffe-border p-12 text-center max-w-lg mx-auto my-12 shadow-sm">
+                      <div class="w-16 h-16 rounded-full bg-caffe-surfaceDim text-caffe-muted mx-auto flex items-center justify-center mb-4">
+                        <span class="material-symbols-outlined text-3xl">inbox</span>
+                      </div>
+                      <h3 class="text-lg font-bold text-caffe-espresso mb-1">هیچ سفارشی در این وضعیت یافت نشد</h3>
+                      <p class="text-xs text-caffe-muted mb-6">در بازه زمانی انتخابی یا فیلترهای اعمال‌شده، موردی برای نمایش وجود ندارد.</p>
+                      <button onclick="toggleGlobalState('default')" class="px-4 py-2 rounded-xl bg-caffe-gold text-caffe-espresso text-xs font-bold hover:bg-caffe-amber transition">
+                        پاک‌کردن فیلترها و مشاهده همه
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+              <!-- Desktop Bottom Status Toast Container (Simulated Floating Snackbar) -->
+              <div id="desktop-snackbar" class="hidden absolute bottom-6 right-6 z-40 bg-caffe-espresso text-white px-4 py-3 rounded-xl shadow-2xl border border-caffe-gold/40 flex items-center gap-3 transition-all animate-bounce">
+                <span class="material-symbols-outlined text-caffe-gold text-xl">info</span>
+                <span id="snackbar-text" class="text-xs font-medium">سفارش جدید AC-0008933 ثبت گردید.</span>
+                <button onclick="hideSnackbar()" class="text-white/60 hover:text-white mr-2"><span class="material-symbols-outlined text-sm">close</span></button>
+              </div>
+
+            </main>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ========================================================================= -->
+      <!-- 2. MOBILE FRAME: 390 x 844 Simulated iPhone Viewport (Spans 4 Cols) -->
+      <!-- ========================================================================= -->
+      <section class="xl:col-span-4 flex flex-col">
+        <!-- Frame Label Header -->
+        <div class="flex items-center justify-between mb-3 px-2">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-500 ring-4 ring-amber-100"></span>
+            <span class="text-sm font-bold text-caffe-espresso">فریم موبایل مدیریت (Mobile 390×844px)</span>
+          </div>
+          <span class="text-xs bg-caffe-surfaceDim text-caffe-muted px-2 py-0.5 rounded border border-caffe-border/80">Temporary Drawer + Card List</span>
+        </div>
+
+        <!-- Phone Shell Container -->
+        <div class="mx-auto w-[390px] h-[844px] bg-[#1a1714] rounded-[52px] p-3.5 shadow-2xl ring-1 ring-black/20 relative flex flex-col select-none overflow-hidden">
+
+          <!-- Phone Screen Inner Bezels -->
+          <div class="w-full h-full bg-caffe-cream rounded-[42px] overflow-hidden flex flex-col relative border border-[#3e342a]">
+
+            <!-- iPhone Dynamic Island & Status Bar -->
+            <div class="pt-3 px-6 pb-2 flex items-center justify-between text-xs text-caffe-espresso bg-white border-b border-caffe-border/50 shrink-0 z-20">
+              <span class="font-en font-bold text-[12px]">10:30</span>
+              <!-- Dynamic Island Pill -->
+              <div class="w-24 h-5 bg-black rounded-full flex items-center justify-end px-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1b6a3b]"></span>
+              </div>
+              <div class="flex items-center gap-1.5 text-xs">
+                <span class="material-symbols-outlined text-sm">signal_cellular_alt</span>
+                <span class="material-symbols-outlined text-sm">wifi</span>
+                <span class="material-symbols-outlined text-sm">battery_full</span>
+              </div>
+            </div>
+
+            <!-- Mobile Top App Bar -->
+            <header class="h-14 bg-white border-b border-caffe-border/80 px-4 flex items-center justify-between gap-2 shrink-0 z-10 shadow-xs">
+              <div class="flex items-center gap-2">
+                <!-- Hamburger Trigger for Temporary Right Drawer -->
+                <button onclick="toggleMobileDrawer(true)" class="w-9 h-9 rounded-xl hover:bg-caffe-surfaceDim flex items-center justify-center text-caffe-espresso active:scale-95 transition">
+                  <span class="material-symbols-outlined text-2xl">menu</span>
+                </button>
+                <div>
+                  <h3 class="font-bold text-xs text-caffe-espresso">داشبورد سفارشات</h3>
+                  <p class="text-[10px] text-caffe-gold font-medium">کافه آرمانی • ولیعصر</p>
+                </div>
+              </div>
+
+              <!-- Right Mobile Tools -->
+              <div class="flex items-center gap-2">
+                <button class="w-8 h-8 rounded-lg hover:bg-caffe-surfaceDim flex items-center justify-center text-caffe-espresso relative">
+                  <span class="material-symbols-outlined text-lg">search</span>
+                </button>
+                <button onclick="triggerSnackbar('اعلان: ۱ سفارش جدید منتظر تایید بار است')" class="w-8 h-8 rounded-lg hover:bg-caffe-surfaceDim flex items-center justify-center text-caffe-espresso relative">
+                  <span class="material-symbols-outlined text-lg">notifications</span>
+                  <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-caffe-danger"></span>
+                </button>
+                <div class="w-7 h-7 rounded-full bg-caffe-espresso text-caffe-gold font-bold text-[10px] flex items-center justify-center">
+                  SA
+                </div>
+              </div>
+            </header>
+
+            <!-- Mobile Search & Filter Strip -->
+            <div class="bg-caffe-surfaceDim/50 p-3 border-b border-caffe-border/60 flex items-center justify-between gap-2">
+              <div class="text-xs font-bold text-caffe-espresso flex items-center gap-1.5">
+                <span>سفارشات زنده</span>
+                <span class="bg-caffe-espresso text-caffe-gold px-1.5 py-0.2 rounded text-[10px]">۷ مورد</span>
+              </div>
+              <div class="flex items-center gap-1 text-[11px]">
+                <button class="bg-white border border-caffe-border px-2 py-1 rounded-lg font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">swap_vert</span> مرتب‌سازی
+                </button>
+                <button class="bg-white border border-caffe-border px-2 py-1 rounded-lg font-medium flex items-center gap-1">
+                  <span class="material-symbols-outlined text-xs">tune</span> فیلتر
+                </button>
+              </div>
+            </div>
+
+            <!-- Mobile Scrollable Content: Dense Table Converted to Sortable Card List -->
+            <div class="flex-1 overflow-y-auto p-3 space-y-3 pb-24">
+
+              <!-- Mobile Order Card 1 (Active) -->
+              <div class="bg-white rounded-2xl p-3.5 border border-caffe-border/90 shadow-sm space-y-2.5">
+                <div class="flex items-center justify-between border-b border-caffe-border/50 pb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="font-en font-black text-xs text-caffe-espresso">AC-0008932</span>
+                    <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">پرداخت موفق</span>
+                  </div>
+                  <span class="text-[10px] text-caffe-muted">۳ دقیقه پیش</span>
+                </div>
+
+                <div class="flex items-start justify-between gap-2 text-xs">
+                  <div>
+                    <h5 class="font-bold text-caffe-espresso">سهراب اخوان</h5>
+                    <p class="text-[11px] text-caffe-muted mt-0.5">۱× آمریکانو (وانیل + دبل شات)، ۱× چیزکیک سن‌سباستین</p>
+                  </div>
+                  <div class="text-left shrink-0">
+                    <span class="font-black text-caffe-espresso text-xs block">۵۱۰٬۰۰۰</span>
+                    <span class="text-[9px] text-caffe-muted">تومان</span>
+                  </div>
+                </div>
+
+                <div class="bg-caffe-surfaceDim/60 p-2 rounded-xl flex items-center justify-between text-[11px]">
+                  <span class="text-amber-900 font-medium flex items-center gap-1">
+                    <span class="material-symbols-outlined text-xs">storefront</span> تحویل حضوری بار
+                  </span>
+                  <span class="font-en text-caffe-muted">۰۹۱۲۳۴۵۶۷۸۹</span>
+                </div>
+
+                <!-- Primary Action for Barista -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <button class="py-2 bg-caffe-espresso hover:bg-caffe-dark text-caffe-gold rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-sm">done_all</span> آماده تحویل
+                  </button>
+                  <button class="py-2 bg-white border border-caffe-border rounded-xl font-medium text-xs text-caffe-espresso hover:bg-caffe-surfaceDim flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-sm">print</span> چاپ فیش
+                  </button>
+                </div>
+              </div>
+
+              <!-- Mobile Order Card 2 -->
+              <div class="bg-white rounded-2xl p-3.5 border border-caffe-border/90 shadow-sm space-y-2.5">
+                <div class="flex items-center justify-between border-b border-caffe-border/50 pb-2">
+                  <div class="flex items-center gap-2">
+                    <span class="font-en font-black text-xs text-caffe-espresso">AC-0008931</span>
+                    <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-bold">عصاره‌گیری</span>
+                  </div>
+                  <span class="text-[10px] text-caffe-muted">۹ دقیقه پیش</span>
+                </div>
+
+                <div class="flex items-start justify-between gap-2 text-xs">
+                  <div>
+                    <h5 class="font-bold text-caffe-espresso">نیلوفر راد</h5>
+                    <p class="text-[11px] text-caffe-muted mt-0.5">۲× آیس کارامل ماکیاتو، ۱× تارت میوه</p>
+                  </div>
+                  <div class="text-left shrink-0">
+                    <span class="font-black text-caffe-espresso text-xs block">۴۴۰٬۰۰۰</span>
+                    <span class="text-[9px] text-caffe-muted">تومان</span>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <button class="py-2 bg-emerald-700 text-white rounded-xl font-bold text-xs transition flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-sm">check</span> تحویل شد
+                  </button>
+                  <button class="py-2 bg-white border border-caffe-border rounded-xl font-medium text-xs text-caffe-espresso flex items-center justify-center gap-1">
+                    جزئیات فاکتور
+                  </button>
+                </div>
+              </div>
+
+              <!-- Mobile Quick Low-stock Banner -->
+              <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-amber-700 text-lg">warning</span>
+                  <div class="text-[11px] text-amber-950 font-bold">کسری موجودی: قهوه اتیوپی</div>
+                </div>
+                <button class="text-[10px] bg-amber-200 text-amber-900 font-bold px-2 py-1 rounded-lg">ثبت ورود انبار</button>
+              </div>
+
+            </div>
+
+            <!-- Mobile Sticky Bottom Primary Action (Above Safe Area) -->
+            <div class="absolute bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-caffe-border p-3 flex items-center justify-between gap-3 z-10">
+              <div class="text-xs">
+                <span class="text-caffe-muted text-[10px] block">فروش شیفت امروز</span>
+                <span class="font-black text-caffe-espresso text-sm">۸٬۴۵۰٬۰۰۰ <span class="text-[10px] font-normal">تومان</span></span>
+              </div>
+              <button class="flex-1 py-2.5 bg-caffe-espresso hover:bg-caffe-wood text-caffe-gold rounded-xl font-bold text-xs shadow-md transition flex items-center justify-center gap-1.5 active:scale-98">
+                <span class="material-symbols-outlined text-base">add_circle</span>
+                سفارش بار جدید (POS)
+              </button>
+            </div>
+
+            <!-- ========================================================= -->
+            <!-- 2.1 TEMPORARY MOBILE RIGHT DRAWER (Overlay) -->
+            <!-- ========================================================= -->
+            <div id="mobile-drawer-overlay" class="hidden absolute inset-0 bg-black/60 backdrop-blur-xs z-30 transition-opacity">
+              <!-- Backdrop click -->
+              <div onclick="toggleMobileDrawer(false)" class="absolute inset-0"></div>
+
+              <!-- Right Drawer Slide -->
+              <div class="absolute top-0 right-0 bottom-0 w-[290px] bg-caffe-espresso text-white flex flex-col justify-between p-4 shadow-2xl z-40">
+                <!-- Mobile Drawer Header -->
+                <div>
+                  <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-8 h-8 rounded-lg bg-caffe-gold text-caffe-espresso font-bold flex items-center justify-center text-sm">
+                        آ
+                      </div>
+                      <div>
+                        <h4 class="font-bold text-xs text-caffe-cream">کافه آرمانی</h4>
+                        <p class="text-[10px] text-caffe-gold">شعبه ولیعصر</p>
+                      </div>
+                    </div>
+                    <button onclick="toggleMobileDrawer(false)" class="text-white/60 hover:text-white p-1">
+                      <span class="material-symbols-outlined text-lg">close</span>
+                    </button>
+                  </div>
+
+                  <!-- Mobile Nav Items -->
+                  <div class="space-y-1 text-xs">
+                    <a href="javascript:void(0)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl bg-caffe-gold text-caffe-espresso font-bold">
+                      <span class="material-symbols-outlined text-base fill-1">dashboard</span> داشبورد
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="flex items-center gap-2.5"><span class="material-symbols-outlined text-base">receipt_long</span> سفارش‌ها</span>
+                      <span class="text-[10px] bg-emerald-500/20 text-emerald-300 px-1.5 rounded">۷</span>
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="material-symbols-outlined text-base">local_cafe</span> محصولات
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="material-symbols-outlined text-base">category</span> دسته‌بندی‌ها
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center justify-between px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="flex items-center gap-2.5"><span class="material-symbols-outlined text-base">inventory_2</span> موجودی انبار</span>
+                      <span class="text-[10px] bg-amber-500/20 text-amber-300 px-1.5 rounded">۲</span>
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="material-symbols-outlined text-base">photo_library</span> رسانه‌ها
+                    </a>
+                    <a href="javascript:void(0)" class="flex items-center gap-2.5 px-3 py-2 rounded-xl text-white/80 hover:bg-white/5">
+                      <span class="material-symbols-outlined text-base">group</span> مشتریان
+                    </a>
+                    <!-- Settings Subtree -->
+                    <div class="pt-2 border-t border-white/10 mt-2">
+                      <p class="text-[10px] text-white/40 px-3 mb-1">تنظیمات پایه</p>
+                      <a href="javascript:void(0)" class="block px-3 py-1.5 text-[11px] text-white/70 hover:text-caffe-gold">درگاه پرداخت</a>
+                      <a href="javascript:void(0)" class="block px-3 py-1.5 text-[11px] text-white/70 hover:text-caffe-gold">تماس و شبکه‌ها</a>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mobile Drawer Bottom User -->
+                <div class="border-t border-white/10 pt-3 flex items-center justify-between">
+                  <div class="flex items-center gap-2 truncate">
+                    <div class="w-8 h-8 rounded-full bg-caffe-gold text-caffe-espresso font-bold flex items-center justify-center text-xs shrink-0">
+                      SA
+                    </div>
+                    <div class="truncate text-[11px]">
+                      <p class="font-bold text-white truncate">سهراب اخوان</p>
+                      <p class="text-caffe-gold text-[10px]">مدیر سیستم</p>
+                    </div>
+                  </div>
+                  <button onclick="showLogoutDialog()" class="text-white/50 hover:text-red-400 p-1.5">
+                    <span class="material-symbols-outlined text-lg">logout</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Home Indicator -->
+          <div class="w-32 h-1 bg-white/40 rounded-full mx-auto mt-2"></div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- 3. GLOBAL BEHAVIORS & CONFIRMATION DIALOG MODAL (Accessible) -->
+    <!-- ========================================================================= -->
+    <div id="logout-confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
+      <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-caffe-border space-y-4 animate-scale-up">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-full bg-red-100 text-caffe-danger flex items-center justify-center shrink-0">
+            <span class="material-symbols-outlined text-xl">logout</span>
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-caffe-espresso">تایید خروج از پنل مدیریت</h4>
+            <p class="text-xs text-caffe-muted mt-0.5">آیا از خروج از حساب کاربری کافه آرمانی اطمینان دارید؟</p>
+          </div>
+        </div>
+
+        <div class="bg-caffe-surfaceDim/60 p-3 rounded-xl text-xs text-caffe-muted">
+          شیفت کاری فعلی و آخرین سفارشات در صندوق مرکزی ثبت شده باقی خواهند ماند.
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-1">
+          <button onclick="hideLogoutDialog()" class="px-4 py-2 rounded-xl border border-caffe-border text-xs font-semibold hover:bg-caffe-surfaceDim text-caffe-espresso transition">
+            انصراف
+          </button>
+          <button onclick="confirmLogoutAction()" class="px-4 py-2 rounded-xl bg-caffe-danger text-white text-xs font-bold hover:bg-red-700 transition">
+            خروج از حساب
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Documentation & Engineering Footnote -->
+    <footer class="bg-white rounded-2xl p-5 border border-caffe-border/70 text-xs text-caffe-muted flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-caffe-gold"></span>
+        <span>معماری رابط کاربری منطبق با استانداردهای ریسپانسیو و توکن‌های پالت قهوه، کرم طبیعی و مسوار کافه آرمانی</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>فونت رسمی: Vazirmatn RTL</span>
+        <span>•</span>
+        <span>ابعاد استاندارد: Desktop 1440×1024 | Mobile 390×844</span>
+        <span>•</span>
+        <span>سامانه مدیریت شعبه ولیعصر تهران</span>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Interactive State Controller Script -->
+  <script>
+    function toggleGlobalState(state) {
+      const views = ['default', 'loading', 'error', 'forbidden', 'empty'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        const btn = document.getElementById('btn-state-' + v);
+        if (el) el.classList.add('hidden');
+        if (btn) {
+          btn.classList.remove('bg-caffe-espresso', 'text-caffe-gold');
+          btn.classList.add('bg-white', 'text-caffe-espresso');
+        }
+      });
+
+      const activeView = document.getElementById('view-' + state);
+      const activeBtn = document.getElementById('btn-state-' + state);
+      if (activeView) activeView.classList.remove('hidden');
+      if (activeBtn) {
+        activeBtn.classList.remove('bg-white', 'text-caffe-espresso');
+        activeBtn.classList.add('bg-caffe-espresso', 'text-caffe-gold');
+      }
+    }
+
+    function toggleMobileDrawer(show) {
+      const drawer = document.getElementById('mobile-drawer-overlay');
+      if (show) {
+        drawer.classList.remove('hidden');
+      } else {
+        drawer.classList.add('hidden');
+      }
+    }
+
+    function triggerSnackbar(text) {
+      const sb = document.getElementById('desktop-snackbar');
+      const sbText = document.getElementById('snackbar-text');
+      if (sb && sbText) {
+        sbText.innerText = text;
+        sb.classList.remove('hidden');
+        setTimeout(() => {
+          sb.classList.add('hidden');
+        }, 4500);
+      }
+    }
+
+    function hideSnackbar() {
+      const sb = document.getElementById('desktop-snackbar');
+      if (sb) sb.classList.add('hidden');
+    }
+
+    function showLogoutDialog() {
+      document.getElementById('logout-confirm-modal').classList.remove('hidden');
+    }
+
+    function hideLogoutDialog() {
+      document.getElementById('logout-confirm-modal').classList.add('hidden');
+    }
+
+    function confirmLogoutAction() {
+      hideLogoutDialog();
+      triggerSnackbar('با موفقیت از سامانه مدیریت خارج شدید.');
+    }
+  </script>
+</body>
+</html>

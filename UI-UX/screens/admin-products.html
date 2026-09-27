@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+
+<html dir="rtl" lang="fa"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>مدیریت محصولات و بار قهوه | کافه آرمانی</title>
+<!-- Google Fonts: Vazirmatn -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config verbatim from Brand Anchor -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed": "#2a170c",
+            "surface-variant": "#e7e2da",
+            "on-secondary-fixed-variant": "#5b4133",
+            "on-primary-fixed-variant": "#4a4642",
+            "surface-bright": "#fef9f1",
+            "on-tertiary-container": "#ab794f",
+            "tertiary-container": "#2e1500",
+            "surface-tint": "#625d59",
+            "background": "#fef9f1",
+            "primary-fixed-dim": "#ccc5c0",
+            "inverse-on-surface": "#f5f0e8",
+            "secondary-container": "#fed8c5",
+            "on-error": "#ffffff",
+            "on-primary-fixed": "#1e1b18",
+            "on-surface": "#1d1c17",
+            "on-primary": "#ffffff",
+            "on-surface-variant": "#4c4640",
+            "tertiary": "#000000",
+            "on-background": "#1d1c17",
+            "surface-container-low": "#f8f3eb",
+            "on-secondary": "#ffffff",
+            "surface": "#fef9f1",
+            "tertiary-fixed": "#ffdcc2",
+            "secondary": "#75584a",
+            "inverse-surface": "#32302b",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-high": "#ece8e0",
+            "error": "#ba1a1a",
+            "outline-variant": "#cfc5bd",
+            "primary-fixed": "#e9e1dc",
+            "primary": "#000000",
+            "secondary-fixed-dim": "#e4bfad",
+            "error-container": "#ffdad6",
+            "primary-container": "#1e1b18",
+            "on-primary-container": "#89837e",
+            "on-tertiary-fixed-variant": "#653d19",
+            "on-secondary-container": "#795c4e",
+            "on-tertiary-fixed": "#2e1500",
+            "surface-dim": "#ded9d2",
+            "on-tertiary": "#ffffff",
+            "surface-container": "#f2ede5",
+            "outline": "#7d766f",
+            "secondary-fixed": "#ffdbca",
+            "tertiary-fixed-dim": "#f5bb8b",
+            "inverse-primary": "#ccc5c0",
+            "on-error-container": "#93000a",
+            "surface-container-highest": "#e7e2da"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-xs": "0.25rem",
+            "space-xl": "2rem",
+            "margin": "1.25rem",
+            "space-sm": "0.5rem",
+            "space-lg": "1.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "headline-xl": ["Vazirmatn"],
+            "body-sm": ["Vazirmatn"],
+            "headline-xl-mobile": ["Vazirmatn"],
+            "body-lg": ["Vazirmatn"],
+            "label-lg": ["Vazirmatn"],
+            "headline-lg": ["Vazirmatn"],
+            "headline-md": ["Vazirmatn"],
+            "label-md": ["Vazirmatn"],
+            "body-md": ["Vazirmatn"],
+            "label-sm": ["Vazirmatn"]
+          },
+          "fontSize": {
+            "headline-xl": ["36px", { "lineHeight": "52px", "fontWeight": "800" }],
+            "body-sm": ["12px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-xl-mobile": ["28px", { "lineHeight": "42px", "fontWeight": "800" }],
+            "body-lg": ["16px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "label-lg": ["14px", { "lineHeight": "22px", "fontWeight": "600" }],
+            "headline-lg": ["26px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "32px", "fontWeight": "700" }],
+            "label-md": ["12px", { "lineHeight": "18px", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "label-sm": ["11px", { "lineHeight": "16px", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      font-feature-settings: "ss01" 1;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .material-symbols-outlined.fill-icon {
+      font-variation-settings: 'FILL' 1;
+    }
+    /* Ambient tactile shadow & paper feel */
+    .tactile-card {
+      box-shadow: 0 2px 10px rgba(58, 36, 24, 0.04);
+    }
+    .tactile-dropdown {
+      box-shadow: 0 12px 32px rgba(23, 20, 17, 0.12);
+    }
+    /* Hide scrollbar for tabs */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased min-h-screen selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- ==================== TOP NAVIGATION BAR (Anchored Component) ==================== -->
+<header class="bg-surface border-b border-outline-variant shadow-sm sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-6 py-3 max-w-7xl mx-auto">
+<!-- Brand & Search cluster (Right side in Persian RTL) -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary text-on-primary flex items-center justify-center font-bold text-lg shadow-sm">
+<span class="material-symbols-outlined">coffee</span>
+</div>
+<div>
+<h1 class="text-headline-md font-headline-md text-on-surface tracking-tight">کافه آرمانی</h1>
+<p class="text-label-sm font-label-sm text-outline">شعبه مرکزی ولی‌عصر • سیستم جامع باریستا</p>
+</div>
+</div>
+<!-- Global Quick Search Bar -->
+<div class="hidden lg:flex items-center relative w-72">
+<span class="material-symbols-outlined absolute right-3 text-outline text-lg pointer-events-none">search</span>
+<input class="w-full pr-10 pl-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-xl text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:border-tertiary-fixed focus:outline-none transition-colors" placeholder="جستجو در سفارشات و منو..." type="text"/>
+</div>
+</div>
+<!-- Navigation Links (Middle) -->
+<nav class="hidden md:flex items-center gap-7">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#">میز کار و سفارشات</a>
+<!-- Active link: منوی تخصصی / محصولات -->
+<a class="text-on-surface font-bold border-b-2 border-primary pb-1 text-label-lg font-label-lg flex items-center gap-1.5" href="#">
+<span>منوی تخصصی</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary-fixed-dim"></span>
+</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#">مشتریان و وفاداری</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#">انبار و رستری</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-lg font-label-lg" href="#">گزارشات مالی</a>
+</nav>
+<!-- Trailing Action Icons & Primary CTA (Left side in Persian RTL) -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1">
+<button class="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95" title="جستجو">
+<span class="material-symbols-outlined">search</span>
+</button>
+<button class="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 relative" title="میزهای فعال">
+<span class="material-symbols-outlined">storefront</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-secondary"></span>
+</button>
+<button class="p-2 rounded-xl text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 relative" title="اعلانات سیستم">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full ring-2 ring-surface"></span>
+</button>
+</div>
+<div class="h-6 w-px bg-outline-variant mx-1 hidden sm:block"></div>
+<button class="hidden sm:inline-flex items-center gap-2 bg-primary text-on-primary px-4 py-2 rounded-xl text-label-md font-label-md hover:bg-inverse-surface active:scale-95 transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>سفارش جدید</span>
+</button>
+</div>
+</div>
+</header>
+<!-- ==================== MAIN CONTENT WRAPPER ==================== -->
+<main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6">
+<!-- View Mode Switcher / Showcase Header -->
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-surface-container-low p-4 rounded-xl border border-outline-variant">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">inventory_2</span>
+<span class="text-label-sm font-label-sm text-outline">مدیریت پلتفرم باریستا و بار گرم/سرد</span>
+</div>
+<h2 class="text-headline-md font-headline-md text-on-surface mt-1">مدیریت محصولات، طعم‌یادها و منوی تخصصی</h2>
+</div>
+<!-- Live Dual View Selector & Stats pill -->
+<div class="flex items-center gap-3 w-full sm:w-auto">
+<div class="inline-flex p-1 bg-surface-container-highest rounded-xl border border-outline-variant text-label-sm font-label-sm">
+<button class="px-3 py-1.5 rounded-lg bg-surface-container-lowest text-on-surface shadow-xs font-semibold flex items-center gap-1.5" onclick="document.getElementById('mobile-preview-section').classList.remove('hidden'); document.getElementById('mobile-preview-section').scrollIntoView({behavior: 'smooth'})">
+<span class="material-symbols-outlined text-base">devices</span>
+<span>مشاهده همزمان دسکتاپ و موبایل</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2.5 rounded-xl text-label-md font-label-md flex items-center gap-2 shadow-sm hover:opacity-95 active:scale-98 transition-transform">
+<span class="material-symbols-outlined text-lg">add_circle</span>
+<span>+ محصول جدید</span>
+</button>
+</div>
+</div>
+<!-- ==================== 1. SUMMARY STAT CARDS (Bento Metric Layout) ==================== -->
+<section class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
+<!-- Metric 1: All Products -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant tactile-card relative overflow-hidden group hover:border-outline transition-colors">
+<div class="flex items-center justify-between text-outline mb-2">
+<span class="text-label-sm font-label-sm">کل منو و اقلام</span>
+<span class="material-symbols-outlined text-base text-secondary">inventory</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="text-headline-lg font-headline-lg text-on-surface font-black">۳۸</span>
+<span class="text-label-sm font-label-sm text-outline">قلم محصول</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-on-surface-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+<span>شامل قهوه، نوشیدنی و قنادی</span>
+</div>
+</div>
+<!-- Metric 2: Published -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant tactile-card relative overflow-hidden group hover:border-outline transition-colors">
+<div class="flex items-center justify-between text-outline mb-2">
+<span class="text-label-sm font-label-sm">منتشرشده (فعال)</span>
+<span class="material-symbols-outlined text-base text-emerald-700">check_circle</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="text-headline-lg font-headline-lg text-on-surface font-black">۳۱</span>
+<span class="text-label-sm font-label-sm text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded-md">۸۱.۵٪ فعال</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-outline">
+<span>قابل سفارش حضوری و آنلاین</span>
+</div>
+</div>
+<!-- Metric 3: Draft -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant tactile-card relative overflow-hidden group hover:border-outline transition-colors">
+<div class="flex items-center justify-between text-outline mb-2">
+<span class="text-label-sm font-label-sm">پیش‌نویس و آزمایشگاهی</span>
+<span class="material-symbols-outlined text-base text-secondary">science</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="text-headline-lg font-headline-lg text-on-surface font-black">۳</span>
+<span class="text-label-sm font-label-sm text-outline">در حال کاپینگ</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-on-secondary-container">
+<span class="w-2 h-2 rounded-full bg-secondary-container"></span>
+<span>تنظیم نسبت عصاره‌گیری</span>
+</div>
+</div>
+<!-- Metric 4: Out of Stock -->
+<div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant tactile-card relative overflow-hidden group hover:border-outline transition-colors">
+<div class="flex items-center justify-between text-outline mb-2">
+<span class="text-label-sm font-label-sm">کسری و ناموجود</span>
+<span class="material-symbols-outlined text-base text-error">warning</span>
+</div>
+<div class="flex items-baseline gap-1.5">
+<span class="text-headline-lg font-headline-lg text-error font-black">۴</span>
+<span class="text-label-sm font-label-sm text-error bg-error-container/40 px-1.5 py-0.5 rounded-md">نیاز به شارژ</span>
+</div>
+<div class="mt-2 flex items-center gap-1 text-label-sm text-outline">
+<span>اتمام بسته دانه اتیوپی یرگاچف</span>
+</div>
+</div>
+<!-- Metric 5: 30-Day Sales (Wide / Highlight) -->
+<div class="col-span-2 md:col-span-1 bg-surface-container-high p-4 rounded-xl border border-outline-variant tactile-card flex flex-col justify-between">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-sm font-label-sm">فروش ۳۰ روز اخیر</span>
+<span class="material-symbols-outlined text-base text-secondary">payments</span>
+</div>
+<div class="my-1">
+<div class="text-headline-md font-headline-md text-on-surface font-black tracking-tight">۲۴۸,۵۰۰,۰۰۰</div>
+<span class="text-label-sm font-label-sm text-outline">تومان گردش ناخالص</span>
+</div>
+<div class="text-label-sm font-label-sm text-emerald-800 flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span>۱۴.۲٪ رشد نسبت به آبان</span>
+</div>
+</div>
+</section>
+<!-- ==================== 2. FILTER & TOOLBAR SYSTEM ==================== -->
+<section class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant space-y-3 tactile-card">
+<!-- Top Row: Search & Key Filters -->
+<div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
+<!-- Search Input with Keyboard Shortcut -->
+<div class="relative flex-1 min-w-[260px]">
+<span class="material-symbols-outlined absolute right-3.5 top-1/2 -translate-y-1/2 text-outline text-lg pointer-events-none">search</span>
+<input class="w-full pr-11 pl-16 py-2.5 bg-surface-container-lowest border border-outline-variant rounded-xl text-body-md font-body-md text-on-surface placeholder:text-outline focus:border-secondary focus:ring-1 focus:ring-secondary focus:outline-none transition-all" placeholder="جستجوی نام نوشیدنی، شناسه SKU یا طعم‌یاد دانه..." type="text" value="اسپرسو"/>
+<kbd class="absolute left-3 top-1/2 -translate-y-1/2 px-2 py-0.5 bg-surface-container text-outline text-label-sm font-label-sm rounded border border-outline-variant">⌘K</kbd>
+</div>
+<!-- Filter Selects -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Category Quick Dropdown -->
+<div class="relative">
+<select class="appearance-none pr-3 pl-8 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors cursor-pointer focus:outline-none focus:border-secondary">
+<option>همه دسته‌ها (۵ دسته فعال)</option>
+<option>اسپرسوبار و مشتقات</option>
+<option>بار سرد و دم‌آوری سرد</option>
+<option>کیک و بیکری دست‌ساز</option>
+<option>دانه‌های تخصصی سینگل اوریجین</option>
+<option>چای اصیل و دمنوش ارگانیک</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm pointer-events-none">expand_more</span>
+</div>
+<!-- Publication Status Filter -->
+<div class="relative">
+<select class="appearance-none pr-3 pl-8 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors cursor-pointer focus:outline-none">
+<option>وضعیت انتشار: همه</option>
+<option selected="">منتشرشده (۳۱)</option>
+<option>پیش‌نویس (۳)</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm pointer-events-none">expand_more</span>
+</div>
+<!-- Stock Level Filter -->
+<div class="relative">
+<select class="appearance-none pr-3 pl-8 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors cursor-pointer focus:outline-none">
+<option>موجودی: همه وضعیت‌ها</option>
+<option>موجود در بار</option>
+<option>کسری دانه / رو به اتمام</option>
+<option>ناموجود</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm pointer-events-none">expand_more</span>
+</div>
+<!-- Auto Inventory Consumption Filter Switch -->
+<button class="inline-flex items-center gap-1.5 px-3 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-secondary text-base">link</span>
+<span>متصل به رسپی دانه انبار</span>
+</button>
+<!-- Sort Order Dropdown -->
+<div class="relative">
+<select class="appearance-none pr-3 pl-8 py-2 bg-surface-container-low border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container transition-colors cursor-pointer focus:outline-none">
+<option>مرتب‌سازی: پرفروش‌ترین ۳۰ روزه</option>
+<option>جدیدترین اقلام</option>
+<option>گران‌ترین به ارزان‌ترین</option>
+<option>ارزان‌ترین به گران‌ترین</option>
+</select>
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline text-sm pointer-events-none">sort</span>
+</div>
+</div>
+</div>
+<!-- Bottom Row: Filter Chips & Active Count Pill -->
+<div class="flex items-center justify-between pt-2 border-t border-outline-variant/60 flex-wrap gap-2 text-label-sm font-label-sm">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="text-outline">فیلترهای فعال:</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container text-on-surface rounded-full border border-outline-variant">
+<span>جستجو: «اسپرسو»</span>
+<button class="hover:text-error transition-colors"><span class="material-symbols-outlined text-xs">close</span></button>
+</span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 bg-surface-container text-on-surface rounded-full border border-outline-variant">
+<span>وضعیت: منتشرشده</span>
+<button class="hover:text-error transition-colors"><span class="material-symbols-outlined text-xs">close</span></button>
+</span>
+<span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed rounded-full text-label-sm font-bold">۲ فیلتر اعمال شده</span>
+<button class="text-secondary hover:underline mr-1 text-label-sm">پاک‌کردن همه فیلترها</button>
+</div>
+<div class="text-outline">
+          نمایش ۱۰ آیتم منتخب از مجموع ۳۸ محصول
+        </div>
+</div>
+</section>
+<!-- ==================== 3. FLOATING BULK ACTIONS BAR (When rows selected) ==================== -->
+<div class="flex items-center justify-between bg-inverse-surface text-inverse-on-surface px-5 py-3 rounded-xl shadow-lg border border-outline/30 animate-in fade-in slide-in-from-top-2 duration-200" id="bulk-bar">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<input checked="" class="w-4 h-4 rounded text-secondary focus:ring-0 cursor-pointer" type="checkbox"/>
+<span class="text-label-md font-label-md font-bold">۳ محصول انتخاب شده</span>
+</div>
+<span class="text-outline-variant text-label-sm hidden sm:inline">| عملیات دسته‌جمعی بر روی محصولات منتخب</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 rounded-lg text-label-sm font-label-sm text-inverse-on-surface transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility</span>
+<span>انتشار همگانی</span>
+</button>
+<button class="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 rounded-lg text-label-sm font-label-sm text-inverse-on-surface transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">visibility_off</span>
+<span>خروج از انتشار</span>
+</button>
+<button class="px-3 py-1.5 bg-surface/10 hover:bg-surface/20 rounded-lg text-label-sm font-label-sm text-inverse-on-surface transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">drive_file_move</span>
+<span>تغییر دسته</span>
+</button>
+<button class="px-3 py-1.5 bg-error/80 hover:bg-error rounded-lg text-label-sm font-label-sm text-on-error transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">delete</span>
+<span>حذف منتخب‌ها</span>
+</button>
+<button class="p-1 hover:bg-surface/20 rounded text-inverse-on-surface" onclick="document.getElementById('bulk-bar').classList.add('hidden')">
+<span class="material-symbols-outlined text-sm">close</span>
+</button>
+</div>
+</div>
+<!-- ==================== 4. DESKTOP DATA-GRID (1440px optimized table) ==================== -->
+<section class="bg-surface-container-lowest rounded-xl border border-outline-variant overflow-hidden tactile-card">
+<div class="overflow-x-auto">
+<table class="w-full text-right border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-label-md font-label-md text-on-surface-variant select-none">
+<th class="p-4 w-12 text-center">
+<input checked="" class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</th>
+<th class="py-4 px-3 font-semibold">محصول و مشخصات طعم‌یادی</th>
+<th class="py-4 px-3 font-semibold">دسته‌بندی</th>
+<th class="py-4 px-3 font-semibold">قیمت فروش</th>
+<th class="py-4 px-3 font-semibold">وضعیت انتشار</th>
+<th class="py-4 px-3 font-semibold">وضعیت انبار و دانه</th>
+<th class="py-4 px-3 font-semibold text-center">فروش ۳۰ روزه</th>
+<th class="py-4 px-3 font-semibold">آخرین بروزرسانی</th>
+<th class="py-4 px-4 font-semibold text-left">عملیات</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/60 text-body-md font-body-md text-on-surface">
+<!-- Row 1: Espresso Double (Selected) -->
+<tr class="hover:bg-surface-container/50 bg-secondary-container/10 transition-colors group">
+<td class="p-4 text-center">
+<input checked="" class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-xl object-cover border border-outline-variant shadow-xs flex-shrink-0" data-alt="An authentic handcrafted ceramic cup filled with rich double shot espresso with thick golden crema resting on a weathered rustic wooden cafe counter in Tehran. Soft natural morning ambient lighting, warm brown and terracotta tones with cozy depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBJfowsYtirmaWl35Po4pqEGMDCTy5MDWZtZe-CSnoAPNndWzmqIXt6vddjQ1WskuniLQN9bUwpNT1Au1SFG-x94ic5UaVlP9PWadB7JKvFT89e69Fq6eG1pIGu-GAd2QgP7R_p0xj4tuiGrEy6GbzWC0QM5LkVsjREGNiXPyrfCpQhT7y-RaSp4H9LtypIiMnyYspxwoygBM-d4ewSZM8JOjg1pU7MNhy-8tRc3RIZ4WhZFDnAGQ"/>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">اسپرسو دوبل تخصصی</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: ESP-01</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">ترکیب ۸۰٪ عربیکا کلمبیا سوپریمو + ۲۰٪ اتیوپی شسته‌شده • نوت شکلات تلخ و آلبالو</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                  اسپرسوبار
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۸۸,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>منتشرشده</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-emerald-800">
+<span class="material-symbols-outlined text-xs">check_circle</span>
+<span>موجود (۱۸ کیلو دانه)</span>
+</span>
+<span class="text-[11px] text-outline">مصرف خودکار: ۱۹ گرم در شات</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-on-surface">۶۴۰</span>
+<span class="text-label-sm text-outline block">فنجان</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۴
+                <span class="block text-[11px] text-on-surface-variant">۱۰:۳۰ ق.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors" title="ویرایش محصول">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors" title="تنظیم رسپی دانه و آسیاب">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors" title="گزینه‌های بیشتر">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Flat White (Selected) -->
+<tr class="hover:bg-surface-container/50 bg-secondary-container/10 transition-colors group">
+<td class="p-4 text-center">
+<input checked="" class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-xl object-cover border border-outline-variant shadow-xs flex-shrink-0" data-alt="Close up photography of flat white coffee with fine silky microfoam latte art in a ceramic artisanal cup resting on warm raw timber cafe table. Soft natural café backlight highlighting velvet milk texture and espresso contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7hsp9_gfa4m7lLVdY5NVnb6Xcta6q8zUqHPJkgjnLtRx7hcl8kCec3cNjjY10qzjT4NgwFQ0QIyhL_WmUHvuXcAOe7vcC4ZzYaRSIjc7ITrj2-V2WBc4b8hwayovQUI6k9jsWWlOT-73Qgvm1ZqvgFtz-GLY8o9j9CFl9hJGc9wSnvD2I0PZGFU8yCRd4z-vTErJrvfPSRcqExXXeAMqMq8sgNu123tIROa6_83cS4tK4BC4dH8E"/>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">فلت وایت تخصصی</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: ESP-08</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">شیر بخارداده با بافت مخملی میکروفوم روی دابل ریسترتو اتیوپی طبیعی</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                  اسپرسوبار
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۱۱۵,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>منتشرشده</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-emerald-800">
+<span class="material-symbols-outlined text-xs">check_circle</span>
+<span>موجود (شیر تازه روز)</span>
+</span>
+<span class="text-[11px] text-outline">مصرف خودکار: شیر + دانه</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-on-surface">۴۸۲</span>
+<span class="text-label-sm text-outline block">فنجان</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۴
+                <span class="block text-[11px] text-on-surface-variant">۰۹:۱۵ ق.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: San Sebastian Cheesecake (Selected) -->
+<tr class="hover:bg-surface-container/50 bg-secondary-container/10 transition-colors group">
+<td class="p-4 text-center">
+<input checked="" class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-xl object-cover border border-outline-variant shadow-xs flex-shrink-0" data-alt="A slice of creamy Basque burnt cheesecake with a perfectly caramelized dark golden-brown top resting on a speckled ceramic dessert plate on a rustic coffee shop table. Warm bakery atmosphere with gentle morning daylight, minimal and sophisticated styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAe6BK80sEmHgMvcnCyri4KZy_yOpEdauixHv-701DfZ7zqzJo2axp8jD8uehuorH6Lj6ztA1As5wYZVJf9NCcwqgjPRry943NSKcC1zbEHAmTENIOWC-J9EEo-Pz5qfNLCqKHKI6U0m58fiB4jyosNO14FjEwT4m9r83xv0xl7WDbyf2q9mJoJpXDT-Uo6B7s6jA3_3IB0O4PPFV2hYMnpzkO3RGHn166Fx3aKxs-KZrS-I_yxXaU"/>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">چیزکیک سن سباستین</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: BCK-04</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">پخت روز با کارامل سوخته طبیعی و پنیر خامه‌ای اعلا فرانسوی</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-secondary-fixed/40 text-on-secondary-fixed-variant border border-secondary-fixed">
+                  کیک و دسر
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۱۴۵,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>منتشرشده</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-amber-800">
+<span class="material-symbols-outlined text-xs">hourglass_top</span>
+<span>رو به اتمام (۳ اسلایس)</span>
+</span>
+<span class="text-[11px] text-outline">سفارش پخت سری جدید فعال</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-on-surface">۲۹۰</span>
+<span class="text-label-sm text-outline block">اسلایس</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۳
+                <span class="block text-[11px] text-on-surface-variant">۱۴:۴۰ ب.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Salted Caramel Iced Latte (Unselected) -->
+<tr class="hover:bg-surface-container/50 transition-colors group">
+<td class="p-4 text-center">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-xl object-cover border border-outline-variant shadow-xs flex-shrink-0" data-alt="Tall crystal glass filled with iced salted caramel latte featuring layered espresso, cold fresh whole milk, rich amber caramel drizzle and fresh cold cubes of ice, garnished with whipped cream. Bright natural cafe daylight on dark wooden background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-pwKadQt-GyWVFguUeHPDQb3gvGNbgjk6auoeXqdewprMTDXIblEiYBfHVC3R489sB4OpAAk2dB7-Y9pZz5GBRkv_pO8wqCL0EHREB1Z1q4VuDx276clzKdnhAgsnvKAiFLdsuJZakjp19APAR2unxZCDmJDTp3MPAImyeR4cU045Wm2EABsmFbLqx3N-HcwGQEXxVv3f0nl32E76Fpg9k0BWyIWVA4PZO1RaR9dpW424sxlpA4k"/>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">آیس لاته کارامل نمکی</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: CLD-02</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">شیر سرد، تکه‌های یخ، سیروپ خانگی کارامل با نمک دریایی خلیج فارس</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                  بار سرد
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۱۲۸,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>منتشرشده</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-emerald-800">
+<span class="material-symbols-outlined text-xs">check_circle</span>
+<span>موجود (سیروپ تازه)</span>
+</span>
+<span class="text-[11px] text-outline">کسر خودکار ۲۵ میل سیروپ</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-on-surface">۳۷۲</span>
+<span class="text-label-sm text-outline block">لیوان</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۲
+                <span class="block text-[11px] text-on-surface-variant">۱۸:۰۵ ب.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 5: Single Origin Geisha Panama (Draft State) -->
+<tr class="hover:bg-surface-container/50 bg-surface-container-low/40 transition-colors group">
+<td class="p-4 text-center">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-outline flex-shrink-0 border border-outline-variant">
+<span class="material-symbols-outlined text-2xl text-secondary">filter_drama</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">گیشا پاناما هسیاندا لا اسمرالدا</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: BEAN-09</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">دم‌آوری V60 قطره‌ای • طعم‌یاد یاس، برگاموت و عسل بهاره • پروفایل برشته‌کاری لایت</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                  دانه‌های تخصصی
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۲۶۰,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-on-surface-variant border border-outline-variant">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+<span>پیش‌نویس (تست رسپی)</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-outline">
+<span class="material-symbols-outlined text-xs">science</span>
+<span>آزمایشگاهی (۵۰۰ گرم)</span>
+</span>
+<span class="text-[11px] text-outline">در انتظار تایید هد باریستا</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-outline">—</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۴
+                <span class="block text-[11px] text-on-surface-variant">۱۱:۰۰ ق.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 6: Cold Brew Ethiopian (Out of Stock / Warning State) -->
+<tr class="hover:bg-surface-container/50 bg-error-container/5 transition-colors group">
+<td class="p-4 text-center">
+<input class="w-4 h-4 rounded border-outline text-primary focus:ring-0 cursor-pointer" type="checkbox"/>
+</td>
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<img class="w-12 h-12 rounded-xl object-cover border border-outline-variant shadow-xs flex-shrink-0 opacity-70" data-alt="Cold brew specialty drip tower with slow dripping iced water through dark ground coffee beans inside an elegant cafe setting. Rich mahogany hues, vintage glass laboratory apparatus, ambient warm light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCan-nkdOKo2PaYRe9WVRF8L22y_3ceWh3KjBEMh69G8xWbbHmjIsAAYVHdcKGGt345bgFhB3fqpMUSZvBabJlOeqTKHHtqSc2sdQYC2XDcIW7Q2WpZsGpEcpkJbUFWiUmadthfCxqBPe60qCWulziVfZWLfGClwim7JZzH8H5E8hk1PSEAqmQc_a1VZ22pJhhowmzPOXerjtl-gUjnRIJQFnJlJd3gcM41-zlM2K_qakWK0B170hU"/>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-on-surface text-label-lg font-label-lg">کلد برو نیترو ۱۶ ساعته</span>
+<span class="px-1.5 py-0.5 rounded text-[10px] font-mono bg-surface-container text-outline">SKU: CLD-09</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline line-clamp-1">عصاره‌گیری سرد قطره‌ای با دانه اتیوپی کوچره • بافت کرمی و کف مخملی</p>
+</div>
+</div>
+</td>
+<td class="py-3 px-3">
+<span class="px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-surface-container text-on-surface-variant border border-outline-variant">
+                  بار سرد
+                </span>
+</td>
+<td class="py-3 px-3 font-bold text-on-surface">
+                ۱۲۰,۰۰۰ <span class="text-label-sm font-normal text-outline">تومان</span>
+</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-label-sm font-label-sm bg-emerald-100 text-emerald-900 border border-emerald-300">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>منتشرشده</span>
+</span>
+</td>
+<td class="py-3 px-3">
+<div class="flex flex-col">
+<span class="inline-flex items-center gap-1.5 text-label-sm font-label-sm text-error font-medium">
+<span class="material-symbols-outlined text-xs">error</span>
+<span>ناموجود (اتمام بچ دم‌آوری)</span>
+</span>
+<span class="text-[11px] text-outline">نیاز به برج عصاره‌گیری مجدد</span>
+</div>
+</td>
+<td class="py-3 px-3 text-center">
+<span class="font-bold text-on-surface">۱۸۸</span>
+<span class="text-label-sm text-outline block">بطری</span>
+</td>
+<td class="py-3 px-3 text-label-sm font-label-sm text-outline">
+                ۱۴۰۳/۰۸/۲۱
+                <span class="block text-[11px] text-on-surface-variant">۱۶:۲۰ ب.ظ</span>
+</td>
+<td class="py-3 px-4 text-left">
+<div class="inline-flex items-center gap-1 opacity-90 group-hover:opacity-100">
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-lg">edit</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-lg">tune</span>
+</button>
+<button class="p-1.5 hover:bg-surface-container rounded-lg text-on-surface-variant hover:text-error transition-colors">
+<span class="material-symbols-outlined text-lg">more_vert</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Smart Persian Pagination Footer -->
+<div class="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-outline-variant bg-surface-container-low gap-3">
+<div class="text-body-sm font-body-sm text-outline flex items-center gap-2">
+<span>نمایش</span>
+<select class="px-2 py-1 bg-surface-container-lowest border border-outline-variant rounded-lg text-label-sm font-label-sm text-on-surface focus:outline-none">
+<option>۱۰ سطر در صفحه</option>
+<option>۲۵ سطر در صفحه</option>
+<option>۵۰ سطر در صفحه</option>
+</select>
+<span>از مجموع <strong>۳۸</strong> محصول فعال بار آرمانی</span>
+</div>
+<!-- Pagination Controls -->
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-outline hover:text-on-surface disabled:opacity-40 flex items-center gap-1 text-label-sm font-label-sm" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span>صفحه قبلی</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-primary text-on-primary font-bold text-label-sm">۱</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container-high text-on-surface text-label-sm">۲</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container-high text-on-surface text-label-sm">۳</button>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container-high text-on-surface text-label-sm">۴</button>
+<button class="px-2.5 py-1.5 rounded-lg border border-outline-variant bg-surface-container-lowest text-on-surface hover:bg-surface-container text-label-sm font-label-sm flex items-center gap-1">
+<span>صفحه بعدی</span>
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ==================== 5. COMPLETE SYSTEM STATES SHOWCASE ==================== -->
+<section class="space-y-4 pt-6">
+<div class="flex items-center gap-2 border-b border-outline-variant pb-2">
+<span class="material-symbols-outlined text-secondary">tune</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">وضعیت‌های سیستم و بازخوردهای عملیاتی (System States)</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- State A: Filtered-Empty State -->
+<div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant text-center flex flex-col items-center justify-center tactile-card min-h-[220px]">
+<div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center text-outline mb-3">
+<span class="material-symbols-outlined text-3xl">filter_alt_off</span>
+</div>
+<h4 class="text-label-lg font-label-lg text-on-surface font-bold">هیچ محصولی با این فیلترها یافت نشد</h4>
+<p class="text-body-sm font-body-sm text-outline max-w-sm mt-1 mb-4">
+            لطفاً عبارت جستجو یا وضعیت فیلتر دسته‌بندی و موجودی انبار را تغییر دهید.
+          </p>
+<button class="px-4 py-2 bg-surface-container border border-outline-variant rounded-xl text-label-md font-label-md text-on-surface hover:bg-surface-container-high transition-colors">
+            پاک‌سازی فیلترها و نمایش همه
+          </button>
+</div>
+<!-- State B: Skeleton Loading State -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant tactile-card space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-secondary-fixed animate-ping"></span>
+<span class="text-label-sm font-label-sm text-outline">در حال همگام‌سازی با ترازوی هوشمند و انبار...</span>
+</div>
+<span class="text-[11px] font-mono text-outline">Skeleton Placeholder</span>
+</div>
+<div class="space-y-2.5 animate-pulse">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container-high rounded-xl"></div>
+<div class="space-y-1.5 flex-1">
+<div class="h-3.5 bg-surface-container-high rounded w-1/3"></div>
+<div class="h-2.5 bg-surface-container rounded w-2/3"></div>
+</div>
+<div class="w-16 h-4 bg-surface-container-high rounded"></div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 bg-surface-container-high rounded-xl"></div>
+<div class="space-y-1.5 flex-1">
+<div class="h-3.5 bg-surface-container-high rounded w-1/4"></div>
+<div class="h-2.5 bg-surface-container rounded w-1/2"></div>
+</div>
+<div class="w-16 h-4 bg-surface-container-high rounded"></div>
+</div>
+<div class="h-2 bg-surface-container rounded w-full mt-4"></div>
+</div>
+</div>
+<!-- State C: API Error State with Retry Button -->
+<div class="bg-error-container/20 p-5 rounded-xl border border-error/30 flex items-start gap-4 tactile-card">
+<div class="w-10 h-10 rounded-xl bg-error/10 text-error flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-2xl">wifi_off</span>
+</div>
+<div class="flex-1">
+<h4 class="text-label-lg font-label-lg font-bold text-on-surface">خطا در دریافت نرخ روز دانه سبز و موجودی انبار</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+              ارتباط با سرویس مرکزی روستری ولی‌عصر به علت تاخیر شبکه قطع شد. آخرین اطلاعات ذخیره محلی نمایش داده می‌شود.
+            </p>
+<div class="mt-3 flex items-center gap-2">
+<button class="px-3 py-1.5 bg-primary text-on-primary rounded-lg text-label-sm font-label-sm hover:opacity-90 transition-opacity flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">refresh</span>
+<span>تلاش مجدد اتصال</span>
+</button>
+<button class="px-3 py-1.5 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg text-label-sm font-label-sm hover:bg-surface-container transition-colors">
+                مشاهده در حالت آفلاین
+              </button>
+</div>
+</div>
+</div>
+<!-- State D: Bulk-action in Progress Bar -->
+<div class="bg-surface-container-lowest p-5 rounded-xl border border-outline-variant tactile-card space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-lg animate-spin">sync</span>
+<span class="text-label-md font-label-md font-bold text-on-surface">در حال بروزرسانی قیمت و رسپی ۳ محصول...</span>
+</div>
+<span class="text-label-sm font-bold text-secondary">۶۵٪</span>
+</div>
+<div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-secondary transition-all duration-300" style="width: 65%;"></div>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-outline">
+<span>در حال همگام‌سازی تگ‌های NFC منوی سالن</span>
+<span>۲ از ۳ با موفقیت انجام شد</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ==================== 6. MOBILE RESPONSIVE PREVIEW (390x844 Frame) ==================== -->
+<section class="pt-8 border-t border-outline-variant space-y-4" id="mobile-preview-section">
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+<div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed mb-1">
+<span class="material-symbols-outlined text-xs">phone_iphone</span>
+<span>نمای موبایل اختصاصی باریستا (Mobile Card View)</span>
+</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">ارگونومی سفارش‌گیری و کاتالوگ موبایل (۳۹۰×۸۴۴)</h3>
+</div>
+<p class="text-body-sm font-body-sm text-outline">طراحی شده برای آیپد مینی و هندست سالن‌کاران با چیدمان کارت فشرده و فیلتر دراور</p>
+</div>
+<!-- Mobile Frame Container -->
+<div class="flex justify-center p-4 sm:p-8 bg-surface-container-low rounded-2xl border border-outline-variant overflow-x-auto">
+<!-- Physical iPhone Mockup Shell (390px width) -->
+<div class="w-[390px] bg-background border-4 border-inverse-surface rounded-[40px] shadow-2xl overflow-hidden flex flex-col relative text-right flex-shrink-0">
+<!-- Notch / Top Speaker Island -->
+<div class="bg-inverse-surface h-6 w-full flex items-center justify-center relative">
+<div class="w-20 h-4 bg-inverse-surface rounded-b-xl flex items-center justify-center">
+<div class="w-3 h-3 rounded-full bg-outline/40 mr-2"></div>
+<div class="w-8 h-1 rounded-full bg-outline/20"></div>
+</div>
+</div>
+<!-- Mobile Screen Header -->
+<div class="p-4 bg-surface border-b border-outline-variant sticky top-0 z-20 space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary text-on-primary flex items-center justify-center font-bold text-sm">
+                  آ
+                </div>
+<div>
+<h4 class="text-label-md font-label-md text-on-surface font-bold">منوی محصولات بار</h4>
+<span class="text-[10px] text-outline block">۳۸ آیتم ثبت شده</span>
+</div>
+</div>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface hover:bg-surface-container-high">
+<span class="material-symbols-outlined text-base">add</span>
+</button>
+</div>
+<!-- Mobile Search & Filter Drawer Trigger -->
+<div class="flex items-center gap-2">
+<div class="relative flex-1">
+<span class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 text-outline text-base">search</span>
+<input class="w-full pr-9 pl-3 py-1.5 bg-surface-container-lowest border border-outline-variant rounded-xl text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none" placeholder="جستجو..." type="text" value="اسپرسو"/>
+</div>
+<!-- Filter Drawer Button with Badge -->
+<button class="px-2.5 py-1.5 bg-surface-container border border-outline-variant rounded-xl text-label-sm font-label-sm text-on-surface flex items-center gap-1 hover:bg-surface-container-high relative" onclick="document.getElementById('mobile-drawer').classList.remove('hidden')">
+<span class="material-symbols-outlined text-base text-secondary">tune</span>
+<span class="w-2 h-2 rounded-full bg-secondary absolute -top-1 -right-1"></span>
+</button>
+</div>
+<!-- Mobile Category Filter Pills -->
+<div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar py-1 text-label-sm">
+<button class="px-3 py-1 rounded-full bg-primary text-on-primary font-bold whitespace-nowrap text-[11px]">همه (۳۸)</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant whitespace-nowrap text-[11px]">اسپرسوبار</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant whitespace-nowrap text-[11px]">بار سرد</button>
+<button class="px-3 py-1 rounded-full bg-surface-container text-on-surface-variant whitespace-nowrap text-[11px]">کیک و دسر</button>
+</div>
+</div>
+<!-- Mobile Cards Stream -->
+<div class="p-3 space-y-3 overflow-y-auto max-h-[520px] bg-background">
+<!-- Mobile Card 1: Double Espresso -->
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant shadow-xs flex gap-3 relative">
+<img class="w-16 h-16 rounded-xl object-cover border border-outline-variant flex-shrink-0" data-alt="An authentic handcrafted ceramic cup filled with rich double shot espresso with thick golden crema resting on a weathered rustic wooden cafe counter in Tehran. Soft natural morning ambient lighting, warm brown and terracotta tones with cozy depth of field." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCGE9WtoYlSuoCchNE15EuJ8DX4FjaKxRQDZk1yak7Il_uBo4kKgi2IwCPLHl0UEzbR9aIa2Zfln97GLuc81JBXrB1yZBwz4ZFah4rQuWIdU4HrzETrr2TNYDyeWjryO0evnjzRib8nEo-sqS2frq19jKbxRq3CDpRvscxEE-Z4s1Xf7lYMGQ7Ztz6IuaZxi9QE1kDtoIbY1-Z_4sVX2HZ82tueok1dVOakF4qhXQMSTsmKTeOxDw"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-start justify-between gap-1">
+<h5 class="text-label-md font-label-md font-bold text-on-surface truncate">اسپرسو دوبل تخصصی</h5>
+<button class="text-outline hover:text-on-surface p-0.5">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<span class="inline-block text-[10px] text-secondary font-medium mt-0.5">اسپرسوبار • کلمبیا و اتیوپی</span>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/50">
+<div class="font-bold text-on-surface text-label-sm">
+                    ۸۸,۰۰۰ <span class="font-normal text-[10px] text-outline">تومان</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-900">منتشر</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container text-outline">موجود</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Card 2: Flat White -->
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant shadow-xs flex gap-3 relative">
+<img class="w-16 h-16 rounded-xl object-cover border border-outline-variant flex-shrink-0" data-alt="Close up photography of flat white coffee with fine silky microfoam latte art in a ceramic artisanal cup resting on warm raw timber cafe table. Soft natural café backlight highlighting velvet milk texture and espresso contrast." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZnozdg9gUtwMsC7SSDvQa8qdP4fRG_I1knNa2qNVjXU8CfGx7tswzjHkUuvtTF2JED_bYhRQ5Yp_Ul2NayXsTN_PP07bwzsig6m0pX5RFZiP1wc-xVfLG-Vg24sOjL7jtaqWC2RWntvPTQ5syjL7ZN46iMtgXN7A3tSYOwTAPIENB_97TMubGY7qv1YUAqZYTgdzSY6Y18C7kK7qz9pfIJFkyFUUwlEvDdaK8Gk1z2i9wB1ERIqg"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-start justify-between gap-1">
+<h5 class="text-label-md font-label-md font-bold text-on-surface truncate">فلت وایت تخصصی</h5>
+<button class="text-outline hover:text-on-surface p-0.5">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<span class="inline-block text-[10px] text-secondary font-medium mt-0.5">اسپرسوبار • شیر تازه روز</span>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/50">
+<div class="font-bold text-on-surface text-label-sm">
+                    ۱۱۵,۰۰۰ <span class="font-normal text-[10px] text-outline">تومان</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-900">منتشر</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-surface-container text-outline">موجود</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Card 3: San Sebastian Cheesecake (Low Stock) -->
+<div class="bg-surface-container-lowest p-3 rounded-2xl border border-outline-variant shadow-xs flex gap-3 relative">
+<img class="w-16 h-16 rounded-xl object-cover border border-outline-variant flex-shrink-0" data-alt="A slice of creamy Basque burnt cheesecake with a perfectly caramelized dark golden-brown top resting on a speckled ceramic dessert plate on a rustic coffee shop table. Warm bakery atmosphere with gentle morning daylight, minimal and sophisticated styling." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCtG1AGF3BoTVteVORWuZ3uhHKELVmkrowgpc_QXOW2ljK3J9vFj6RBzy4fEHN-StZlEXrI-6oN-YP4Za1YL5uhQrwGg84NQu-IGO1wFlpzBErMAAcCiXs1wND1POZj9ATIczh0VcQzfrRPahUv1xaXiCIdZZwEfhEhl8nrRRjLPSnizUBcFMHpr1IWVLlv5oIVNo3V7Ano_M0BTmTIMZ-7iDDeyg80-ofL-MOHfvbE_pXhtGgklCM"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-start justify-between gap-1">
+<h5 class="text-label-md font-label-md font-bold text-on-surface truncate">چیزکیک سن سباستین</h5>
+<button class="text-outline hover:text-on-surface p-0.5">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<span class="inline-block text-[10px] text-secondary font-medium mt-0.5">کیک و دسر • پخت روزانه</span>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/50">
+<div class="font-bold text-on-surface text-label-sm">
+                    ۱۴۵,۰۰۰ <span class="font-normal text-[10px] text-outline">تومان</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-100 text-emerald-900">منتشر</span>
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-900">۳ عدد</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Card 4: Cold Brew (Out of Stock) -->
+<div class="bg-surface-container-lowest/80 p-3 rounded-2xl border border-error/30 shadow-xs flex gap-3 relative opacity-85">
+<img class="w-16 h-16 rounded-xl object-cover border border-outline-variant flex-shrink-0" data-alt="Cold brew specialty drip tower with slow dripping iced water through dark ground coffee beans inside an elegant cafe setting. Rich mahogany hues, vintage glass laboratory apparatus, ambient warm light." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCIZcxD9YJkhIxGdlBrI8glpuS0P8lvuuJuSx4eyoLIeMHs1AYV3_5dln_t64dWn4gP1OFNRYSSrRd7OhKVftIYHKsXuP8OF4ANl9-JRzLQs-KKRA9kSO17DPx7tLPUjTj-v6_Q9q9poqCNwI0FZiIQmB-QiV_MTcO4Upw6TUAh6TIUsncRrszeKSXr9YrtBMAmTAnrCCj94CXGsT38KUsevynkJV_2tTpnU3nnh3DUE5kegHtV6Q8"/>
+<div class="flex-1 min-w-0">
+<div class="flex items-start justify-between gap-1">
+<h5 class="text-label-md font-label-md font-bold text-on-surface truncate">کلد برو نیترو ۱۶ ساعته</h5>
+<button class="text-outline hover:text-on-surface p-0.5">
+<span class="material-symbols-outlined text-sm">more_vert</span>
+</button>
+</div>
+<span class="inline-block text-[10px] text-error font-medium mt-0.5">بار سرد • نیازمند شارژ برج دم‌آوری</span>
+<div class="flex items-center justify-between mt-2 pt-2 border-t border-outline-variant/50">
+<div class="font-bold text-on-surface text-label-sm">
+                    ۱۲۰,۰۰۰ <span class="font-normal text-[10px] text-outline">تومان</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-error-container text-on-error-container">ناموجود</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Persistent Ordering / Quick Action Bar for Floor Staff -->
+<div class="p-3 bg-surface border-t border-outline-variant flex items-center justify-between mt-auto">
+<div>
+<span class="text-[10px] text-outline block">آیتم‌های فیلترشده</span>
+<span class="text-label-sm font-bold text-on-surface">۱۰ محصول</span>
+</div>
+<button class="bg-primary text-on-primary px-4 py-2 rounded-xl text-label-sm font-label-sm flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-sm">qr_code_scanner</span>
+<span>اسکن سریع بارکد</span>
+</button>
+</div>
+<!-- Bottom Home Indicator -->
+<div class="bg-background pb-2 pt-1 flex justify-center">
+<div class="w-32 h-1 bg-outline/30 rounded-full"></div>
+</div>
+<!-- ==================== MOBILE ADVANCED FILTER DRAWER (Slide from Right) ==================== -->
+<div class="hidden absolute inset-0 bg-inverse-surface/40 backdrop-blur-xs z-30 flex justify-start" id="mobile-drawer">
+<div class="w-4/5 h-full bg-surface-container-lowest shadow-2xl p-4 flex flex-col justify-between border-l border-outline-variant animate-in slide-in-from-right duration-200">
+<div class="space-y-4">
+<div class="flex items-center justify-between border-b border-outline-variant pb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary">tune</span>
+<h5 class="text-label-lg font-label-lg font-bold text-on-surface">فیلترهای پیشرفته منو</h5>
+</div>
+<button class="p-1 text-outline hover:text-on-surface" onclick="document.getElementById('mobile-drawer').classList.add('hidden')">
+<span class="material-symbols-outlined text-lg">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="space-y-3 text-body-sm font-body-sm">
+<div>
+<label class="block text-label-sm font-label-sm text-outline mb-1.5">وضعیت انتشار در منوی آنلاین</label>
+<div class="space-y-1">
+<label class="flex items-center gap-2">
+<input checked="" class="text-primary focus:ring-0" name="mob_pub" type="radio"/>
+<span>همه وضعیت‌ها</span>
+</label>
+<label class="flex items-center gap-2">
+<input class="text-primary focus:ring-0" name="mob_pub" type="radio"/>
+<span>فقط فعال و منتشرشده</span>
+</label>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/50">
+<label class="block text-label-sm font-label-sm text-outline mb-1.5">موجودی مواد اولیه</label>
+<div class="space-y-1">
+<label class="flex items-center gap-2">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>کالاهای موجود در بار</span>
+</label>
+<label class="flex items-center gap-2">
+<input checked="" class="rounded text-primary focus:ring-0" type="checkbox"/>
+<span>اقلام نیازمند شارژ دانه</span>
+</label>
+</div>
+</div>
+<div class="pt-2 border-t border-outline-variant/50">
+<label class="block text-label-sm font-label-sm text-outline mb-1.5">محدوده قیمت (تومان)</label>
+<div class="grid grid-cols-2 gap-2">
+<input class="p-1.5 bg-surface-container rounded-lg border border-outline-variant text-[11px]" placeholder="از ۵۰,۰۰۰" type="text"/>
+<input class="p-1.5 bg-surface-container rounded-lg border border-outline-variant text-[11px]" placeholder="تا ۳۰۰,۰۰۰" type="text"/>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Bottom Actions -->
+<div class="pt-3 border-t border-outline-variant flex items-center gap-2">
+<button class="flex-1 py-2 bg-primary text-on-primary rounded-xl text-label-sm font-label-sm font-bold text-center" onclick="document.getElementById('mobile-drawer').classList.add('hidden')">
+                  اعمال فیلترها (۲ مورد)
+                </button>
+<button class="px-3 py-2 bg-surface-container text-on-surface rounded-xl text-label-sm font-label-sm" onclick="document.getElementById('mobile-drawer').classList.add('hidden')">
+                  ریست
+                </button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- ==================== FOOTER (Anchored Minimal Component) ==================== -->
+<footer class="bg-surface-container-lowest border-t border-outline-variant mt-12">
+<div class="flex flex-col md:flex-row justify-between items-center w-full px-6 py-4 max-w-7xl mx-auto gap-4">
+<!-- Copyright text from JSON -->
+<div class="text-body-sm font-body-sm text-outline">
+        © ۱۴۰۳ کافه آرمانی. تمامی حقوق محفوظ است | تهران، خیابان ولی‌عصر
+      </div>
+<!-- Links from JSON -->
+<div class="flex items-center gap-6 flex-wrap justify-center">
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-sm font-label-sm" href="#">قوانین و راهنما</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-sm font-label-sm" href="#">مستندات دیزاین‌سیستم</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-sm font-label-sm" href="#">ارتباط با پشتیبانی فنی</a>
+<a class="text-on-surface-variant hover:text-primary transition-colors duration-150 text-label-sm font-label-sm" href="#">درباره آرمانی</a>
+</div>
+</div>
+</footer>
+</body></html>
