@@ -32,6 +32,9 @@ npm run format:check # بررسی قالب‌بندی
 npm run test:unit   # آزمون‌های واحد
 npm run test:integration # آزمون‌های یکپارچگی
 npm run test:e2e    # ساخت و آزمون HTTP نسخهٔ production
+npm run test:unit:watch # اجرای تعاملی Vitest
+npm run test:e2e:debug # اشکال‌زدایی Playwright
+npm run test:e2e:ui # رابط محلی Playwright
 npm run validate    # همهٔ بررسی‌های پایه
 npm run start:local # ساخت و اجرای محلی نسخهٔ production
 ```
@@ -75,5 +78,7 @@ npm run start:local # ساخت و اجرای محلی نسخهٔ production
 مرزهای ماژول‌ها، مسئولیت‌ها و جریان درخواست در [راهنمای معماری](docs/architecture.md) ثبت شده‌اند. `npm run check:architecture` جهت وابستگی‌ها و چرخه‌های import را بررسی می‌کند.
 
 قراردادهای پایگاه داده، migration، index و seed در [راهنمای پایگاه داده](docs/database.md) آمده‌اند. هیچ migration یا همگام‌سازی index هنگام درخواست عادی اجرا نمی‌شود.
+
+راهنمای [آزمون‌ها](docs/testing.md) شامل پیش‌نیاز مرورگر، ایزوله‌سازی داده‌ها، اجرای CI و بررسی traceهای خطا است.
 
 برای اجرای MongoDB، Redis و MinIO، دستورات راه‌اندازی، آزمون، توقف و پاک‌سازی داده‌ها را در [راهنمای زیرساخت محلی](docs/local-infrastructure.md) ببینید. برنامهٔ Next.js همچنان روی میزبان اجرا می‌شود.

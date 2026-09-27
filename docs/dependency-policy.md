@@ -8,15 +8,21 @@ Infrastructure packages and services need an ADR before adoption. Document owner
 
 ## Current dependencies
 
-| Dependency                          | Purpose                                                          | Platform alternative                              |
-| ----------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------- |
-| Next.js                             | App Router, rendering, routing, build                            | Node HTTP server plus custom routing and bundling |
-| React and React DOM                 | Component rendering                                              | Direct DOM manipulation                           |
-| server-only                         | Build-time protection for private server modules                 | Convention alone cannot block client imports      |
-| TypeScript and type packages        | Static typing and React/Node declarations                        | JavaScript and runtime checks alone               |
-| ESLint and eslint-config-next       | Code quality and Next/React rules                                | Compiler checks alone                             |
-| Prettier and eslint-config-prettier | Stable formatting and removal of conflicting lint style rules    | Editor-specific formatting                        |
-| eslint-plugin-simple-import-sort    | Enforced import/export order                                     | Manual ordering                                   |
-| Mongoose 9                          | MongoDB schemas, validation, document versions, and transactions | Raw MongoDB driver plus custom ODM conventions    |
+| Dependency                          | Purpose                                                          | Platform alternative                               |
+| ----------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------- |
+| Next.js                             | App Router, rendering, routing, build                            | Node HTTP server plus custom routing and bundling  |
+| React and React DOM                 | Component rendering                                              | Direct DOM manipulation                            |
+| server-only                         | Build-time protection for private server modules                 | Convention alone cannot block client imports       |
+| TypeScript and type packages        | Static typing and React/Node declarations                        | JavaScript and runtime checks alone                |
+| ESLint and eslint-config-next       | Code quality and Next/React rules                                | Compiler checks alone                              |
+| Prettier and eslint-config-prettier | Stable formatting and removal of conflicting lint style rules    | Editor-specific formatting                         |
+| eslint-plugin-simple-import-sort    | Enforced import/export order                                     | Manual ordering                                    |
+| Mongoose 9                          | MongoDB schemas, validation, document versions, and transactions | Raw MongoDB driver plus custom ODM conventions     |
+| MUI and Emotion                     | Design-system components and styling for future client UI        | Hand-written components and CSS                    |
+| Vitest                              | Fast typed unit/integration test projects                        | Node test runner lacks this multi-project UI setup |
+| Testing Library and jsdom           | User-centered Client Component interaction tests                 | Browser-only tests for every small interaction     |
+| Playwright                          | Production-like browser E2E, traces, and screenshots             | Manual browser checks                              |
+| `@axe-core/playwright`              | Automated accessibility assertions in browser tests              | Manual inspection alone                            |
+| `mongodb-memory-server`             | Isolated replica-set integration tests without dev data          | Shared local database, unsafe for parallel tests   |
 
 Node's built-in test runner powers unit, integration, and production HTTP smoke tests, so no test framework is installed yet.

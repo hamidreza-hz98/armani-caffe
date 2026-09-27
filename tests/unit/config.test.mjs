@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import test from "node:test";
+
+import { test } from "vitest";
 
 import { parsePublicConfig } from "../../src/config/public-schema.ts";
 import { parseServerConfig } from "../../src/config/server-schema.ts";

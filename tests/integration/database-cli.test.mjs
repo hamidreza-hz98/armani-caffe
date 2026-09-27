@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import test from "node:test";
+
+import { test } from "vitest";
 
 function dbCommand(args, env = process.env) {
   return spawnSync(process.execPath, ["--conditions=react-server", "scripts/db.mjs", ...args], {

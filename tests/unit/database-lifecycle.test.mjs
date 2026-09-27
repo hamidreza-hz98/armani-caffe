@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import test from "node:test";
 
 import mongoose, { Schema } from "mongoose";
+import { test } from "vitest";
 
 import { ConnectionCache } from "../../src/server/database/connection-cache.ts";
 import {
