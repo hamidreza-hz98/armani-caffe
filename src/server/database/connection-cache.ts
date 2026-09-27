@@ -28,4 +28,11 @@ export class ConnectionCache<T extends ReusableConnection> {
     });
     return this.pending;
   }
+
+  async close(): Promise<void> {
+    if (this.pending) await this.pending.catch(() => undefined);
+    const connection = this.connection;
+    this.connection = null;
+    if (connection) await connection.close();
+  }
 }

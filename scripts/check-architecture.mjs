@@ -141,7 +141,10 @@ export function architectureViolations(files, { requireLayout = true } = {}) {
       if (file.startsWith("src/app/") && targetModule && !isPublicModuleFile(targetModule)) {
         violations.push(`${file}: UI/routes must use the public module boundary, not ${target}`);
       }
-      if (file.startsWith("src/app/") && target.startsWith("src/server/")) {
+      if (
+        file.startsWith("src/app/") &&
+        /^src\/server\/(database|secrets|minio|queue|payments)\//.test(target)
+      ) {
         violations.push(`${file}: UI/routes must not import persistence internals: ${target}`);
       }
       if (file.startsWith("src/shared/") && !target.startsWith("src/shared/")) {

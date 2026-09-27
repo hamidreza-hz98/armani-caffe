@@ -37,3 +37,10 @@ export function getDatabaseConnection(): Promise<Connection> {
   }
   return store.__armaniDatabaseCache.cache.get();
 }
+
+export async function closeDatabaseConnection(): Promise<void> {
+  const store = globalThis as GlobalDatabaseCache;
+  const cache = store.__armaniDatabaseCache?.cache;
+  if (cache) await cache.close();
+  delete store.__armaniDatabaseCache;
+}

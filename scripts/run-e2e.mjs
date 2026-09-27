@@ -10,6 +10,8 @@ const env = {
   ...process.env,
   ...testEnv({
     MONGODB_URI: `mongodb://127.0.0.1:1/${resources.databaseName}?directConnection=true`,
+    REDIS_URL: "redis://127.0.0.1:1",
+    MINIO_ENDPOINT: "http://127.0.0.1:1",
     MINIO_BUCKET: resources.minioBucket,
   }),
   TEST_REDIS_PREFIX: resources.redisPrefix,

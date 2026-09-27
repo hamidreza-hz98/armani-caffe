@@ -6,6 +6,7 @@ import rtlPlugin from "@mui/stylis-plugin-rtl";
 import type { ReactNode } from "react";
 import { prefixer } from "stylis";
 
+import { FeedbackProvider } from "./feedback-provider";
 import { theme } from "./theme";
 
 const cacheOptions = { key: "armani-rtl", stylisPlugins: [prefixer, rtlPlugin] };
@@ -15,7 +16,7 @@ export function DesignSystemProvider({ children }: { children: ReactNode }) {
     <AppRouterCacheProvider options={cacheOptions}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        {children}
+        <FeedbackProvider>{children}</FeedbackProvider>
       </ThemeProvider>
     </AppRouterCacheProvider>
   );

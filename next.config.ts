@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 
+import { securityHeaders } from "./src/config/security-headers.ts";
 import { parseServerConfig } from "./src/config/server-schema.ts";
 
 const mode = process.env.NODE_ENV;
@@ -11,6 +12,9 @@ parseServerConfig(process.env, mode);
 const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
+  },
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders(mode) }];
   },
 };
 

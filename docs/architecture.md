@@ -49,6 +49,7 @@ flowchart TD
 - Infrastructure may use its own layers, shared primitives, and `src/server` services. It never imports another module's private files or persistence adapters.
 - `index.ts` may expose only its domain/contracts. `server.ts` may compose its own layers. Cross-module imports are allowed only from application or `server.ts` through the other module's `index.ts` or `server.ts`.
 - Routes and UI may use a module's public barrel but never its internal persistence. Client Components must not import `server.ts`; its `server-only` marker lets Next.js reject that at build time. No module imports an App Router handler.
+- Operational route handlers may import the shared server health/observability facades, but never database, secrets, MinIO, queue, or payment internals directly.
 - Local dependency cycles are forbidden. An application-level orchestration flow should call public use cases instead of letting repositories reach into one another.
 
 The repository's `npm run check:architecture` parses static imports, re-exports, dynamic imports, and literal `require` calls. It checks all module layouts, import directions, server markers, and cycles. This complements TypeScript and `npm run check:boundaries`; it does not replace code review for non-literal dynamic imports.
