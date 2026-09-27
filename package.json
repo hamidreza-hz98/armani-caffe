@@ -42,14 +42,19 @@
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run check:boundaries && npm run check:architecture && npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
+    "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
+    "@fontsource-variable/vazirmatn": "5.3.0",
     "@mui/material": "9.4.0",
+    "@mui/material-nextjs": "9.4.0",
+    "@mui/stylis-plugin-rtl": "7.3.1",
     "mongoose": "9.10.2",
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "stylis": "4.3.6"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -60,6 +65,7 @@
     "@types/node": "24.19.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/stylis": "4.2.7",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "eslint-config-prettier": "10.1.8",
