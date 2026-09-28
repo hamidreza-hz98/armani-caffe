@@ -1,11 +1,11 @@
 const secretKey =
-  /password|secret|token|authorization|cookie|api.?key|access.?key|credential|encryption|encrypted.?payload|ciphertext|fingerprint|uri|private.?key|email|phone|address/i;
+  /^state$|callback.?state|password|secret|token|authorization|cookie|api.?key|access.?key|credential|encryption|encrypted.?payload|ciphertext|fingerprint|uri|private.?key|email|phone|address/i;
 
 export function redactText(value: string, secrets: readonly string[] = []): string {
   let result = value
     .replace(/(mongodb(?:\+srv)?|redis|rediss|https?):\/\/[^\s/@]+@/gi, "$1://[REDACTED]@")
     .replace(/\bBearer\s+[^\s,;]+/gi, "Bearer [REDACTED]")
-    .replace(/((?:password|secret|token|key)=)[^\s&]+/gi, "$1[REDACTED]");
+    .replace(/((?:password|secret|token|key|state)=)[^\s&]+/gi, "$1[REDACTED]");
   for (const secret of secrets) {
     if (secret.length >= 8) result = result.replaceAll(secret, "[REDACTED]");
   }

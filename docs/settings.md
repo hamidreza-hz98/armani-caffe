@@ -12,7 +12,7 @@ Settings owns five singletons identified by `kind`, not caller-supplied document
 | `payment`  | Fake disabled, default null, priority zero; Iranian gateway placeholder disabled, priority one, sandbox mode       | Owner configuration; cashier default/enabled summary; never public                                    |
 | `printing` | Disabled, empty bridge ID, 80 mm paper, one copy, auto-print off, empty footer                                     | Owner configuration; cashier operational preferences without bridge ID/credential state; never public |
 
-The fake provider cannot be enabled in production. The gateway placeholder cannot be enabled until Task 21 implements the chosen approved adapter and extends these contracts. Settings never accepts arbitrary provider endpoints or callback URLs: adapters own approved endpoints, and callback origins come from runtime configuration. This task does not perform payments/printing or implement admin UI. Business media references are not yet fields in this contract; the later identity/media UI must extend it using Media's reference lifecycle, not arbitrary untracked IDs/URLs.
+The fake provider cannot be enabled in production. The undocumented gateway placeholder stays disabled. Task 20 adds up to four optional gateway entries with provider IDs, enabled flags, priorities, modes and an optional default; actual gateways require approved code adapters. See [Payments](payments.md). Settings never accepts arbitrary provider endpoints or callback URLs: adapters own approved endpoints, and callback origins come from runtime configuration. Settings does not itself perform payments/printing or implement admin UI. Business media references are not yet fields in this contract; the later identity/media UI must extend it using Media's reference lifecycle, not arbitrary untracked IDs/URLs.
 
 ## Validation and safe maps
 
@@ -30,7 +30,7 @@ The five-entry cache contains cloned safe DTOs only. Every hit checks the indexe
 
 ## Write-only credentials and rotation
 
-Optional write fields: `secrets.gatewayCredential` for payment and `secrets.bridgeToken` for printing. Omitted/empty string means **unchanged**; non-empty bounded opaque strings replace; `null` explicitly clears. Enabled printing requires a stored bridge token; clearing it while still enabled fails. Owner reads and mutation responses contain only `{ configured, keyId, rotatedAt }`, never old or newly supplied secrets. Cashiers see no credential state. Public settings explicitly select only business/contact/SEO fields.
+Optional write fields: `secrets.gatewayCredential` (legacy placeholder), `secrets.providerCredentials` (JSON-encoded gateway credential map) for payment and `secrets.bridgeToken` for printing. Omitted/empty string means **unchanged**; non-empty bounded strings replace; `null` explicitly clears. The credential map is limited to four gateway IDs and replaces the complete prior map. Enabled printing requires a stored bridge token; clearing it while still enabled fails. Owner reads and mutation responses contain only `{ configured, keyId, rotatedAt }`, never old or newly supplied secrets. Cashiers see no credential state. Public settings explicitly select only business/contact/SEO fields.
 
 The server-only vault uses Node's [authenticated encryption APIs](https://nodejs.org/docs/latest-v24.x/api/crypto.html): AES-256-GCM, fresh 96-bit nonce, 128-bit tag, versioned envelope, encryption timestamp and deterministic 96-bit key ID. AAD binds kind, version, key ID and timestamp, preventing ciphertext relocation between payment and printing. `encryptedPayload` is excluded from Mongoose queries by default and explicitly projected out of native safe reads. Only credential writes, rotation and trusted server adapter callbacks load ciphertext. Crypto/parser/write-driver failures use static messages without secret-bearing exception causes.
 
@@ -38,10 +38,10 @@ Keys come from the existing `ENCRYPTION_KEY` (32-byte hex current key) and optio
 
 1. Back up the database; retain the old key securely. Set the new current key and old previous key, then restart all processes.
 2. As OWNER, submit each payment/printing singleton's current values/revision, `rotate: true` and a new mutation key. Rotation explicitly audits, advances revision and reencrypts configured credentials. Reads never silently rotate.
-3. Verify key IDs. Keep the previous key until **all encrypted subsystems**, including Media, have rotated and at least the seven-day settings receipt window has expired.
+3. Verify key IDs. Keep the previous key until **all encrypted subsystems**, including Media, have rotated, pending payment credential snapshots/callbacks no longer need it, and at least the seven-day settings receipt window has expired.
 4. Only then remove the previous key and restart. Unknown/retired keys fail closed; recover by restoring the retained key, not overwriting unreadable credentials with defaults.
 
-Trusted payment/printing adapters can use the server-only repository's `withCredentials` callback to authenticate/sign provider requests. Such callbacks must never return/serialize/log credentials or place them in errors. This API is absent from `SettingsService`, browser exports and HTTP operations; no credential-reveal endpoint exists. Runtime bridge credentials/callback base URL remain deployment configuration and are not silently copied into DB settings.
+Trusted payment/printing adapters can use the server-only repository's `withCredentials` callback to authenticate/sign provider requests. Credentials must remain inside the server-only adapter/composition graph and must never reach public responses, logs or error messages. This API is absent from `SettingsService`, browser exports and HTTP operations; no credential-reveal endpoint exists. Runtime bridge credentials/callback base URL remain deployment configuration and are not silently copied into DB settings.
 
 ## HTTP and authorization
 

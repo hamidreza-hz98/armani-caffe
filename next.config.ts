@@ -14,7 +14,13 @@ const nextConfig: NextConfig = {
     root: process.cwd(),
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders(mode) }];
+    return [
+      { source: "/:path*", headers: securityHeaders(mode) },
+      {
+        source: "/api/payments/callback/:path*",
+        headers: [{ key: "Referrer-Policy", value: "no-referrer" }],
+      },
+    ];
   },
 };
 

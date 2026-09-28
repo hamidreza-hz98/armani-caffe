@@ -3,7 +3,7 @@ import "server-only";
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes } from "node:crypto";
 
 import { ApplicationError } from "../../../shared/errors.ts";
-import { settingsRecord } from "../contracts/settings.ts";
+import { parseProviderCredentials, settingsRecord } from "../contracts/settings.ts";
 import type { SettingsKind, SettingsSecrets } from "../domain/model.ts";
 
 type Envelope = {
@@ -103,14 +103,16 @@ export class SettingsVault {
           decipher.final(),
         ]).toString("utf8"),
       );
-      const field = kind === "payment" ? "gatewayCredential" : "bridgeToken",
-        parsed = settingsRecord(data, [field]);
-      if (
-        typeof parsed[field] !== "string" ||
-        (parsed[field] as string).length < 16 ||
-        (parsed[field] as string).length > 4096
-      )
-        throw new Error();
+      const parsed = settingsRecord(
+        data,
+        kind === "payment" ? ["gatewayCredential", "providerCredentials"] : ["bridgeToken"],
+      );
+      if (!Object.keys(parsed).length) throw new Error();
+      for (const [field, value] of Object.entries(parsed)) {
+        if (field === "providerCredentials") parseProviderCredentials(value);
+        else if (typeof value !== "string" || value.length < 16 || value.length > 4096)
+          throw new Error();
+      }
       return parsed as SettingsSecrets;
     } catch {
       throw new ApplicationError("UNAVAILABLE", "Stored settings credentials cannot be decrypted");

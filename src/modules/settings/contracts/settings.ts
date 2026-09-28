@@ -75,7 +75,10 @@ export function parseSettingsValues<K extends SettingsKind>(
   input: unknown,
 ): SettingsValues[K] {
   const defaults = settingsDefaults(kind);
-  const v = settingsRecord(input, Object.keys(defaults));
+  const v = settingsRecord(input, [
+    ...Object.keys(defaults),
+    ...(kind === "payment" ? ["providers"] : []),
+  ]);
   if (Object.keys(defaults).some((key) => !(key in v))) invalid();
   let result: SettingsValues[SettingsKind];
   switch (kind) {
@@ -136,9 +139,34 @@ export function parseSettingsValues<K extends SettingsKind>(
     }
     case "payment": {
       const fakeEnabled = bool(v.fakeEnabled),
-        defaultProvider = choice(v.defaultProvider, ["fake", null]);
-      if ((defaultProvider !== null && !fakeEnabled) || (fakeEnabled && defaultProvider === null))
-        invalid();
+        defaultProvider = v.defaultProvider === null ? null : text(v.defaultProvider, 60, true);
+      let providers: NonNullable<SettingsValues["payment"]["providers"]> | undefined;
+      if (v.providers !== undefined) {
+        if (!Array.isArray(v.providers) || v.providers.length > 4) invalid();
+        providers = v.providers.map((value) => {
+          const p = settingsRecord(value, ["id", "enabled", "priority", "mode"]),
+            id = text(p.id, 60, true);
+          if (
+            !/^[a-z][a-z0-9-]{0,59}$/u.test(id) ||
+            id === "fake" ||
+            (id === "iranian-gateway" && p.enabled !== false)
+          )
+            invalid();
+          return {
+            id,
+            enabled: bool(p.enabled),
+            priority: integer(p.priority, 100),
+            mode: choice(p.mode, ["sandbox", "production"]),
+          };
+        });
+        if (new Set(providers.map((p) => p.id)).size !== providers.length) invalid();
+      }
+      const eligible = [
+        ...(fakeEnabled ? ["fake"] : []),
+        ...(providers ?? []).filter((p) => p.enabled).map((p) => p.id),
+      ];
+      if (defaultProvider !== null && !eligible.includes(defaultProvider)) invalid();
+      if (providers === undefined && fakeEnabled && defaultProvider === null) invalid();
       result = {
         defaultProvider,
         fakeEnabled,
@@ -146,6 +174,7 @@ export function parseSettingsValues<K extends SettingsKind>(
         gatewayEnabled: choice(v.gatewayEnabled, [false]),
         gatewayPriority: integer(v.gatewayPriority, 100),
         gatewayMode: choice(v.gatewayMode, ["sandbox", "production"]),
+        ...(providers ? { providers } : {}),
       };
       break;
     }
@@ -193,10 +222,14 @@ export function parseSettingsWrite<K extends SettingsKind>(
   if (v.secrets !== undefined) {
     const field =
       kind === "payment" ? "gatewayCredential" : kind === "printing" ? "bridgeToken" : null;
-    const fields = settingsRecord(v.secrets, field ? [field] : []);
+    const fields = settingsRecord(
+      v.secrets,
+      field ? [field, ...(kind === "payment" ? ["providerCredentials"] : [])] : [],
+    );
     secrets = {};
     for (const [key, value] of Object.entries(fields)) {
       if (value === "") continue;
+      if (key === "providerCredentials" && value !== null) parseProviderCredentials(value);
       if (
         value !== null &&
         (typeof value !== "string" ||
@@ -209,6 +242,33 @@ export function parseSettingsWrite<K extends SettingsKind>(
     }
   }
   return { revision, values, rotate, ...(secrets ? { secrets } : {}) };
+}
+export function parseProviderCredentials(value: unknown): Record<string, string> {
+  if (typeof value !== "string" || value.length > 4096) invalid();
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    return invalid();
+  }
+  if (
+    !parsed ||
+    typeof parsed !== "object" ||
+    Array.isArray(parsed) ||
+    Object.keys(parsed).length > 4
+  )
+    invalid();
+  for (const [id, credential] of Object.entries(parsed)) {
+    if (
+      !/^[a-z][a-z0-9-]{0,59}$/u.test(id) ||
+      typeof credential !== "string" ||
+      credential.length < 16 ||
+      credential.length > 768 ||
+      /[\u0000-\u001f\u007f]/u.test(credential)
+    )
+      invalid();
+  }
+  return parsed as Record<string, string>;
 }
 export function settingsMutationKey(value: unknown): string {
   if (typeof value !== "string" || !/^[a-zA-Z0-9_-]{8,128}$/.test(value)) invalid();

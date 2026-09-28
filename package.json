@@ -30,6 +30,8 @@
     "outbox:work": "node --conditions=react-server scripts/outbox.mjs work",
     "outbox:replay": "node --conditions=react-server scripts/outbox.mjs replay",
     "media:cleanup": "node --conditions=react-server scripts/media-cleanup.mjs",
+    "payment:inquire": "node --conditions=react-server scripts/payments.mjs inquire",
+    "payment:fake:settle": "node --conditions=react-server scripts/payments.mjs fake:settle",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

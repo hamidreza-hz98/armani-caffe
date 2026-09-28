@@ -21,7 +21,13 @@ export type SettingsValues = {
   };
   seo: { title: string; description: string; titleTemplate: string; indexable: boolean };
   payment: {
-    defaultProvider: "fake" | null;
+    defaultProvider: string | null;
+    providers?: {
+      id: string;
+      enabled: boolean;
+      priority: number;
+      mode: "sandbox" | "production";
+    }[];
     fakeEnabled: boolean;
     fakePriority: number;
     gatewayEnabled: false;
@@ -51,7 +57,11 @@ export type CredentialState = Readonly<{
 export type OwnerSettings<K extends SettingsKind = SettingsKind> = SettingsDocument<K> & {
   credentials: CredentialState;
 };
-export type SettingsSecrets = { gatewayCredential?: string; bridgeToken?: string };
+export type SettingsSecrets = {
+  gatewayCredential?: string;
+  providerCredentials?: string;
+  bridgeToken?: string;
+};
 export type PublicSettings = Readonly<{
   business: SettingsValues["business"];
   contact: SettingsValues["contact"] & { mapUrl: string | null };
