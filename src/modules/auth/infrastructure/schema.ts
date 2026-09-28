@@ -17,6 +17,13 @@ export const sessionSchema = new Schema(
     expiresAt: utcDateField(),
     revokedAt: { type: Date, default: null },
     lastUsedAt: { type: Date, default: null },
+    authVersion: {
+      type: Number,
+      default: null,
+      min: 1,
+      validate: (value: number | null) => value === null || Number.isSafeInteger(value),
+      select: false,
+    },
   },
   { ...documentSchemaOptions(), collection: "sessions" },
 );
@@ -27,3 +34,16 @@ sessionSchema.index(
   { name: "session_principal_expiry" },
 );
 sessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0, name: "session_expiry_ttl" });
+
+export const adminLoginThrottleSchema = new Schema(
+  {
+    _id: { type: String, required: true },
+    count: { type: Number, required: true },
+    expiresAt: utcDateField(),
+  },
+  { ...documentSchemaOptions(), collection: "admin_login_throttles" },
+);
+adminLoginThrottleSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0, name: "admin_login_throttle_expiry" },
+);

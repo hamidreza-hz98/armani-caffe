@@ -1,3 +1,4 @@
+import { requireAdminCapability } from "../../../shared/admin-capabilities.ts";
 import { ApplicationError } from "../../../shared/errors.ts";
 import {
   parseSettingsWrite,
@@ -34,7 +35,7 @@ export function requireSettingsActor(actor: SettingsActor | null): SettingsActor
 }
 export function requireSettingsOwner(actor: SettingsActor | null): SettingsActor {
   const authenticated = requireSettingsActor(actor);
-  if (authenticated.role !== "OWNER") throw new ApplicationError("FORBIDDEN", "Owner required");
+  requireAdminCapability(authenticated, "settings.manage");
   return authenticated;
 }
 /** Safe DTO cache only. Each hit checks the DB revision, including other-process writes. */
@@ -102,8 +103,7 @@ export class SettingsService {
   async read(actor: SettingsActor | null, kindInput: unknown) {
     const authenticated = requireSettingsActor(actor),
       kind = settingsKind(kindInput);
-    if (authenticated.role === "CASHIER" && kind === "seo")
-      throw new ApplicationError("FORBIDDEN", "SEO settings are owner-only");
+    requireAdminCapability(authenticated, kind === "seo" ? "settings.seo.read" : "settings.read");
     const row = await this.snapshot(kind);
     if (authenticated.role === "OWNER") return row;
     if (kind === "business" || kind === "contact")

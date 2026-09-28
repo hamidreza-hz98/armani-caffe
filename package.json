@@ -25,6 +25,7 @@
     "db:indexes:plan": "node --conditions=react-server scripts/db.mjs indexes:plan",
     "db:indexes:apply": "node --conditions=react-server scripts/db.mjs indexes:apply",
     "db:seed": "node --conditions=react-server scripts/db.mjs seed",
+    "admin:bootstrap": "node --conditions=react-server scripts/admin-bootstrap.mjs",
     "db:smoke": "node --conditions=react-server scripts/db.mjs smoke",
     "outbox:work": "node --conditions=react-server scripts/outbox.mjs work",
     "outbox:replay": "node --conditions=react-server scripts/outbox.mjs replay",

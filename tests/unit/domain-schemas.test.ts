@@ -39,6 +39,7 @@ const item = {
 describe("Mongoose domain schema defenses", () => {
   it("rejects extra admin roles and normalizes phone", async () => {
     const admin = new Admin({
+      username: "owner-test",
       phone: "09123456789",
       displayName: "مالک",
       passwordHash: "hash",
@@ -48,6 +49,7 @@ describe("Mongoose domain schema defenses", () => {
     expect(admin.phone).toBe("+989123456789");
     await expect(
       new Admin({
+        username: "other-test",
         phone: "09123456789",
         displayName: "مدیر",
         passwordHash: "hash",

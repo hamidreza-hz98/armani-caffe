@@ -9,3 +9,11 @@ export type Admin = EntityDto &
 export function assertAdminRole(role: string): asserts role is AdminRole {
   if (!adminRoles.includes(role as AdminRole)) throw new RangeError("Unknown admin role");
 }
+
+export type AdminDetails = Admin &
+  Readonly<{
+    username: string;
+    revision: number;
+    lastLoginAt: string | null;
+    deletedAt: string | null;
+  }>;

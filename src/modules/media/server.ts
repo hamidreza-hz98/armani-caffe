@@ -7,6 +7,7 @@ import { registerResource } from "../../server/lifecycle/index.ts";
 // Server public boundary. Compose use cases and adapters here.
 import { configuredMinioClient } from "../../server/minio/index.ts";
 import { getServerConfig } from "../../server/secrets/config.ts";
+import { authenticateAdminRequest } from "../auth/server.ts";
 import {
   productMediaIds,
   productMediaUsages,
@@ -35,10 +36,10 @@ export {
   mediaReferenceSchema,
 } from "./infrastructure/schema.ts";
 
-// Task 14 will supply the verified admin session resolver. Never trust actor IDs/roles in headers or JSON.
+// Only verified live admin sessions supply actor IDs and roles.
 export const handleMediaHttp = createMediaHttpHandler({
   service: createMediaService,
-  authenticate: async () => null,
+  authenticate: authenticateAdminRequest,
   origins: () => {
     const config = getServerConfig();
     return [new URL(config.appUrl).origin, new URL(config.adminUrl).origin];

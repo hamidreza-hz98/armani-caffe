@@ -5,6 +5,7 @@ import type { Connection } from "mongoose";
 
 import { getDatabaseConnection } from "../../server/database/connection.ts";
 import { getServerConfig } from "../../server/secrets/config.ts";
+import { authenticateAdminRequest } from "../auth/server.ts";
 import { commitSensitiveChange } from "../notifications/server.ts";
 import { SettingsService } from "./application/service.ts";
 import { createSettingsHttpHandler } from "./infrastructure/http.ts";
@@ -75,10 +76,10 @@ export async function createSettingsService(): Promise<SettingsService> {
   return singleton;
 }
 
-// Fail closed until Task 14 provides the verified admin-session resolver.
+// Roles are resolved from verified live admin sessions, never caller-supplied identity.
 export const handleSettingsHttp = createSettingsHttpHandler({
   service: createSettingsService,
-  authenticate: async () => null,
+  authenticate: authenticateAdminRequest,
   origins: () => {
     const config = getServerConfig();
     return [new URL(config.appUrl).origin, new URL(config.adminUrl).origin];

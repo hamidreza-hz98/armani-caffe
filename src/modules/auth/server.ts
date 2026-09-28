@@ -1,4 +1,175 @@
 import "server-only";
 
-// Server public boundary. Compose use cases and adapters here.
-export { sessionSchema } from "./infrastructure/schema.ts";
+import { randomUUID } from "node:crypto";
+
+import type { Connection } from "mongoose";
+
+import { getDatabaseConnection } from "../../server/database/connection.ts";
+import { getServerConfig } from "../../server/secrets/config.ts";
+import { requireAdminCapability } from "../../shared/admin-capabilities.ts";
+import { ApplicationError } from "../../shared/errors.ts";
+import type { SecurityCommit } from "../../shared/security-ports.ts";
+import { AdminService, createAdminsHttpHandler, MongoAdminRepository } from "../admins/server.ts";
+import { appendAudit } from "../audit/server.ts";
+import { commitSensitiveChange } from "../notifications/server.ts";
+import { AdminAuthService } from "./application/admin-auth.ts";
+import { validAdminToken } from "./domain/admin-session.ts";
+import { createAdminAuthHttpHandler, readAdminCookie } from "./infrastructure/http.ts";
+import { ScryptPasswords } from "./infrastructure/passwords.ts";
+import { MongoAdminAuthStore } from "./infrastructure/repository.ts";
+
+export { adminCookie, createAdminAuthHttpHandler, readAdminCookie } from "./infrastructure/http.ts";
+export { isSupportedAdminPasswordHash, ScryptPasswords } from "./infrastructure/passwords.ts";
+export { adminLoginThrottleSchema, sessionSchema } from "./infrastructure/schema.ts";
+export async function requireAdminPage(
+  capability: import("../../shared/admin-capabilities.ts").AdminCapability = "admin.access",
+) {
+  // Keep the Next-only page adapter out of Node CLI import graphs.
+  const { requireAdminPage: guardAdminPage } = await import("./infrastructure/guards.ts");
+  return guardAdminPage(capability, async (token) =>
+    (await configuredAdminSecurity()).auth.resolve(token),
+  );
+}
+
+/** Production composition; injectable clock/key only for isolated backend tests. */
+export function createAdminSecurity(
+  connection: Connection,
+  key: string,
+  now: () => Date = () => new Date(),
+) {
+  const commit: SecurityCommit = async (change, operation) => {
+    const idempotencyKey = `admin:${randomUUID()}`;
+    try {
+      return await commitSensitiveChange(
+        connection,
+        {
+          audit: {
+            actor: change.actor,
+            area: "admin",
+            action: change.action,
+            subject: { kind: "admin", id: change.subjectId },
+            requestId: change.requestId,
+            idempotencyKey,
+            metadata: change.metadata ?? {},
+          },
+          events: [
+            {
+              actor: change.actor,
+              aggregateKind: "admin",
+              aggregateId: change.subjectId,
+              eventType: change.action,
+              payload: { adminId: change.subjectId },
+              requestId: change.requestId,
+              idempotencyKey,
+            },
+          ],
+          change: (tx) => operation(tx),
+        },
+        now,
+      );
+    } catch (error) {
+      if (error instanceof ApplicationError) throw error;
+      if (error && typeof error === "object" && "code" in error && error.code === 11000)
+        throw new ApplicationError(
+          "CONFLICT",
+          "Admin security change conflicts with existing data",
+        );
+      throw new ApplicationError("UNAVAILABLE", "Admin security transaction failed");
+    }
+  };
+  const passwords = new ScryptPasswords();
+  const holder: { store?: MongoAdminAuthStore } = {};
+  const activeStore = () => {
+    if (!holder.store) throw new ApplicationError("UNAVAILABLE", "Admin security is not ready");
+    return holder.store;
+  };
+  const repository = new MongoAdminRepository(
+    connection,
+    (token, capability, tx) => activeStore().authorize(token, capability, tx),
+    (tx, id) => activeStore().revokeAll(tx, id),
+    commit,
+    now,
+  );
+  const store = new MongoAdminAuthStore(
+    connection,
+    {
+      byUsername: (username) => repository.identityByUsername(username),
+      byId: (id, tx) => repository.identityById(id, tx),
+      lock: (id, version, tx, hash) => repository.lockIdentity(id, version, tx, hash),
+      trackLogin: (id, tx) => repository.trackLogin(id, tx),
+    },
+    key,
+    commit,
+    async (requestId) => {
+      try {
+        await connection.transaction((tx) =>
+          appendAudit(
+            connection,
+            tx,
+            {
+              actor: { kind: "system", id: null },
+              area: "admin",
+              action: "admin.login_rejected",
+              subject: { kind: "admin-auth", id: "anonymous" },
+              requestId,
+              idempotencyKey: `admin-failure:${randomUUID()}`,
+              outcome: "failure",
+              metadata: {},
+            },
+            now(),
+          ),
+        );
+      } catch {
+        throw new ApplicationError("UNAVAILABLE", "Authentication audit unavailable");
+      }
+    },
+    now,
+  );
+  holder.store = store;
+  return {
+    auth: new AdminAuthService(store, passwords),
+    admins: new AdminService(repository, passwords, (token, capability, tx) =>
+      store.authorize(token, capability, tx),
+    ),
+    repository,
+    passwords,
+    store,
+  };
+}
+export async function configuredAdminSecurity() {
+  const config = getServerConfig();
+  return createAdminSecurity(await getDatabaseConnection(), config.auth.adminSessionSecret);
+}
+export function adminTokenFromRequest(request: Request) {
+  return readAdminCookie(request, getServerConfig().mode === "production");
+}
+export async function authenticateAdminRequest(request: Request) {
+  const token = adminTokenFromRequest(request);
+  if (!validAdminToken(token)) return null;
+  return (await configuredAdminSecurity()).auth.resolve(token);
+}
+const origins = () => {
+  const config = getServerConfig();
+  return [new URL(config.appUrl).origin, new URL(config.adminUrl).origin];
+};
+export const handleAdminAuthHttp = createAdminAuthHttpHandler({
+  service: async () => (await configuredAdminSecurity()).auth,
+  production: () => getServerConfig().mode === "production",
+  origins,
+  network: () => "shared-untrusted-network",
+});
+export const handleAdminsHttp = createAdminsHttpHandler({
+  service: async () => (await configuredAdminSecurity()).admins,
+  authenticate: authenticateAdminRequest,
+  token: adminTokenFromRequest,
+  origins,
+});
+export async function requireAdminToken(
+  token: string | null,
+  capability: import("../../shared/admin-capabilities.ts").AdminCapability,
+) {
+  return requireAdminCapability(
+    await (await configuredAdminSecurity()).auth.resolve(token),
+    capability,
+  );
+}

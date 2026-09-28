@@ -1,5 +1,6 @@
 import { createHash } from "node:crypto";
 
+import { requireAdminCapability } from "../../../shared/admin-capabilities.ts";
 import { ApplicationError } from "../../../shared/errors.ts";
 import {
   idempotencyKey,
@@ -17,7 +18,7 @@ const hash = (value: unknown) => createHash("sha256").update(JSON.stringify(valu
 export function requireMediaOwner(actor: MediaActor | null): MediaActor {
   if (!actor) throw new ApplicationError("UNAUTHORIZED", "Authentication is required");
   mediaId(actor.id);
-  if (actor.role !== "OWNER") throw new ApplicationError("FORBIDDEN", "OWNER role is required");
+  requireAdminCapability(actor, "media.manage");
   return actor;
 }
 export class MediaService {

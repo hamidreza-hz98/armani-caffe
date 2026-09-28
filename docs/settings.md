@@ -1,6 +1,6 @@
 # Typed singleton settings
 
-Verification (2026-09-28): format/lint/types/server boundaries/architecture, 59 unit/client tests, 32 MongoDB integration tests (10 settings-specific), production build and 10 Playwright tests passed. Full `validate` fails only at the existing real-MinIO suite setup: its five tests remain unverified because MinIO is unavailable on this host. Admin HTTP authentication remains deliberately gated on Task 14.
+Task 13 verification (2026-09-28): format/lint/types/server boundaries/architecture, 59 unit/client tests, 32 MongoDB integration tests (10 settings-specific), production build and 10 Playwright tests passed. Full `validate` failed at the real-MinIO suite setup because MinIO was unavailable on this host. Task 14 subsequently connected admin HTTP authentication; see [admin auth](admin-auth.md).
 
 Settings owns five singletons identified by `kind`, not caller-supplied document IDs. `settings_kind_unique` enforces this. Browser-safe types/contracts are exported from `modules/settings`; server composition from `modules/settings/server`. No connection, encryption-key read or settings write happens at import/build time.
 
@@ -49,7 +49,7 @@ Trusted payment/printing adapters can use the server-only repository's `withCred
 - `GET /api/settings/[kind]`: authenticated, role-projected values.
 - `PATCH /api/settings/[kind]`: OWNER only, allowed exact app/admin Origin, JSON ≤16 KiB, Idempotency-Key; body `{ revision, values, secrets?, rotate? }`.
 
-Actors are resolved server-side, never from headers/JSON IDs/roles. Responses use no-store/nosniff, request IDs and the shared safe Persian error serializer. As with Media, the shipped resolver returns `null` until Task 14 supplies verified sessions. Admin endpoints currently return 401 rather than bypass authentication. Integration tests inject a trusted resolver to exercise OWNER/CASHIER policy.
+Actors are resolved from the verified admin session server-side, never from headers/JSON IDs/roles. Responses use no-store/nosniff, request IDs and the shared safe Persian error serializer. Integration tests also inject a trusted resolver to exercise OWNER/CASHIER policy.
 
 ## Explicit migration and tests
 
@@ -70,4 +70,4 @@ npx vitest run --project integration tests/integration/settings.test.ts
 npm run test:e2e
 ```
 
-Settings integration uses an isolated real MongoDB replica set and does not touch development data. Coverage includes defaults, event atomicity, CAS/replay races, rollback, encryption/redaction/rotation, preserve/clear semantics, role/CSRF/bounded-body checks, cross-instance cache freshness and legacy migration refusal/conversion. Production-like E2E verifies fail-closed admin routes; authenticated browser journeys await Task 14. Full `validate` still needs real MinIO for the existing storage integration suite.
+Settings integration uses an isolated real MongoDB replica set and does not touch development data. Coverage includes defaults, event atomicity, CAS/replay races, rollback, encryption/redaction/rotation, preserve/clear semantics, role/CSRF/bounded-body checks, cross-instance cache freshness and legacy migration refusal/conversion. Full `validate` still needs real MinIO for the existing storage integration suite.

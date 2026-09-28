@@ -1,5 +1,12 @@
 export type ErrorCode =
-  "VALIDATION" | "NOT_FOUND" | "CONFLICT" | "UNAUTHORIZED" | "FORBIDDEN" | "UNAVAILABLE";
+  | "VALIDATION"
+  | "NOT_FOUND"
+  | "CONFLICT"
+  | "UNAUTHORIZED"
+  | "FORBIDDEN"
+  | "UNAVAILABLE"
+  | "INVALID_CREDENTIALS"
+  | "RATE_LIMITED";
 
 export class ApplicationError extends Error {
   readonly code: ErrorCode;
@@ -15,6 +22,8 @@ export class ApplicationError extends Error {
 }
 
 const publicMessages: Record<ErrorCode, string> = {
+  INVALID_CREDENTIALS: "نام کاربری یا رمز عبور معتبر نیست.",
+  RATE_LIMITED: "تعداد درخواست‌ها زیاد است. کمی بعد دوباره تلاش کنید.",
   VALIDATION: "اطلاعات واردشده معتبر نیست.",
   NOT_FOUND: "مورد درخواستی پیدا نشد.",
   CONFLICT: "این درخواست با وضعیت فعلی سازگار نیست.",
@@ -45,5 +54,7 @@ export function errorStatus(code: SafeError["code"]): number {
     FORBIDDEN: 403,
     UNAVAILABLE: 503,
     INTERNAL: 500,
+    INVALID_CREDENTIALS: 401,
+    RATE_LIMITED: 429,
   }[code];
 }

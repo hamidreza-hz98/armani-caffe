@@ -29,6 +29,9 @@ function fakeConnection() {
         async findOne(filter) {
           return records.get(filter._id) ?? null;
         },
+        async countDocuments() {
+          return records.size;
+        },
         async insertOne(document) {
           if (records.has(document._id)) throw { code: 11000 };
           records.set(document._id, document);
@@ -36,6 +39,9 @@ function fakeConnection() {
         async updateOne(filter, update) {
           if (!records.has(filter._id))
             records.set(filter._id, { _id: filter._id, ...update.$setOnInsert });
+        },
+        async updateMany() {
+          return { matchedCount: 0 };
         },
         async createIndex(keys, options) {
           indexes.push({ collection: name, keys, name: options.name });
@@ -62,14 +68,14 @@ test("migration status is read-only and migrations apply once in transactions", 
   assert.equal((await migrationStatus(connection))[0].appliedAt, null);
   assert.equal(connection.transactions, 0);
   const fixed = new Date("2025-01-01T00:00:00.000Z");
-  assert.deepEqual(await applyMigrations(connection, () => fixed), [1, 2, 3]);
+  assert.deepEqual(await applyMigrations(connection, () => fixed), [1, 2, 3, 4]);
   assert.deepEqual(await applyMigrations(connection, () => fixed), []);
   assert.equal((await migrationStatus(connection))[0].appliedAt, fixed);
   assert.equal(
     connection.collections.get("_app_metadata").get("schema-baseline").initializedAt,
     fixed,
   );
-  assert.equal(connection.transactions, 6);
+  assert.equal(connection.transactions, 8);
 });
 
 test("baseline seed is idempotent and indexes apply only when requested", async () => {
