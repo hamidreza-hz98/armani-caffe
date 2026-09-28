@@ -27,6 +27,7 @@ export type {
   UploadTicket,
 } from "./application/storage.ts";
 export { createMediaActions } from "./infrastructure/actions.ts";
+export { syncCategoryMediaReference } from "./infrastructure/category-reference.ts";
 export { createMediaHttpHandler } from "./infrastructure/http.ts";
 export { MinioMediaStorage } from "./infrastructure/minio-storage.ts";
 export {

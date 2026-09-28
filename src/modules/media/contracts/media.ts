@@ -128,4 +128,8 @@ export type MediaDetail = MediaSummary &
     objectVersion?: string;
     sha256?: string | null;
   }>;
-export type MediaUsage = Readonly<{ entityKind: "product"; entityId: string; field: "mediaIds" }>;
+export type MediaUsage = Readonly<{
+  entityKind: "product" | "category";
+  entityId: string;
+  field: "mediaIds" | "mediaId";
+}>;

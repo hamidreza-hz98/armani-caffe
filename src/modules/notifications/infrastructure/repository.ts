@@ -28,7 +28,7 @@ export async function appendOutbox(
       availableAt: event.availableAt ? new Date(event.availableAt) : now,
       replayCount: 0,
     })),
-    { session },
+    { session, ordered: true },
   );
 }
 

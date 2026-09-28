@@ -80,9 +80,9 @@ type Cleanup = {
 type Receipt = { scope: string; key: string; fingerprint: string; result: MediaDetail };
 type Reference = {
   mediaId: Types.ObjectId;
-  entityKind: "product";
+  entityKind: "product" | "category";
   entityId: Types.ObjectId;
-  field: "mediaIds";
+  field: "mediaIds" | "mediaId";
 };
 export type MediaReferenceBridge = Readonly<{
   usages: (session: ClientSession | null, id: string) => Promise<MediaUsage[]>;
@@ -513,6 +513,15 @@ export class MongoMediaRepository implements MediaRepository {
         (from.visibility === "public" && to.visibility !== "public")
       )
         throw new ApplicationError("CONFLICT", "Replacement must preserve ready/public access");
+      if (
+        await this.references
+          .countDocuments({ mediaId: id, entityKind: "category" })
+          .session(session)
+      )
+        throw new ApplicationError(
+          "CONFLICT",
+          "Category media must be changed through category update",
+        );
       await this.bridge.replace(session, id, targetId);
       const refs = await this.references.find({ mediaId: id }).session(session).lean();
       for (const ref of refs)

@@ -101,9 +101,9 @@ mediaAssetSchema.pre("validate", function () {
 export const mediaReferenceSchema = new Schema(
   {
     mediaId: objectIdField(),
-    entityKind: { type: String, required: true, enum: ["product"] },
+    entityKind: { type: String, required: true, enum: ["product", "category"] },
     entityId: objectIdField(),
-    field: { type: String, required: true, enum: ["mediaIds"] },
+    field: { type: String, required: true, enum: ["mediaIds", "mediaId"] },
   },
   { ...documentSchemaOptions(), collection: "media_references" },
 );

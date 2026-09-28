@@ -10,7 +10,10 @@ import {
   sessionSchema,
 } from "../../modules/auth/server.ts";
 import { cartSchema } from "../../modules/carts/server.ts";
-import { categorySchema } from "../../modules/catalog/categories/server.ts";
+import {
+  categoryOrderGuardSchema,
+  categorySchema,
+} from "../../modules/catalog/categories/server.ts";
 import { productAdditionSchema, productSchema } from "../../modules/catalog/products/server.ts";
 import { customerSchema } from "../../modules/customers/server.ts";
 import {
@@ -44,6 +47,7 @@ const schemas = [
   mediaReceiptSchema,
   mediaReferenceSchema,
   categorySchema,
+  categoryOrderGuardSchema,
   productSchema,
   productAdditionSchema,
   cartSchema,
