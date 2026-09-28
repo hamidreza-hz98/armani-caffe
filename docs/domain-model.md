@@ -4,6 +4,8 @@ This is the model contract for Phase 1 before CRUD. Every record has MongoDB `_i
 
 ## Entities and ownership
 
+Task 21 adds durable `checkout_intents` with frozen payment quotes and stock manifests, `order_counters` for `AC-` codes, and transactional `order_sales_projection`. Order lifecycle is **NEW → PREPARING → READY → COMPLETED**, with owner-only NEW/PREPARING cancellation and separately verified refund branches. See [Orders](orders.md) for migration 11, atomicity, snapshots, indexes and paid-stock recovery. The original pre-CRUD order status spellings below are normalized explicitly by that migration.
+
 Settings now uses five complete typed primitive contracts, write-only credential inputs, role-specific DTOs and a seven-day actor-scoped mutation receipt collection. See [settings](settings.md) for defaults, CAS/audit/outbox invariants, encryption and explicit migration 3.
 
 | Entity / collection                                  | Owner and references                                         | Key invariants and lifecycle                                                                                                                                                           | Uniqueness, access indexes, retention                                                                                                                                |

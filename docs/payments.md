@@ -26,7 +26,7 @@ Credential sets use the existing authenticated AES-256-GCM Settings vault. Each 
 
 ## Trusted creation and public callbacks
 
-This task does **not** expose a public amount-taking payment creation route. The upcoming checkout workflow must supply a trusted intent port that reads and validates a durable, server-priced payable order inside the reservation transaction, and enforce customer ownership before invoking creation. Tests use real MongoDB payable order fixtures. The default callback composition deliberately refuses to create intents until checkout is wired. Cart totals or browser quote fields are not payment input.
+Task 21 wires the durable server-priced checkout intent and atomic verified-success settlement hook. `POST /api/checkout` enforces customer ownership before creation and accepts no amount. Framework-only tests retain real MongoDB payable fixtures. See [orders](orders.md) for frozen quotes, stock recovery and controlled refund requests. Browser quote fields are never payment input.
 
 `GET/POST /api/payments/callback/[provider]/[id]` supports allowlisted adapters only. The callback origin is the configured `PAYMENT_CALLBACK_BASE_URL`, which must be an origin (no path, credentials, query or fragment) and HTTPS in production. HMAC state binds the transaction and recorded callback key; the exact path/provider/authority must match. Generic POST transport accepts only bounded URL-encoded forms; each adapter must independently approve its documented method and fields. Duplicate fields across query/form and unknown fields are rejected. Fake accepts GET only. State is compared in constant time, and callback responses use no-store and no-referrer headers. Browser status/result hints are never verification evidence.
 

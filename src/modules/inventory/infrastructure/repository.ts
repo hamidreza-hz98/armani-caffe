@@ -511,6 +511,66 @@ export class MongoInventoryRepository implements InventoryOperations {
     }
   }
   /** Product module supplies its own transaction and validated product identity. */
+  async canConsumeOrder(
+    session: ClientSession,
+    quantities: readonly { inventoryItemId: string; quantity: number; unit: BaseUnit }[],
+  ) {
+    if (!session.inTransaction()) throw new ApplicationError("VALIDATION", "Transaction required");
+    if (quantities.length > 200)
+      throw new ApplicationError("VALIDATION", "Stock manifest bound exceeded");
+    const rows = await this.items()
+      .find({ _id: { $in: quantities.map((q) => oid(q.inventoryItemId)) } }, { session })
+      .limit(200)
+      .toArray();
+    return quantities.every((q) => {
+      const item = rows.find((r) => String(r._id) === q.inventoryItemId);
+      return (
+        Number.isSafeInteger(q.quantity) &&
+        q.quantity > 0 &&
+        item?.status === "active" &&
+        item.unit === q.unit &&
+        Number.isSafeInteger(item.onHand) &&
+        item.onHand >= 0 &&
+        item.onHand >= q.quantity
+      );
+    });
+  }
+  async reverseOrder(session: ClientSession, orderId: string, requestId: string) {
+    if (!session.inTransaction()) throw new ApplicationError("VALIDATION", "Transaction required");
+    const originals = await this.ledger()
+      .find({ orderId: oid(orderId), reason: "sale" }, { session })
+      .sort({ inventoryItemId: 1 })
+      .limit(201)
+      .toArray();
+    if (originals.length > 200)
+      throw new ApplicationError("UNAVAILABLE", "Stock reversal bound exceeded");
+    for (const original of originals) {
+      if (await this.ledger().findOne({ reversalOf: original._id }, { session })) continue;
+      const item = await this.items().findOne({ _id: original.inventoryItemId }, { session });
+      if (!item || item.unit !== original.unit)
+        throw new ApplicationError("CONFLICT", "Reversal inventory incompatible");
+      const moved = await this.move(session, item, {
+        inventoryItemId: item._id,
+        delta: -original.delta,
+        reason: "reversal",
+        orderId: oid(orderId),
+        actorKind: "system",
+        actorId: null,
+        idempotencyKey: `cancel:${orderId}:${item._id}`,
+        reversalOf: original._id,
+        requestId: null,
+        fingerprint: fingerprint({ reversal: String(original._id) }),
+      });
+      await this.record(
+        session,
+        { kind: "system", id: null },
+        "inventory.order_reversed",
+        String(moved.row._id),
+        requestId,
+        moved.events,
+      );
+    }
+  }
   async replaceConsumptionRules(
     session: ClientSession,
     productId: string,

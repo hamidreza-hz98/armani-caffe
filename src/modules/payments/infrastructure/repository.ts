@@ -12,6 +12,7 @@ import type { PaymentIssue, PaymentView } from "../domain/framework.ts";
 import { assertTransactionTransition, type TransactionStatus } from "../domain/model.ts";
 
 export type PaymentPorts = {
+  settled?: (session: ClientSession, view: PaymentView, requestId: string) => Promise<void>;
   /** Must read a durable, server-priced payable intent under this transaction. */
   intent: (orderId: string, session: ClientSession) => Promise<{ amountToman: number }>;
   configuration: () => Promise<ProviderConfiguration>;
@@ -276,6 +277,7 @@ export class MongoPaymentRepository implements PaymentRepository {
           { session, returnDocument: "after" },
         );
         if (!updated) throw new ApplicationError("CONFLICT", "Payment completion changed");
+        if (status === "succeeded") await this.ports.settled?.(session, dto(updated), requestId);
         await this.ports.record(
           session,
           dto(updated),
@@ -288,10 +290,27 @@ export class MongoPaymentRepository implements PaymentRepository {
       if (
         error instanceof ApplicationError &&
         error.code === "CONFLICT" &&
+        error.message === "Payment uniqueness conflict" &&
         (change.reference || change.authority)
       )
         return this.complete(work, { issue: "REFERENCE_CONFLICT" }, requestId);
       throw error;
     }
   }
+}
+
+/** Locks authoritative financial evidence in the caller's fulfillment transaction. */
+export async function paymentReceipt(connection: Connection, session: ClientSession, id: string) {
+  if (!session.inTransaction())
+    throw new ApplicationError("VALIDATION", "Financial evidence requires transaction");
+  const row = await connection
+    .db!.collection<Row>("transactions")
+    .findOneAndUpdate(
+      { _id: new Types.ObjectId(id), status: { $in: ["succeeded", "refunded"] } },
+      { $inc: { confirmationGuard: 1 } },
+      { session, returnDocument: "after" },
+    );
+  if (!row || !row.providerReference)
+    throw new ApplicationError("CONFLICT", "Verified payment required");
+  return dto(row);
 }

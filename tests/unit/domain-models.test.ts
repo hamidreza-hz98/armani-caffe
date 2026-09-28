@@ -49,8 +49,8 @@ describe("domain invariants", () => {
   });
 
   it("rejects invalid lifecycle transitions", () => {
-    expect(() => assertOrderTransition("placed", "preparing")).not.toThrow();
-    expect(() => assertOrderTransition("completed", "preparing")).toThrow(RangeError);
+    expect(() => assertOrderTransition("NEW", "PREPARING")).not.toThrow();
+    expect(() => assertOrderTransition("COMPLETED", "PREPARING")).toThrow(RangeError);
     expect(() => assertTransactionTransition("succeeded", "pending")).toThrow(RangeError);
     expect(() => assertOrderPaymentTransition("refunded", "paid")).toThrow(RangeError);
     expect(() => assertInvoiceTransition("voided", "issued")).toThrow(RangeError);

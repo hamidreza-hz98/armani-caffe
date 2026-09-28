@@ -409,7 +409,7 @@ test("product edits preserve historical order/invoice snapshots and sold count d
     idempotencyKey: "snapshot-order",
     items: [persistedSnapshot],
     totalToman: 220000,
-    status: "completed",
+    status: "COMPLETED",
     paymentStatus: "paid",
     placedAt: time,
   });

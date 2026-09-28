@@ -14,7 +14,7 @@ export async function productSoldCounts(
         {
           $match: {
             paymentStatus: "paid",
-            status: "completed",
+            status: { $in: ["NEW", "PREPARING", "READY", "COMPLETED"] },
             "items.productId": { $in: objectIds },
           },
         },

@@ -44,6 +44,7 @@ export const transactionSchema = new Schema(
     creationAttempts: { type: Number, min: 0, default: 0 },
     verificationAttempts: { type: Number, min: 0, default: 0 },
     settledAt: { type: Date, default: null },
+    confirmationGuard: { type: Number, min: 0, default: 0 },
   },
   { ...documentSchemaOptions(true), collection: "transactions" },
 );

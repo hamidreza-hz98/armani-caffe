@@ -53,6 +53,9 @@ function fakeConnection() {
         async updateMany() {
           return { matchedCount: 0 };
         },
+        async deleteMany() {
+          return { deletedCount: 0 };
+        },
         async createIndex(keys, options) {
           indexes.push({ collection: name, keys, name: options.name });
         },
@@ -78,14 +81,17 @@ test("migration status is read-only and migrations apply once in transactions", 
   assert.equal((await migrationStatus(connection))[0].appliedAt, null);
   assert.equal(connection.transactions, 0);
   const fixed = new Date("2025-01-01T00:00:00.000Z");
-  assert.deepEqual(await applyMigrations(connection, () => fixed), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  assert.deepEqual(
+    await applyMigrations(connection, () => fixed),
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  );
   assert.deepEqual(await applyMigrations(connection, () => fixed), []);
   assert.equal((await migrationStatus(connection))[0].appliedAt, fixed);
   assert.equal(
     connection.collections.get("_app_metadata").get("schema-baseline").initializedAt,
     fixed,
   );
-  assert.equal(connection.transactions, 20);
+  assert.equal(connection.transactions, 22);
 });
 
 test("baseline seed is idempotent and indexes apply only when requested", async () => {

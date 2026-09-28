@@ -26,12 +26,13 @@ export type Cart = EntityDto &
     sessionId: string | null;
     items: readonly CartItemSnapshot[];
     totalToman: TomanAmount;
-    status: "active" | "checked_out" | "abandoned";
-    expiresAt: UtcTimestamp;
+    status: "active" | "payment_pending" | "checked_out" | "abandoned";
+    expiresAt: UtcTimestamp | null;
   }>;
 
 const allowed: Record<Cart["status"], readonly Cart["status"][]> = {
-  active: ["checked_out", "abandoned"],
+  active: ["payment_pending", "checked_out", "abandoned"],
+  payment_pending: ["checked_out", "abandoned"],
   checked_out: [],
   abandoned: [],
 };

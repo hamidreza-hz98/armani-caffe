@@ -49,6 +49,14 @@ function identity(row: Row | null): CustomerIdentity | null {
   };
 }
 export class MongoCustomerRepository {
+  async orderSnapshot(id: string, session: ClientSession) {
+    const row = await this.rows().findOne(
+      { _id: new Types.ObjectId(id), status: "active" },
+      { session, projection: { phone: 1, displayName: 1 } },
+    );
+    if (!row) throw new ApplicationError("UNAUTHORIZED", "Customer unavailable");
+    return { id, displayName: row.displayName, phone: row.phone };
+  }
   private readonly connection: Connection;
   private readonly now: () => Date;
   constructor(connection: Connection, now: () => Date = () => new Date()) {

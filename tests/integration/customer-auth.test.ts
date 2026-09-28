@@ -287,7 +287,7 @@ test("migration 5 upgrades compatible legacy customers and revokes old sessions"
     principalKind: "customer",
     expiresAt: new Date(now.getTime() + 10000),
   });
-  expect(await applyMigrations(connection, clock)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  expect(await applyMigrations(connection, clock)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
   const row = await connection.db!.collection("customers").findOne({ phone: "+989111111111" });
   expect(row).toMatchObject({ authVersion: 1, birthDate: null });
   expect(

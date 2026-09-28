@@ -41,10 +41,16 @@ export const cartSchema = new Schema(
     status: {
       type: String,
       required: true,
-      enum: ["active", "checked_out", "abandoned"],
+      enum: ["active", "payment_pending", "checked_out", "abandoned"],
       default: "active",
     },
-    expiresAt: utcDateField(),
+    expiresAt: {
+      ...utcDateField(false),
+      required: function () {
+        return this.get("status") !== "payment_pending";
+      },
+    },
+    checkoutId: { ...objectIdField(false), default: null },
   },
   { ...documentSchemaOptions(true), collection: "carts" },
 );

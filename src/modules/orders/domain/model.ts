@@ -5,7 +5,7 @@ import {
   type UtcTimestamp,
 } from "../../../shared/domain.ts";
 
-export type OrderStatus = "placed" | "preparing" | "ready" | "completed" | "cancelled";
+export type OrderStatus = "NEW" | "PREPARING" | "READY" | "COMPLETED" | "CANCELLED";
 export type OrderPaymentStatus = "unpaid" | "pending" | "paid" | "refunded";
 export type OrderAdditionSnapshot = Readonly<{
   additionId: string;
@@ -35,11 +35,11 @@ export type Order = EntityDto &
   }>;
 
 const allowed: Record<OrderStatus, readonly OrderStatus[]> = {
-  placed: ["preparing", "cancelled"],
-  preparing: ["ready", "cancelled"],
-  ready: ["completed"],
-  completed: [],
-  cancelled: [],
+  NEW: ["PREPARING", "CANCELLED"],
+  PREPARING: ["READY", "CANCELLED"],
+  READY: ["COMPLETED"],
+  COMPLETED: [],
+  CANCELLED: [],
 };
 
 export function assertOrderTransition(from: OrderStatus, to: OrderStatus): void {
@@ -72,6 +72,8 @@ export function makeOrderItemSnapshot(input: {
 }): OrderItemSnapshot {
   if (!Number.isSafeInteger(input.quantity) || input.quantity < 1 || input.quantity > 100)
     throw new RangeError("Invalid order item quantity");
+  if (new Set(input.additions.map((a) => a.additionId)).size !== input.additions.length)
+    throw new RangeError("Duplicate order additions");
   const additions = Object.freeze(
     input.additions.map((addition) =>
       Object.freeze({
@@ -82,7 +84,8 @@ export function makeOrderItemSnapshot(input: {
     ),
   );
   const unitPriceToman = asToman(
-    input.basePriceToman + additions.reduce((sum, addition) => sum + addition.priceToman, 0),
+    asToman(input.basePriceToman) +
+      additions.reduce((sum, addition) => sum + addition.priceToman, 0),
   );
   return Object.freeze({
     productId: input.productId,

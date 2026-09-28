@@ -20,6 +20,7 @@ import { createSettingsRepository, SettingsVault } from "../../modules/settings/
 import { ApplicationError } from "../../shared/errors.ts";
 import { getDatabaseConnection } from "../database/connection.ts";
 import { getServerConfig } from "../secrets/config.ts";
+import { composeOrderService } from "./orders.ts";
 // Add documented gateway factories here once. Settings select among registered adapters.
 const gatewayFactories = new Map<string, ProviderFactory>();
 
@@ -27,6 +28,7 @@ export function composePaymentFramework(
   connection: Connection,
   options: {
     intent: PaymentPorts["intent"];
+    settled?: PaymentPorts["settled"];
     vault: SettingsVault;
     callbackBaseUrl: string;
     production?: boolean;
@@ -62,6 +64,7 @@ export function composePaymentFramework(
     connection,
     {
       intent: options.intent,
+      settled: options.settled,
       configuration: () =>
         settings.withCredentials("payment", async (raw, secrets) => {
           const values = raw as SettingsValues["payment"];
@@ -153,9 +156,15 @@ export function composePaymentFramework(
 }
 export async function configuredPaymentFramework() {
   const config = getServerConfig();
-  return composePaymentFramework(await getDatabaseConnection(), {
-    intent: async () => {
-      throw new ApplicationError("UNAVAILABLE", "Checkout intent adapter is not wired yet");
+  const connection = await getDatabaseConnection();
+  const orders = composeOrderService(connection, {
+    customerSessionSecret: config.auth.sessionSecret,
+    adminSessionSecret: config.auth.adminSessionSecret,
+  }).repository;
+  return composePaymentFramework(connection, {
+    intent: (id, session) => orders.paymentIntent(id, session),
+    settled: async (session, view, requestId) => {
+      await orders.confirmInside(session, view.id, requestId);
     },
     vault: new SettingsVault(config.encryption.key, config.encryption.previousKey),
     callbackBaseUrl: config.paymentCallbackBaseUrl,

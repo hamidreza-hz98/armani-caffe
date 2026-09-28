@@ -16,4 +16,5 @@ export function createCartService(
 }
 
 // Server public boundary. Compose use cases and adapters here.
+export { cartCheckoutPort } from "./infrastructure/checkout.ts";
 export { cartSchema } from "./infrastructure/schema.ts";

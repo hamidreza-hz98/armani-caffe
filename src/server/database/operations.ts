@@ -13,6 +13,7 @@ import * as inventoryLedger from "./migrations/0007-inventory-ledger.ts";
 import * as productWorkflows from "./migrations/0008-product-workflows.ts";
 import * as cartWorkflows from "./migrations/0009-cart-workflows.ts";
 import * as paymentFramework from "./migrations/0010-payment-framework.ts";
+import * as orderConfirmation from "./migrations/0011-order-confirmation.ts";
 
 export const migrations = [
   baseline,
@@ -25,6 +26,7 @@ export const migrations = [
   productWorkflows,
   cartWorkflows,
   paymentFramework,
+  orderConfirmation,
 ] as const;
 
 export const databaseIndexes = [

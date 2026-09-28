@@ -30,7 +30,7 @@ import {
   mediaReferenceSchema,
 } from "../../modules/media/server.ts";
 import { outboxEventSchema } from "../../modules/notifications/server.ts";
-import { orderSchema } from "../../modules/orders/server.ts";
+import { checkoutIntentSchema, orderSchema } from "../../modules/orders/server.ts";
 import { transactionSchema } from "../../modules/payments/server.ts";
 import { printJobSchema } from "../../modules/printing/server.ts";
 import { settingsReceiptSchema, settingsSchema } from "../../modules/settings/server.ts";
@@ -53,6 +53,7 @@ const schemas = [
   cartSchema,
   transactionSchema,
   orderSchema,
+  checkoutIntentSchema,
   inventoryItemSchema,
   productConsumptionRuleSchema,
   inventoryMovementSchema,

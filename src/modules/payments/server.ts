@@ -1,4 +1,5 @@
 import "server-only";
+export { paymentReceipt } from "./infrastructure/repository.ts";
 
 import type { Connection } from "mongoose";
 

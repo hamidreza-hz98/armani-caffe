@@ -35,14 +35,14 @@ export const orderSchema = new Schema(
   {
     code: { type: String, required: true, match: /^AC-[0-9]{7,}$/ },
     snapshotVersion: { type: Number, required: true, enum: [1], default: 1, immutable: true },
-    customerId: { ...objectIdField(false), default: null },
+    customerId: { ...objectIdField(false), default: null, immutable: true },
     items: { type: [orderItemSnapshotSchema], required: true, immutable: true },
     totalToman: { ...tomanAmountField(), immutable: true },
     status: {
       type: String,
       required: true,
-      enum: ["placed", "preparing", "ready", "completed", "cancelled"],
-      default: "placed",
+      enum: ["NEW", "PREPARING", "READY", "COMPLETED", "CANCELLED"],
+      default: "NEW",
     },
     paymentStatus: {
       type: String,
@@ -52,7 +52,16 @@ export const orderSchema = new Schema(
     },
     idempotencyKey: requiredText(128),
     placedAt: { ...utcDateField(), immutable: true },
-    notes: { type: String, maxlength: 1000, default: "" },
+    notes: { type: String, maxlength: 1000, default: "", immutable: true },
+    checkoutId: { ...objectIdField(false), immutable: true },
+    cartId: { ...objectIdField(false), immutable: true },
+    transactionId: { ...objectIdField(false), immutable: true },
+    customer: { type: Schema.Types.Mixed, immutable: true },
+    pricing: { type: Schema.Types.Mixed, immutable: true },
+    transaction: { type: Schema.Types.Mixed, immutable: true },
+    refundStatus: { type: String, enum: ["NONE", "REQUESTED", "REFUNDED"], default: "NONE" },
+    cancellationReason: { type: String, maxlength: 1000, default: null },
+    refundReason: { type: String, maxlength: 1000, default: null },
   },
   { ...documentSchemaOptions(true), collection: "orders" },
 );
@@ -79,3 +88,73 @@ orderSchema.index({ idempotencyKey: 1 }, { unique: true, name: "order_idempotenc
 orderSchema.index({ status: 1, placedAt: -1 }, { name: "order_status_placed" });
 orderSchema.index({ paymentStatus: 1, placedAt: -1 }, { name: "order_payment_placed" });
 orderSchema.index({ customerId: 1, placedAt: -1 }, { name: "order_customer_placed" });
+orderSchema.index({ placedAt: -1, _id: -1 }, { name: "order_recent" });
+orderSchema.index({ customerId: 1, placedAt: -1, _id: -1 }, { name: "order_customer_recent" });
+for (const field of ["checkoutId", "cartId", "transactionId"])
+  orderSchema.index(
+    { [field]: 1 },
+    {
+      unique: true,
+      name: `order_${field}_unique`,
+      partialFilterExpression: { [field]: { $type: "objectId" } },
+    },
+  );
+export const checkoutIntentSchema = new Schema(
+  {
+    cartId: { ...objectIdField(), immutable: true },
+    customerId: { ...objectIdField(), immutable: true },
+    key: { ...requiredText(100), immutable: true },
+    cartRevision: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: Number.isSafeInteger,
+      immutable: true,
+    },
+    customer: { type: Schema.Types.Mixed, required: true, immutable: true },
+    items: { type: [orderItemSnapshotSchema], required: true, immutable: true },
+    pricing: { type: Schema.Types.Mixed, required: true, immutable: true },
+    stock: {
+      type: [
+        new Schema(
+          {
+            inventoryItemId: requiredText(24),
+            quantity: positiveIntegerField(),
+            unit: { type: String, required: true, enum: ["gram", "milliliter", "piece"] },
+          },
+          { _id: false, strict: "throw" },
+        ),
+      ],
+      default: [],
+      immutable: true,
+    },
+    notes: { type: String, maxlength: 1000, default: "", immutable: true },
+    state: {
+      type: String,
+      required: true,
+      enum: ["PAYMENT_PENDING", "RECOVERY_REQUIRED", "CONFIRMED", "REFUND_REQUESTED", "REFUNDED"],
+    },
+    recovery: {
+      type: String,
+      enum: [null, "INSUFFICIENT_STOCK", "CART_UNAVAILABLE"],
+      default: null,
+    },
+    transactionId: { type: String, default: null },
+    refundReason: { type: String, default: null, maxlength: 1000 },
+  },
+  { ...documentSchemaOptions(true), collection: "checkout_intents" },
+);
+checkoutIntentSchema.index(
+  { customerId: 1, key: 1 },
+  { unique: true, name: "checkout_customer_key_unique" },
+);
+checkoutIntentSchema.index({ cartId: 1 }, { unique: true, name: "checkout_cart_unique" });
+checkoutIntentSchema.index({ state: 1, updatedAt: 1 }, { name: "checkout_recovery" });
+checkoutIntentSchema.index(
+  { transactionId: 1 },
+  {
+    unique: true,
+    name: "checkout_transaction_unique",
+    partialFilterExpression: { transactionId: { $type: "string" } },
+  },
+);

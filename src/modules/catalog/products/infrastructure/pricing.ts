@@ -47,7 +47,7 @@ export async function productPricingProjection(
     .collection("categories")
     .find(
       { _id: { $in: categoryIds }, status: "published", deletedAt: null },
-      { session, projection: { _id: 1 } },
+      { session, projection: { _id: 1, name: 1 } },
     )
     .limit(50)
     .maxTimeMS(2500)
@@ -91,6 +91,9 @@ export async function productPricingProjection(
       {
         id: String(p._id),
         name: p.name,
+        categoryName: String(
+          categories.find((c) => String(c._id) === String(p.categoryId))?.name ?? "",
+        ),
         basePriceToman: p.basePriceToman,
         available:
           p.status === "published" &&
