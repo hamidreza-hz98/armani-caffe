@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import { parseAdminCreate, parseAdminUpdate } from "@/modules/admins/contracts/admin";
 import { parseAdminLogin } from "@/modules/auth/contracts/admin-auth";
-import { adminCookieName, customerCookieName } from "@/modules/auth/domain/admin-session";
+import { adminCookieName } from "@/modules/auth/domain/admin-session";
+import { customerCookieName } from "@/modules/auth/domain/customer-session";
 import { adminCookie, readAdminCookie, ScryptPasswords } from "@/modules/auth/server";
 import {
   adminCapabilities,

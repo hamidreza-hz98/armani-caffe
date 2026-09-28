@@ -430,7 +430,7 @@ test("explicit media migration quarantines legacy records without touching their
     updatedAt: now(),
     __v: 0,
   });
-  expect(await applyMigrations(connection, now)).toEqual([1, 2, 3, 4]);
+  expect(await applyMigrations(connection, now)).toEqual([1, 2, 3, 4, 5]);
   expect(await applyMigrations(connection, now)).toEqual([]);
   const record = await connection.db!.collection("media_assets").findOne({ _id: id });
   expect(record).toMatchObject({

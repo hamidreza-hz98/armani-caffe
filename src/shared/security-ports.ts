@@ -12,7 +12,7 @@ export type AdminAuthorizer = (
   transaction?: TransactionContext,
 ) => Promise<AdminActor>;
 export type SecurityChange = {
-  actor: { kind: "admin" | "system"; id: string | null };
+  actor: { kind: "admin" | "customer" | "system"; id: string | null };
   action: string;
   subjectId: string;
   requestId: string;

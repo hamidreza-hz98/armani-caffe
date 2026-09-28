@@ -11,16 +11,29 @@ import { ApplicationError } from "../../shared/errors.ts";
 import type { SecurityCommit } from "../../shared/security-ports.ts";
 import { AdminService, createAdminsHttpHandler, MongoAdminRepository } from "../admins/server.ts";
 import { appendAudit } from "../audit/server.ts";
+import { MongoCustomerRepository } from "../customers/server.ts";
 import { commitSensitiveChange } from "../notifications/server.ts";
 import { AdminAuthService } from "./application/admin-auth.ts";
+import { CustomerAuthService } from "./application/customer-auth.ts";
 import { validAdminToken } from "./domain/admin-session.ts";
+import { createCustomerHttpHandler } from "./infrastructure/customer-http.ts";
+import { MongoCustomerAuthStore } from "./infrastructure/customer-repository.ts";
 import { createAdminAuthHttpHandler, readAdminCookie } from "./infrastructure/http.ts";
 import { ScryptPasswords } from "./infrastructure/passwords.ts";
 import { MongoAdminAuthStore } from "./infrastructure/repository.ts";
 
+export {
+  createCustomerHttpHandler,
+  customerCookie,
+  readCustomerCookie,
+} from "./infrastructure/customer-http.ts";
 export { adminCookie, createAdminAuthHttpHandler, readAdminCookie } from "./infrastructure/http.ts";
 export { isSupportedAdminPasswordHash, ScryptPasswords } from "./infrastructure/passwords.ts";
-export { adminLoginThrottleSchema, sessionSchema } from "./infrastructure/schema.ts";
+export {
+  adminLoginThrottleSchema,
+  customerAuthThrottleSchema,
+  sessionSchema,
+} from "./infrastructure/schema.ts";
 export async function requireAdminPage(
   capability: import("../../shared/admin-capabilities.ts").AdminCapability = "admin.access",
 ) {
@@ -173,3 +186,89 @@ export async function requireAdminToken(
     capability,
   );
 }
+
+/** Separate customer secret and token namespace; shares only the session collection. */
+export function createCustomerSecurity(
+  connection: Connection,
+  key: string,
+  now: () => Date = () => new Date(),
+) {
+  const commit: SecurityCommit = async (change, operation) => {
+    const idempotencyKey = `customer:${randomUUID()}`;
+    try {
+      return await commitSensitiveChange(
+        connection,
+        {
+          audit: {
+            actor: change.actor,
+            area: "customer",
+            action: change.action,
+            subject: { kind: "customer", id: change.subjectId },
+            requestId: change.requestId,
+            idempotencyKey,
+            metadata: change.metadata ?? {},
+          },
+          events: [
+            {
+              actor: change.actor,
+              aggregateKind: "customer",
+              aggregateId: change.subjectId,
+              eventType: change.action,
+              payload: { customerId: change.subjectId },
+              requestId: change.requestId,
+              idempotencyKey,
+            },
+          ],
+          change: (tx) => operation(tx),
+        },
+        now,
+      );
+    } catch (error) {
+      if (error instanceof ApplicationError) throw error;
+      if (error && typeof error === "object" && "code" in error && error.code === 11000)
+        throw new ApplicationError("CONFLICT", "Customer identity already exists");
+      throw new ApplicationError("UNAVAILABLE", "Customer security transaction failed");
+    }
+  };
+  const customers = new MongoCustomerRepository(connection, now);
+  const store = new MongoCustomerAuthStore(
+    connection,
+    customers,
+    key,
+    commit,
+    async (requestId) => {
+      try {
+        await connection.transaction((tx) =>
+          appendAudit(
+            connection,
+            tx,
+            {
+              actor: { kind: "system", id: null },
+              area: "customer",
+              action: "customer.login_rejected",
+              subject: { kind: "customer-auth", id: "anonymous" },
+              requestId,
+              idempotencyKey: `customer-failure:${randomUUID()}`,
+              outcome: "failure",
+              metadata: {},
+            },
+            now(),
+          ),
+        );
+      } catch {
+        throw new ApplicationError("UNAVAILABLE", "Customer authentication audit unavailable");
+      }
+    },
+    now,
+  );
+  return { auth: new CustomerAuthService(store, new ScryptPasswords()), customers, store };
+}
+export async function configuredCustomerSecurity() {
+  const config = getServerConfig();
+  return createCustomerSecurity(await getDatabaseConnection(), config.auth.sessionSecret);
+}
+export const handleCustomerHttp = createCustomerHttpHandler({
+  service: async () => (await configuredCustomerSecurity()).auth,
+  production: () => getServerConfig().mode === "production",
+  origins,
+});

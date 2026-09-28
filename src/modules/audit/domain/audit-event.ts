@@ -2,7 +2,8 @@ import type { AuditActor } from "../../../shared/actor.ts";
 import type { UtcTimestamp } from "../../../shared/domain.ts";
 
 export type { AuditActor } from "../../../shared/actor.ts";
-export type SensitiveArea = "admin" | "payment" | "order" | "inventory" | "settings" | "print";
+export type SensitiveArea =
+  "admin" | "customer" | "payment" | "order" | "inventory" | "settings" | "print";
 
 export type AuditEvent = Readonly<{
   id: string;

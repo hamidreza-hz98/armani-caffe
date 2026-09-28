@@ -47,3 +47,16 @@ adminLoginThrottleSchema.index(
   { expiresAt: 1 },
   { expireAfterSeconds: 0, name: "admin_login_throttle_expiry" },
 );
+
+export const customerAuthThrottleSchema = new Schema(
+  {
+    _id: { type: String, required: true },
+    count: { type: Number, required: true },
+    expiresAt: utcDateField(),
+  },
+  { ...documentSchemaOptions(), collection: "customer_auth_throttles" },
+);
+customerAuthThrottleSchema.index(
+  { expiresAt: 1 },
+  { expireAfterSeconds: 0, name: "customer_auth_throttle_expiry" },
+);

@@ -8,6 +8,17 @@ export const customerSchema = new Schema(
   {
     phone: iranianMobileField(),
     displayName: { type: String, trim: true, maxlength: 120, default: null },
+    passwordHash: { type: String, required: true, maxlength: 255, select: false },
+    birthDate: {
+      type: Date,
+      default: null,
+      validate: (value: Date | null) =>
+        value === null ||
+        (value instanceof Date &&
+          Number.isFinite(value.getTime()) &&
+          value.toISOString().endsWith("T00:00:00.000Z")),
+    },
+    authVersion: { type: Number, required: true, min: 1, default: 1, select: false },
     status: { type: String, required: true, enum: ["active", "blocked"], default: "active" },
     lastOrderAt: { type: Date, default: null },
   },

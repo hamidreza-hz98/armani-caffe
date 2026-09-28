@@ -7,8 +7,15 @@ import * as baseline from "./migrations/0001-baseline.ts";
 import * as mediaWorkflows from "./migrations/0002-media-workflows.ts";
 import * as typedSettings from "./migrations/0003-typed-settings.ts";
 import * as adminSecurity from "./migrations/0004-admin-security.ts";
+import * as customerSecurity from "./migrations/0005-customer-security.ts";
 
-export const migrations = [baseline, mediaWorkflows, typedSettings, adminSecurity] as const;
+export const migrations = [
+  baseline,
+  mediaWorkflows,
+  typedSettings,
+  adminSecurity,
+  customerSecurity,
+] as const;
 
 export const databaseIndexes = [
   {

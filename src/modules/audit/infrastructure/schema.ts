@@ -25,7 +25,7 @@ export const auditEventSchema = new Schema(
     area: {
       type: String,
       required: true,
-      enum: ["admin", "payment", "order", "inventory", "settings", "print"],
+      enum: ["admin", "customer", "payment", "order", "inventory", "settings", "print"],
     },
     action: requiredText(120),
     subject: { type: subjectSchema, required: true },

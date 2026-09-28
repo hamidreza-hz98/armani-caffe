@@ -4,7 +4,11 @@ import type { Schema } from "mongoose";
 
 import { adminOwnerGuardSchema, adminSchema } from "../../modules/admins/server.ts";
 import { auditEventSchema } from "../../modules/audit/server.ts";
-import { adminLoginThrottleSchema, sessionSchema } from "../../modules/auth/server.ts";
+import {
+  adminLoginThrottleSchema,
+  customerAuthThrottleSchema,
+  sessionSchema,
+} from "../../modules/auth/server.ts";
 import { cartSchema } from "../../modules/carts/server.ts";
 import { categorySchema } from "../../modules/catalog/categories/server.ts";
 import { productAdditionSchema, productSchema } from "../../modules/catalog/products/server.ts";
@@ -32,6 +36,7 @@ const schemas = [
   adminSchema,
   adminOwnerGuardSchema,
   adminLoginThrottleSchema,
+  customerAuthThrottleSchema,
   customerSchema,
   sessionSchema,
   mediaAssetSchema,
