@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 
 import {
   AbortMultipartUploadCommand,
@@ -180,6 +180,25 @@ test("bulk returns partial results and a failed variant removes uploaded sibling
   }
   const after = await client.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: "media/" }));
   expect(after.KeyCount).toBe(before.KeyCount);
+});
+
+test("managed output versions retain staging until DB completion and support exact-prefix recovery", async () => {
+  const ticket = await storage.prepareUpload(owner, bytes.length, "image/jpeg");
+  expect((await postUpload(ticket, bytes)).ok).toBe(true);
+  const version = randomUUID();
+  const image = await storage.finalizeUpload(owner, ticket.token, version);
+  const recovered = await storage.findUpload(owner, version);
+  expect(recovered?.objects.map((object) => object.key).sort()).toEqual(
+    image.objects.map((object) => object.key).sort(),
+  );
+  expect(recovered?.objects.every((object) => object.width > 0 && object.height > 0)).toBe(true);
+  expect(
+    (await client.send(new ListObjectsV2Command({ Bucket: bucket, Prefix: ticket.fields.key })))
+      .KeyCount,
+  ).toBe(1);
+  await storage.removeStaging(owner, ticket.fields.key);
+  await storage.deleteUpload(owner, version);
+  expect(await storage.findUpload(owner, version)).toBeNull();
 });
 
 test("large images use S3 multipart and interrupted multipart transfers are aborted", async () => {

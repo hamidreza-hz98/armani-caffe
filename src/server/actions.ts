@@ -10,7 +10,7 @@ import { logEvent, withRequestContext } from "./observability/index.ts";
 export async function runSafeAction<T>(
   name: string,
   action: () => Promise<T>,
-  requestId = randomUUID(),
+  requestId: string = randomUUID(),
 ): Promise<Result<T, SafeError>> {
   return withRequestContext(requestId, async () => {
     try {

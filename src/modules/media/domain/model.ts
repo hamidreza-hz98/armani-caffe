@@ -6,14 +6,33 @@ export type MediaAsset = EntityDto &
     objectKey: string;
     mimeType: string;
     byteSize: number;
-    sha256: string;
+    sha256: string | null;
+    filename: string;
+    objectVersion: string;
+    width: number | null;
+    height: number | null;
+    title: string;
+    altText: string;
+    caption: string;
+    seo: Readonly<{ title: string; description: string; keywords: readonly string[] }>;
+    visibility: "private" | "public";
+    uploaderId: string;
+    variants: readonly Readonly<{
+      key: string;
+      variant: "original" | "small" | "large";
+      mimeType: "image/webp";
+      byteSize: number;
+      width: number;
+      height: number;
+      sha256: string;
+    }>[];
     status: MediaStatus;
     ownerId: string;
     deletedAt: UtcTimestamp | null;
   }>;
 
 const allowed: Record<MediaStatus, readonly MediaStatus[]> = {
-  pending: ["ready", "rejected"],
+  pending: ["ready", "rejected", "deleted"],
   ready: ["deleted"],
   rejected: ["deleted"],
   deleted: [],

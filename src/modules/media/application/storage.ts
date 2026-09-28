@@ -6,6 +6,8 @@ export type StoredImage = Readonly<{
     byteSize: number;
     sha256: string;
     mimeType: "image/webp";
+    width: number;
+    height: number;
   }>[];
 }>;
 export type UploadInput = Readonly<{ bytes: Uint8Array; mimeType: string }>;
@@ -21,8 +23,16 @@ export interface MediaStorage {
     ownerId: string,
     inputs: readonly UploadInput[],
   ): Promise<readonly ({ ok: true; image: StoredImage } | { ok: false; code: "UPLOAD_FAILED" })[]>;
-  prepareUpload(ownerId: string, byteSize: number, mimeType: string): Promise<UploadTicket>;
-  finalizeUpload(ownerId: string, token: string): Promise<StoredImage>;
+  prepareUpload(
+    ownerId: string,
+    byteSize: number,
+    mimeType: string,
+    existingKey?: string,
+  ): Promise<UploadTicket>;
+  finalizeUpload(ownerId: string, token: string, outputId?: string): Promise<StoredImage>;
+  findUpload(ownerId: string, outputId: string): Promise<StoredImage | null>;
+  deleteUpload(ownerId: string, outputId: string): Promise<void>;
+  removeStaging(ownerId: string, key: string): Promise<void>;
   cancelUpload(ownerId: string, token: string): Promise<void>;
   read(ownerId: string, key: string): Promise<Uint8Array>;
   metadata(

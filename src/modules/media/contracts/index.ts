@@ -1,2 +1,2 @@
 // Transport-safe input and output contracts belong here.
-export {};
+export * from "./media.ts";

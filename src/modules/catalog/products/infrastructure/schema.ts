@@ -39,6 +39,7 @@ export const productSchema = new Schema(
   { ...documentSchemaOptions(true), collection: "products" },
 );
 addSoftDelete(productSchema);
+productSchema.index({ mediaIds: 1, _id: 1 }, { name: "product_media_usage" });
 productSchema.index(
   { slug: 1 },
   {

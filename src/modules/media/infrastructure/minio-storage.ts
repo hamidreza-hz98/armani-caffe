@@ -7,6 +7,7 @@ import {
   GetObjectCommand,
   HeadBucketCommand,
   HeadObjectCommand,
+  ListObjectsV2Command,
   S3Client,
 } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
@@ -73,10 +74,15 @@ export class MinioMediaStorage implements MediaStorage {
       throw new RangeError("Expired or unauthorized upload ticket");
     return ticket;
   }
-  async upload(ownerId: string, input: UploadInput): Promise<StoredImage> {
+  async upload(
+    ownerId: string,
+    input: UploadInput,
+    outputId: string = randomUUID(),
+  ): Promise<StoredImage> {
     assertOwnerId(ownerId);
     const variants = await normalizeImage(input);
-    const id = randomUUID();
+    const id = outputId;
+    stagingKey(ownerId, id);
     const keys: string[] = [];
     const objects: StoredImage["objects"][number][] = [];
     try {
@@ -92,7 +98,11 @@ export class MinioMediaStorage implements MediaStorage {
             ContentType: "image/webp",
             CacheControl: "private, max-age=31536000, immutable",
             ContentDisposition: "inline",
-            Metadata: { sha256: variant.sha256 },
+            Metadata: {
+              sha256: variant.sha256,
+              width: String(variant.width),
+              height: String(variant.height),
+            },
           },
           partSize: 5 * 1024 * 1024,
           queueSize: 2,
@@ -112,6 +122,8 @@ export class MinioMediaStorage implements MediaStorage {
           byteSize: variant.bytes.length,
           sha256: variant.sha256,
           mimeType: "image/webp",
+          width: variant.width,
+          height: variant.height,
         });
       }
       return { id, objects };
@@ -137,9 +149,10 @@ export class MinioMediaStorage implements MediaStorage {
     }
     return results;
   }
-  async prepareUpload(ownerId: string, byteSize: number, mimeType: string) {
+  async prepareUpload(ownerId: string, byteSize: number, mimeType: string, existingKey?: string) {
     validateMediaInput(byteSize, mimeType);
-    const key = stagingKey(ownerId, randomUUID());
+    const key = existingKey ?? stagingKey(ownerId, randomUUID());
+    assertOwnedKey(key, ownerId, true);
     const policy = await createPresignedPost(this.client, {
       Bucket: this.bucket,
       Key: key,
@@ -165,7 +178,7 @@ export class MinioMediaStorage implements MediaStorage {
       expiresIn: expirySeconds,
     };
   }
-  async finalizeUpload(ownerId: string, token: string): Promise<StoredImage> {
+  async finalizeUpload(ownerId: string, token: string, outputId?: string): Promise<StoredImage> {
     const ticket = this.ticket(ownerId, token);
     let image: StoredImage | undefined;
     try {
@@ -176,15 +189,73 @@ export class MinioMediaStorage implements MediaStorage {
       if (stat.ContentLength !== ticket.byteSize)
         throw new RangeError("Uploaded size differs from ticket");
       const bytes = await this.readKey(ticket.key);
-      image = await this.upload(ownerId, { bytes, mimeType: ticket.mimeType });
+      image = await this.upload(ownerId, { bytes, mimeType: ticket.mimeType }, outputId);
     } finally {
       try {
-        await this.removeKey(ticket.key);
+        if (!outputId) await this.removeKey(ticket.key);
       } catch {
         logEvent("error", "media.staging_cleanup_required", { key: ticket.key });
       }
     }
     return image;
+  }
+  async removeStaging(ownerId: string, key: string): Promise<void> {
+    assertOwnedKey(key, ownerId, true);
+    await this.removeKey(key);
+  }
+  private async uploadKeys(ownerId: string, outputId: string): Promise<string[]> {
+    stagingKey(ownerId, outputId);
+    const response = await this.client.send(
+      new ListObjectsV2Command({
+        Bucket: this.bucket,
+        Prefix: `media/v1/${ownerId}/${outputId}/`,
+        MaxKeys: 20,
+      }),
+      { abortSignal: AbortSignal.timeout(10_000) },
+    );
+    if (response.IsTruncated) throw new Error("Unexpected upload object count");
+    return (response.Contents ?? []).map((object) => {
+      const key = object.Key!;
+      assertOwnedKey(key, ownerId);
+      return key;
+    });
+  }
+  async findUpload(ownerId: string, outputId: string): Promise<StoredImage | null> {
+    const keys = await this.uploadKeys(ownerId, outputId);
+    if (keys.length !== 3) return null;
+    const objects: StoredImage["objects"][number][] = [];
+    for (const key of keys) {
+      const stat = await this.client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: key }),
+        { abortSignal: AbortSignal.timeout(10_000) },
+      );
+      const match = /\/([a-f0-9]{64})-(original|small|large)\.webp$/.exec(key)!;
+      const width = Number(stat.Metadata?.width);
+      const height = Number(stat.Metadata?.height);
+      if (
+        stat.ContentType !== "image/webp" ||
+        stat.Metadata?.sha256 !== match[1] ||
+        !Number.isSafeInteger(width) ||
+        width < 1 ||
+        !Number.isSafeInteger(height) ||
+        height < 1
+      )
+        return null;
+      objects.push({
+        key,
+        variant: match[2] as "original" | "small" | "large",
+        byteSize: stat.ContentLength!,
+        sha256: match[1],
+        mimeType: "image/webp",
+        width,
+        height,
+      });
+    }
+    if (new Set(objects.map((object) => object.variant)).size !== 3) return null;
+    return { id: outputId, objects };
+  }
+  async deleteUpload(ownerId: string, outputId: string): Promise<void> {
+    await this.delete(ownerId, await this.uploadKeys(ownerId, outputId));
   }
   async cancelUpload(ownerId: string, token: string): Promise<void> {
     await this.removeKey(this.ticket(ownerId, token).key);

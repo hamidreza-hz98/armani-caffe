@@ -32,17 +32,22 @@ export async function normalizeImage(input: UploadInput) {
     ["small", 320],
     ["large", 1280],
   ] as const) {
-    const output = await sharp(bytes, { limitInputPixels: MAX_MEDIA_PIXELS, failOn: "warning" })
+    const { data: output, info } = await sharp(bytes, {
+      limitInputPixels: MAX_MEDIA_PIXELS,
+      failOn: "warning",
+    })
       .autoOrient()
       .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
       .webp({ quality: 82 })
       .timeout({ seconds: 10 })
-      .toBuffer();
+      .toBuffer({ resolveWithObject: true });
     validateMediaInput(output.byteLength, "image/webp");
     results.push({
       variant,
       bytes: output,
       sha256: createHash("sha256").update(output).digest("hex"),
+      width: info.width,
+      height: info.height,
     });
   }
   return results;

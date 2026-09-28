@@ -35,3 +35,42 @@ export function assertOwnedKey(key: string, ownerId: string, staging = false): v
   if (!pattern.test(key) || !key.startsWith(`${staging ? "staging" : "media"}/v1/${ownerId}/`))
     throw new RangeError("Invalid or unauthorized media key");
 }
+
+export function assertImageVersion(
+  ownerId: string,
+  image: {
+    id: string;
+    objects: readonly {
+      key: string;
+      variant: string;
+      sha256: string;
+      mimeType: string;
+      byteSize: number;
+      width: number;
+      height: number;
+    }[];
+  },
+): void {
+  if (
+    image.objects.length !== 3 ||
+    new Set(image.objects.map((object) => object.variant)).size !== 3
+  )
+    throw new RangeError("Three distinct image variants are required");
+  for (const object of image.objects) {
+    validateMediaInput(object.byteSize, object.mimeType);
+    const limit = { original: 4096, small: 320, large: 1280 }[
+      object.variant as "original" | "small" | "large"
+    ];
+    if (
+      object.mimeType !== "image/webp" ||
+      object.key !== mediaKey(ownerId, image.id, object.sha256, object.variant) ||
+      !Number.isSafeInteger(object.width) ||
+      !Number.isSafeInteger(object.height) ||
+      object.width < 1 ||
+      object.height < 1 ||
+      object.width > limit ||
+      object.height > limit
+    )
+      throw new RangeError("Invalid normalized image descriptor");
+  }
+}

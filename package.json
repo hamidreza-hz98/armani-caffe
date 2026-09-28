@@ -28,6 +28,7 @@
     "db:smoke": "node --conditions=react-server scripts/db.mjs smoke",
     "outbox:work": "node --conditions=react-server scripts/outbox.mjs work",
     "outbox:replay": "node --conditions=react-server scripts/outbox.mjs replay",
+    "media:cleanup": "node --conditions=react-server scripts/media-cleanup.mjs",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit",

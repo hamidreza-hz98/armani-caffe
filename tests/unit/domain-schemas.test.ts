@@ -132,6 +132,15 @@ describe("Mongoose domain schema defenses", () => {
 
   it("requires timestamps and actors for terminal workflow states", async () => {
     const media = {
+      filename: "test.jpg",
+      objectVersion: "00000000-0000-4000-8000-000000000001",
+      title: "رسانه",
+      uploaderId: objectId,
+      initiationKey: "test-initiation",
+      fingerprint: "b".repeat(64),
+      ticketCiphertext: "encrypted-test-ticket",
+      stagingKey: "staging/test",
+      expiresAt: new Date(),
       objectKey: "media/one",
       bucket: "media",
       mimeType: "image/jpeg",

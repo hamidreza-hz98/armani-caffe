@@ -16,7 +16,12 @@ import {
   stockApprovalRequestSchema,
 } from "../../modules/inventory/server.ts";
 import { invoiceSchema } from "../../modules/invoices/server.ts";
-import { mediaAssetSchema } from "../../modules/media/server.ts";
+import {
+  mediaAssetSchema,
+  mediaCleanupSchema,
+  mediaReceiptSchema,
+  mediaReferenceSchema,
+} from "../../modules/media/server.ts";
 import { outboxEventSchema } from "../../modules/notifications/server.ts";
 import { orderSchema } from "../../modules/orders/server.ts";
 import { transactionSchema } from "../../modules/payments/server.ts";
@@ -28,6 +33,9 @@ const schemas = [
   customerSchema,
   sessionSchema,
   mediaAssetSchema,
+  mediaCleanupSchema,
+  mediaReceiptSchema,
+  mediaReferenceSchema,
   categorySchema,
   productSchema,
   productAdditionSchema,
