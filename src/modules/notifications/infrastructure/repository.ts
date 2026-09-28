@@ -19,7 +19,8 @@ export async function appendOutbox(
 ): Promise<void> {
   if (events.length === 0)
     throw new RangeError("A domain change requires at least one outbox event");
-  await outboxModel(connection).create(
+  // insertMany validates every event without tracking mutable save documents on rollback.
+  await outboxModel(connection).insertMany(
     events.map((event) => ({
       ...event,
       status: "pending",

@@ -353,7 +353,7 @@ test("migration 4 refuses unknown legacy password hashes and revokes legacy sess
   await connection
     .db!.collection("sessions")
     .insertOne({ principalKind: "admin", expiresAt: new Date(time.getTime() + 10000) });
-  expect(await applyMigrations(connection, clock)).toEqual([4, 5, 6]);
+  expect(await applyMigrations(connection, clock)).toEqual([4, 5, 6, 7]);
   expect(
     (await connection.db!.collection("sessions").findOne({ principalKind: "admin" }))!.revokedAt,
   ).toEqual(time);

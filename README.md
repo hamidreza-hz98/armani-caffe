@@ -1,5 +1,7 @@
 # Armani Caffe
 
+Stock units, approvals, immutable movements, migrations, and trusted order/product ports are documented in [Inventory](docs/inventory.md).
+
 وب‌سایت آرمانی کافه، ساخته‌شده با Next.js App Router و TypeScript.
 
 تنظیمات singleton، نقش‌ها، رمزنگاری و چرخش کلید، cache و migration شمارهٔ ۳ در [راهنمای تنظیمات](docs/settings.md) مستند شده‌اند. ورود مدیر، نشست‌ها، نقش‌ها و راه‌اندازی نخستین مالک در [راهنمای احراز هویت مدیریت](docs/admin-auth.md) آمده‌اند.

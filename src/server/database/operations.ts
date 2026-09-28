@@ -9,6 +9,7 @@ import * as typedSettings from "./migrations/0003-typed-settings.ts";
 import * as adminSecurity from "./migrations/0004-admin-security.ts";
 import * as customerSecurity from "./migrations/0005-customer-security.ts";
 import * as categoryOrder from "./migrations/0006-category-order.ts";
+import * as inventoryLedger from "./migrations/0007-inventory-ledger.ts";
 
 export const migrations = [
   baseline,
@@ -17,6 +18,7 @@ export const migrations = [
   adminSecurity,
   customerSecurity,
   categoryOrder,
+  inventoryLedger,
 ] as const;
 
 export const databaseIndexes = [

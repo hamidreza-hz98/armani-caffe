@@ -8,6 +8,7 @@ export type InventoryItem = EntityDto &
     onHand: number;
     reorderLevel: number;
     status: "active" | "archived";
+    revision: number;
   }>;
 export type ProductConsumptionRule = EntityDto &
   Readonly<{
@@ -20,7 +21,12 @@ export type InventoryMovement = EntityDto &
   Readonly<{
     inventoryItemId: string;
     delta: number;
-    reason: "purchase" | "sale" | "waste" | "adjustment" | "refund";
+    reason: "initial" | "purchase" | "sale" | "waste" | "adjustment" | "refund" | "reversal";
+    before: number;
+    after: number;
+    unit: "gram" | "milliliter" | "piece";
+    reversalOf: string | null;
+    requestId: string | null;
     orderId: string | null;
     actorKind: "admin" | "system";
     actorId: string | null;
@@ -35,6 +41,10 @@ export type StockApprovalRequest = EntityDto &
     decidedBy: string | null;
     decidedAt: UtcTimestamp | null;
     status: "pending" | "approved" | "rejected";
+    kind: "initial" | "purchase" | "adjustment" | "waste" | "reversal";
+    unit: "gram" | "milliliter" | "piece";
+    movementId: string | null;
+    reversalOf: string | null;
   }>;
 
 export function assertStockApprovalTransition(
