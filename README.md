@@ -1,5 +1,7 @@
 # Armani Caffe
 
+Product lifecycle, additions, public menu, stock mappings, and rollout are documented in [Products](docs/products.md).
+
 Stock units, approvals, immutable movements, migrations, and trusted order/product ports are documented in [Inventory](docs/inventory.md).
 
 وب‌سایت آرمانی کافه، ساخته‌شده با Next.js App Router و TypeScript.

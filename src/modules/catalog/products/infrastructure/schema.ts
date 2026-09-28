@@ -22,9 +22,11 @@ export const productSchema = new Schema(
       required: true,
       lowercase: true,
       trim: true,
-      match: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+      match: /^[\p{Script=Arabic}a-z0-9]+(?:-[\p{Script=Arabic}a-z0-9]+)*$/u,
     },
     description: { type: String, trim: true, maxlength: 2000, default: "" },
+    excerpt: { type: String, trim: true, maxlength: 300, default: "" },
+    ingredients: { type: String, trim: true, maxlength: 2000, default: "" },
     basePriceToman: tomanAmountField(),
     mediaIds: { type: [Schema.Types.ObjectId], default: [] },
     status: {
@@ -61,6 +63,7 @@ productSchema.index(
 export const productAdditionSchema = new Schema(
   {
     productId: objectIdField(),
+    mediaId: { ...objectIdField(false), default: null },
     name: requiredText(120),
     priceToman: tomanAmountField(),
     available: { type: Boolean, required: true, default: true },
@@ -72,6 +75,7 @@ productAdditionSchema.index(
   { productId: 1, name: 1 },
   { unique: true, name: "addition_product_name_unique" },
 );
+productAdditionSchema.index({ mediaId: 1, productId: 1 }, { name: "addition_media_usage" });
 productAdditionSchema.index(
   { productId: 1, available: 1, sortOrder: 1 },
   { name: "addition_product_menu" },

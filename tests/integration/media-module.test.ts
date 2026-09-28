@@ -17,7 +17,8 @@ import {
   createMediaHttpHandler,
   MediaService,
 } from "../../src/modules/media/server.ts";
-import { applyDatabaseIndexes, applyMigrations } from "../../src/server/database/operations.ts";
+import * as mediaMigration from "../../src/server/database/migrations/0002-media-workflows.ts";
+import { applyDatabaseIndexes } from "../../src/server/database/operations.ts";
 import { testEnv } from "../fixtures/config.mjs";
 import { FakeMediaStorage } from "../fixtures/FakeMediaStorage.ts";
 import { isolatedResources } from "../fixtures/isolation.ts";
@@ -246,6 +247,43 @@ test("in-use deletion is blocked and replacement rewrites real product reference
   expect((await service.delete(owner, replacement.id, "delete-now-unused")).status).toBe("deleted");
 });
 
+test("replacement updates addition images and parent revision without changing addition price", async () => {
+  const from = await ready("addition-image-old", "public"),
+    to = await ready("addition-image-new", "public");
+  const product = await connection.models.Product.create({
+    name: "اضافه",
+    slug: "addition-parent",
+    categoryId: new mongoose.Types.ObjectId(),
+    basePriceToman: 50000,
+    sortOrder: 0,
+    mediaIds: [],
+  });
+  const additionId = new mongoose.Types.ObjectId();
+  await connection.db!.collection("product_additions").insertOne({
+    _id: additionId,
+    productId: product._id,
+    name: "شیر",
+    priceToman: 10000,
+    mediaId: new mongoose.Types.ObjectId(from.id),
+    available: true,
+    sortOrder: 0,
+    __v: 0,
+  });
+  expect(await service.usages(owner, from.id)).toEqual([
+    { entityKind: "product", entityId: String(product._id), field: "additionMediaIds" },
+  ]);
+  await expect(service.delete(owner, from.id, "addition-image-delete")).rejects.toMatchObject({
+    code: "CONFLICT",
+  });
+  await service.replace(owner, from.id, to.id, "addition-image-replace");
+  const addition = await connection
+    .db!.collection("product_additions")
+    .findOne({ _id: additionId });
+  expect(String(addition!.mediaId)).toBe(to.id);
+  expect(addition!.priceToman).toBe(10000);
+  expect((await connection.models.Product.findById(product._id)).__v).toBe(product.__v + 1);
+});
+
 test("raw legacy product links block deletion and failed replacement rolls back", async () => {
   const old = await ready("legacy-link-old", "public");
   const next = await ready("legacy-link-new", "public");
@@ -266,9 +304,11 @@ test("raw legacy product links block deletion and failed replacement rolls back"
     storage,
     now,
   );
-  const repositorySpy = vi.spyOn(connection.models.Product, "find").mockImplementationOnce(() => {
-    throw new Error("Injected reference failure");
-  });
+  const repositorySpy = vi
+    .spyOn(Object.getPrototypeOf(connection.db!.collection("products")), "updateOne")
+    .mockImplementationOnce(() => {
+      throw new Error("Injected reference failure");
+    });
   await expect(failed.replace(owner, old.id, next.id, "replace-rollback")).rejects.toThrow();
   repositorySpy.mockRestore();
   expect((await service.detail(owner, old.id)).status).toBe("ready");
@@ -430,8 +470,11 @@ test("explicit media migration quarantines legacy records without touching their
     updatedAt: now(),
     __v: 0,
   });
-  expect(await applyMigrations(connection, now)).toEqual([1, 2, 3, 4, 5, 6, 7]);
-  expect(await applyMigrations(connection, now)).toEqual([]);
+  // This suite intentionally contains orphan legacy product fixtures; test only media rollout.
+  await connection.transaction((tx) => mediaMigration.up(connection.db!, tx, now()));
+  const migrated = await connection.db!.collection("media_assets").findOne({ _id: id });
+  await connection.transaction((tx) => mediaMigration.up(connection.db!, tx, now()));
+  expect(await connection.db!.collection("media_assets").findOne({ _id: id })).toEqual(migrated);
   const record = await connection.db!.collection("media_assets").findOne({ _id: id });
   expect(record).toMatchObject({
     status: "rejected",

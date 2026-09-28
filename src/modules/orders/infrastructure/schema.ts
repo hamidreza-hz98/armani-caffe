@@ -71,6 +71,10 @@ orderSchema.pre("validate", function () {
     this.invalidate("totalToman", "Order total mismatch");
 });
 orderSchema.index({ code: 1 }, { unique: true, name: "order_code_unique" });
+orderSchema.index(
+  { "items.productId": 1, paymentStatus: 1, status: 1 },
+  { name: "order_product_sales" },
+);
 orderSchema.index({ idempotencyKey: 1 }, { unique: true, name: "order_idempotency_unique" });
 orderSchema.index({ status: 1, placedAt: -1 }, { name: "order_status_placed" });
 orderSchema.index({ paymentStatus: 1, placedAt: -1 }, { name: "order_payment_placed" });

@@ -131,5 +131,5 @@ export type MediaDetail = MediaSummary &
 export type MediaUsage = Readonly<{
   entityKind: "product" | "category";
   entityId: string;
-  field: "mediaIds" | "mediaId";
+  field: "mediaIds" | "mediaId" | "additionMediaIds";
 }>;

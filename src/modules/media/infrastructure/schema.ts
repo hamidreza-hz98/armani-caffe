@@ -103,7 +103,7 @@ export const mediaReferenceSchema = new Schema(
     mediaId: objectIdField(),
     entityKind: { type: String, required: true, enum: ["product", "category"] },
     entityId: objectIdField(),
-    field: { type: String, required: true, enum: ["mediaIds", "mediaId"] },
+    field: { type: String, required: true, enum: ["mediaIds", "mediaId", "additionMediaIds"] },
   },
   { ...documentSchemaOptions(), collection: "media_references" },
 );

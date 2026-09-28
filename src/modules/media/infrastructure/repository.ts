@@ -82,7 +82,7 @@ type Reference = {
   mediaId: Types.ObjectId;
   entityKind: "product" | "category";
   entityId: Types.ObjectId;
-  field: "mediaIds" | "mediaId";
+  field: "mediaIds" | "mediaId" | "additionMediaIds";
 };
 export type MediaReferenceBridge = Readonly<{
   usages: (session: ClientSession | null, id: string) => Promise<MediaUsage[]>;

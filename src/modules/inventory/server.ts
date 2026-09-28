@@ -16,6 +16,7 @@ import { type InventoryRecord, MongoInventoryRepository } from "./infrastructure
 
 export { InventoryService } from "./application/service.ts";
 export { createInventoryHttpHandler } from "./infrastructure/http.ts";
+export { productStockProjection } from "./infrastructure/product-stock.ts";
 export { MongoInventoryRepository } from "./infrastructure/repository.ts";
 export function createInventoryService(
   connection: Connection,

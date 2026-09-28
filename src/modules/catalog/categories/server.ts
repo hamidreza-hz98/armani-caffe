@@ -18,6 +18,10 @@ import { MongoCategoryRepository } from "./infrastructure/repository.ts";
 
 export { CategoryService } from "./application/service.ts";
 export { createCategoryHttpHandler } from "./infrastructure/http.ts";
+export {
+  publicProductCategories,
+  validateProductCategory,
+} from "./infrastructure/product-reference.ts";
 export { MongoCategoryRepository } from "./infrastructure/repository.ts";
 export { categoryOrderGuardSchema, categorySchema } from "./infrastructure/schema.ts";
 

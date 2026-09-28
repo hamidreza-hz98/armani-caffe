@@ -6,6 +6,10 @@ export type Product = EntityDto &
     name: string;
     slug: string;
     description: string;
+    excerpt: string;
+    ingredients: string;
+    revision: number;
+    sortOrder: number;
     basePriceToman: TomanAmount;
     mediaIds: readonly string[];
     status: "draft" | "published" | "archived";
@@ -16,6 +20,7 @@ export type Product = EntityDto &
 export type ProductAddition = EntityDto &
   Readonly<{
     productId: string;
+    mediaId: string | null;
     name: string;
     priceToman: TomanAmount;
     available: boolean;
