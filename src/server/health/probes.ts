@@ -3,7 +3,10 @@ import "server-only";
 import net from "node:net";
 import tls from "node:tls";
 
+import { HeadBucketCommand } from "@aws-sdk/client-s3";
+
 import { getDatabaseConnection } from "../database/connection.ts";
+import { configuredMinioClient } from "../minio/index.ts";
 import { getServerConfig } from "../secrets/config.ts";
 
 const timeoutMs = 2500;
@@ -88,6 +91,14 @@ export async function probeMinio(): Promise<void> {
   const url = new URL("/minio/health/ready", endpoint);
   const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs), cache: "no-store" });
   if (!response.ok) throw new Error(`MinIO readiness returned ${response.status}`);
+  const client = configuredMinioClient();
+  try {
+    await client.send(new HeadBucketCommand({ Bucket: getServerConfig().minio.bucket }), {
+      abortSignal: AbortSignal.timeout(timeoutMs),
+    });
+  } finally {
+    client.destroy();
+  }
 }
 
 export const dependencyProbes = { mongodb: probeMongo, redis: probeRedis, minio: probeMinio };

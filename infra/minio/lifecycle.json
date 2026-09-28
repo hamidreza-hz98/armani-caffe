@@ -1,0 +1,16 @@
+{
+  "Rules": [
+    {
+      "ID": "expire-unvalidated-staging",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "staging/" },
+      "Expiration": { "Days": 1 }
+    },
+    {
+      "ID": "abort-interrupted-multipart",
+      "Status": "Enabled",
+      "Filter": { "Prefix": "" },
+      "AbortIncompleteMultipartUpload": { "DaysAfterInitiation": 1 }
+    }
+  ]
+}

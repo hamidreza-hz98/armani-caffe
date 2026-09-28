@@ -51,6 +51,8 @@ Then repeat the Start sequence. There is deliberately no `npm run infra:reset` s
 
 ## Troubleshooting
 
+MinIO's community repository is archived and official legacy binary downloads are no longer served. The historical pinned image may not be obtainable on a new machine. Do not silently substitute an unreviewed image or service; use an already available trusted build for local testing, or make an explicit supported-storage decision before provisioning/deployment. See [ADR 0003](adr/0003-private-media-storage.md). Real-media integration tests can target a dedicated existing MinIO server using the `MINIO_TEST_*` variables in [media storage](media-storage.md).
+
 - `docker` is unavailable: install or start Docker Desktop/Engine, enable Linux containers, and confirm `docker compose version`.
 - A port is occupied: set the corresponding `*_PORT` variable in your shell, then run `infra:up` again. Update host connection URLs accordingly.
 - MongoDB reports `NotYetInitialized` or transactions fail: run `npm run infra:init:mongo`, then confirm `npm run infra:smoke`. Do not change the replica-set member host to `localhost`; containers use `mongodb`.

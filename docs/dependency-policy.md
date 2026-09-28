@@ -29,4 +29,4 @@ Infrastructure packages and services need an ADR before adoption. Document owner
 | `@axe-core/playwright`                      | Automated accessibility assertions in browser tests                                   | Manual inspection alone                            |
 | `mongodb-memory-server`                     | Isolated replica-set integration tests without dev data                               | Shared local database, unsafe for parallel tests   |
 
-Node's built-in test runner powers unit, integration, and production HTTP smoke tests, so no test framework is installed yet.
+Private media adds exact-pinned `@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/s3-presigned-post`, and `@aws-sdk/s3-request-presigner` for S3 signing, bounded multipart transfer, and private object operations, plus `sharp` for decoded-type validation and metadata-free image variants. These are server-only and justified in [ADR 0003](adr/0003-private-media-storage.md).

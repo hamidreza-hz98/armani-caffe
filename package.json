@@ -44,6 +44,10 @@
     "validate": "npm run format:check && npm run lint && npm run typecheck && npm run check:boundaries && npm run check:architecture && npm run test:unit && npm run test:integration && npm run test:e2e"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "3.1141.0",
+    "@aws-sdk/lib-storage": "3.1141.0",
+    "@aws-sdk/s3-presigned-post": "3.1141.0",
+    "@aws-sdk/s3-request-presigner": "3.1141.0",
     "@emotion/cache": "11.14.0",
     "@emotion/react": "11.14.0",
     "@emotion/styled": "11.14.1",
@@ -56,6 +60,7 @@
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "server-only": "0.0.1",
+    "sharp": "0.35.5",
     "stylis": "4.3.6"
   },
   "devDependencies": {
