@@ -1,5 +1,5 @@
 const secretKey =
-  /password|secret|token|authorization|cookie|api.?key|access.?key|credential|encryption|uri|private.?key|email|phone|address/i;
+  /password|secret|token|authorization|cookie|api.?key|access.?key|credential|encryption|encrypted.?payload|ciphertext|fingerprint|uri|private.?key|email|phone|address/i;
 
 export function redactText(value: string, secrets: readonly string[] = []): string {
   let result = value

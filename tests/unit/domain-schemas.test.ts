@@ -10,6 +10,7 @@ import { outboxEventSchema } from "@/modules/notifications/server";
 import { orderSchema } from "@/modules/orders/server";
 import { transactionSchema } from "@/modules/payments/server";
 import { printJobSchema } from "@/modules/printing/server";
+import { settingsDefaults } from "@/modules/settings";
 import { settingsSchema } from "@/modules/settings/server";
 import { databaseIndexes } from "@/server/database/operations";
 
@@ -107,7 +108,11 @@ describe("Mongoose domain schema defenses", () => {
 
   it("blocks secrets in settings and audit metadata", async () => {
     await expect(
-      new Settings({ kind: "business", revision: 1, values: { title: "کافه" } }).validate(),
+      new Settings({
+        kind: "business",
+        revision: 1,
+        values: { ...settingsDefaults("business"), title: "کافه" },
+      }).validate(),
     ).resolves.toBeUndefined();
     await expect(
       new Settings({ kind: "payment", revision: 1, values: { apiKey: "secret" } }).validate(),

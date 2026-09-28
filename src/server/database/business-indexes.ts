@@ -26,7 +26,7 @@ import { outboxEventSchema } from "../../modules/notifications/server.ts";
 import { orderSchema } from "../../modules/orders/server.ts";
 import { transactionSchema } from "../../modules/payments/server.ts";
 import { printJobSchema } from "../../modules/printing/server.ts";
-import { settingsSchema } from "../../modules/settings/server.ts";
+import { settingsReceiptSchema, settingsSchema } from "../../modules/settings/server.ts";
 
 const schemas = [
   adminSchema,
@@ -49,6 +49,7 @@ const schemas = [
   invoiceSchema,
   printJobSchema,
   settingsSchema,
+  settingsReceiptSchema,
   auditEventSchema,
   outboxEventSchema,
 ];

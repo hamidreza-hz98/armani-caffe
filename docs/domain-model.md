@@ -4,6 +4,8 @@ This is the model contract for Phase 1 before CRUD. Every record has MongoDB `_i
 
 ## Entities and ownership
 
+Settings now uses five complete typed primitive contracts, write-only credential inputs, role-specific DTOs and a seven-day actor-scoped mutation receipt collection. See [settings](settings.md) for defaults, CAS/audit/outbox invariants, encryption and explicit migration 3.
+
 | Entity / collection                                  | Owner and references                                         | Key invariants and lifecycle                                                                                                                                                           | Uniqueness, access indexes, retention                                                                                                                       |
 | ---------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Admin / `admins`                                     | Admins; no parent                                            | `OWNER` or `CASHIER` only; active/disabled; password hash excluded from DTO and selected queries                                                                                       | Unique normalized phone; role/status/created list. Retain disabled accounts for audit history.                                                              |

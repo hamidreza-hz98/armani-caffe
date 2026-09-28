@@ -5,8 +5,9 @@ import type { Connection } from "mongoose";
 import { businessIndexes } from "./business-indexes.ts";
 import * as baseline from "./migrations/0001-baseline.ts";
 import * as mediaWorkflows from "./migrations/0002-media-workflows.ts";
+import * as typedSettings from "./migrations/0003-typed-settings.ts";
 
-export const migrations = [baseline, mediaWorkflows] as const;
+export const migrations = [baseline, mediaWorkflows, typedSettings] as const;
 
 export const databaseIndexes = [
   {

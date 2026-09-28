@@ -8,6 +8,8 @@ Infrastructure packages and services need an ADR before adoption. Document owner
 
 ## Current dependencies
 
+Typed settings adds no dependency: Node `crypto` supplies AES-GCM/HMAC and the existing MongoDB transaction/outbox provides atomic changes. See [settings](settings.md) for key rotation, visibility and cache policy.
+
 | Dependency                                  | Purpose                                                                               | Platform alternative                               |
 | ------------------------------------------- | ------------------------------------------------------------------------------------- | -------------------------------------------------- |
 | Next.js                                     | App Router, rendering, routing, build                                                 | Node HTTP server plus custom routing and bundling  |
