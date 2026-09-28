@@ -11,6 +11,7 @@ import * as customerSecurity from "./migrations/0005-customer-security.ts";
 import * as categoryOrder from "./migrations/0006-category-order.ts";
 import * as inventoryLedger from "./migrations/0007-inventory-ledger.ts";
 import * as productWorkflows from "./migrations/0008-product-workflows.ts";
+import * as cartWorkflows from "./migrations/0009-cart-workflows.ts";
 
 export const migrations = [
   baseline,
@@ -21,6 +22,7 @@ export const migrations = [
   categoryOrder,
   inventoryLedger,
   productWorkflows,
+  cartWorkflows,
 ] as const;
 
 export const databaseIndexes = [

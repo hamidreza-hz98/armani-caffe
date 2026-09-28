@@ -1,6 +1,7 @@
 # Armani Caffe
 
 Product lifecycle, additions, public menu, stock mappings, and rollout are documented in [Products](docs/products.md).
+Customer cart contracts, authoritative pricing, expiry, concurrency and rollout are documented in [Carts](docs/carts.md).
 
 Stock units, approvals, immutable movements, migrations, and trusted order/product ports are documented in [Inventory](docs/inventory.md).
 

@@ -19,6 +19,13 @@ function fakeConnection() {
       if (!collections.has(name)) collections.set(name, new Map());
       const records = collections.get(name);
       return {
+        aggregate() {
+          return {
+            async toArray() {
+              return [];
+            },
+          };
+        },
         find() {
           return {
             sort() {
@@ -71,14 +78,14 @@ test("migration status is read-only and migrations apply once in transactions", 
   assert.equal((await migrationStatus(connection))[0].appliedAt, null);
   assert.equal(connection.transactions, 0);
   const fixed = new Date("2025-01-01T00:00:00.000Z");
-  assert.deepEqual(await applyMigrations(connection, () => fixed), [1, 2, 3, 4, 5, 6, 7, 8]);
+  assert.deepEqual(await applyMigrations(connection, () => fixed), [1, 2, 3, 4, 5, 6, 7, 8, 9]);
   assert.deepEqual(await applyMigrations(connection, () => fixed), []);
   assert.equal((await migrationStatus(connection))[0].appliedAt, fixed);
   assert.equal(
     connection.collections.get("_app_metadata").get("schema-baseline").initializedAt,
     fixed,
   );
-  assert.equal(connection.transactions, 16);
+  assert.equal(connection.transactions, 18);
 });
 
 test("baseline seed is idempotent and indexes apply only when requested", async () => {

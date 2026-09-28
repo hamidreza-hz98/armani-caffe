@@ -10,6 +10,8 @@ export type CartAdditionSnapshot = Readonly<{
   name: string;
   priceToman: TomanAmount;
 }>;
+export const cartItemKey = (productId: string, additionIds: readonly string[]) =>
+  [productId, ...[...additionIds].sort()].join(":");
 export type CartItemSnapshot = Readonly<{
   productId: string;
   productName: string;
@@ -47,6 +49,8 @@ export function makeCartItemSnapshot(input: {
 }): CartItemSnapshot {
   if (!Number.isSafeInteger(input.quantity) || input.quantity < 1 || input.quantity > 100)
     throw new RangeError("Invalid cart quantity");
+  if (new Set(input.additions.map((a) => a.additionId)).size !== input.additions.length)
+    throw new RangeError("Duplicate cart additions");
   const additions = Object.freeze(
     input.additions.map((addition) =>
       Object.freeze({
@@ -57,7 +61,8 @@ export function makeCartItemSnapshot(input: {
     ),
   );
   const unitPriceToman = asToman(
-    input.basePriceToman + additions.reduce((sum, addition) => sum + addition.priceToman, 0),
+    asToman(input.basePriceToman) +
+      additions.reduce((sum, addition) => sum + addition.priceToman, 0),
   );
   return Object.freeze({
     productId: input.productId,

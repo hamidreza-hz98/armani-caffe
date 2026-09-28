@@ -9,6 +9,7 @@ import {
   requiredText,
   utcDateField,
 } from "../../../server/database/schema-fields.ts";
+import { CART_MAX_LINES, CART_MAX_QUANTITY } from "../contracts/cart.ts";
 
 const additionSnapshotSchema = new Schema(
   {
@@ -23,7 +24,7 @@ const cartItemSnapshotSchema = new Schema(
     productId: objectIdField(),
     productName: requiredText(160),
     additions: { type: [additionSnapshotSchema], default: [] },
-    quantity: positiveIntegerField(),
+    quantity: { ...positiveIntegerField(), max: CART_MAX_QUANTITY },
     unitPriceToman: tomanAmountField(),
     lineTotalToman: tomanAmountField(),
   },
@@ -36,6 +37,7 @@ export const cartSchema = new Schema(
     sessionId: { ...objectIdField(false), default: null },
     items: { type: [cartItemSnapshotSchema], default: [] },
     totalToman: tomanAmountField(),
+    notes: { type: String, maxlength: 1000, default: "" },
     status: {
       type: String,
       required: true,
@@ -53,6 +55,7 @@ cartSchema.pre("validate", function () {
     unitPriceToman: number;
     lineTotalToman: number;
   }[];
+  if (items.length > CART_MAX_LINES) this.invalidate("items", "Cart line limit exceeded");
   for (const item of items)
     if (item.lineTotalToman !== item.quantity * item.unitPriceToman)
       this.invalidate("items", "Cart line total mismatch");
@@ -62,5 +65,13 @@ cartSchema.pre("validate", function () {
     this.invalidate("customerId", "Cart needs an owner");
 });
 cartSchema.index({ customerId: 1, status: 1, updatedAt: -1 }, { name: "cart_customer_status" });
+cartSchema.index(
+  { customerId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { status: "active", customerId: { $type: "objectId" } },
+    name: "cart_one_active_customer",
+  },
+);
 cartSchema.index({ sessionId: 1, status: 1, updatedAt: -1 }, { name: "cart_session_status" });
 cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0, name: "cart_expiry_ttl" });

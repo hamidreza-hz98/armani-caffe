@@ -24,4 +24,5 @@ export {
   productMediaUsages,
   replaceProductMedia,
 } from "./infrastructure/media-references.ts";
+export { productPricingProjection } from "./infrastructure/pricing.ts";
 export { productAdditionSchema, productSchema } from "./infrastructure/schema.ts";

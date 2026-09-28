@@ -153,6 +153,28 @@ export class MongoCustomerAuthStore implements CustomerAuthStore {
     );
     return touched.matchedCount === 1 ? this.principal(row, identity) : null;
   }
+  /** Session write serializes privileged customer work with logout/rotation. */
+  async authorize(token: string | null, tx: TransactionContext): Promise<{ id: string }> {
+    const row = await this.active(token, tx);
+    if (!row) throw new ApplicationError("UNAUTHORIZED", "Customer session required");
+    const identity = await this.customers.byId(String(row.principalId), tx);
+    if (!identity || identity.status !== "active" || identity.authVersion !== row.authVersion)
+      throw new ApplicationError("UNAUTHORIZED", "Customer session required");
+    const touched = await this.rows().updateOne(
+      {
+        _id: row._id,
+        principalKind: "customer",
+        revokedAt: null,
+        authVersion: row.authVersion,
+        expiresAt: { $gt: this.now() },
+      },
+      { $set: { lastUsedAt: this.now(), updatedAt: this.now() }, $inc: { __v: 1 } },
+      { session: mongoSession(tx) },
+    );
+    if (touched.matchedCount !== 1)
+      throw new ApplicationError("UNAUTHORIZED", "Customer session required");
+    return { id: identity.id };
+  }
   private async issue(
     identity: CustomerCredentialIdentity,
     expiresAt: Date,
