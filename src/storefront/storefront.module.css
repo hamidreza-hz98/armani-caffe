@@ -1,0 +1,334 @@
+.shell {
+  min-height: 100dvh;
+  max-width: 480px;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  background: #f7f2ea;
+  box-shadow: 0 0 36px rgb(23 20 17 / 6%);
+}
+.skipLink {
+  position: absolute;
+  z-index: 1500;
+  inset-block-start: -80px;
+  inset-inline-start: 12px;
+  padding: 10px 16px;
+  background: #171411;
+  color: #fff;
+  border-radius: 10px;
+}
+.skipLink:focus {
+  inset-block-start: 8px;
+}
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgb(255 252 247 / 96%);
+  border-block-end: 1px solid #d8cabb;
+  backdrop-filter: blur(10px);
+}
+.headerInner {
+  min-height: 72px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: #211a16;
+  text-decoration: none;
+  flex-shrink: 1;
+}
+.brand img {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  border-radius: 10px;
+}
+.brand span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+.brand strong {
+  font-size: 14px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.brand small {
+  display: none;
+  font-size: 10px;
+  color: #6f6259;
+  white-space: nowrap;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+}
+.contactTrigger {
+  min-height: 44px !important;
+  padding-inline: 8px !important;
+  white-space: nowrap;
+  font-size: 11px !important;
+  border-color: #c7b6a6 !important;
+  color: #3a2418 !important;
+}
+.contactTrigger :global(.MuiButton-startIcon) {
+  margin-inline: 0 3px;
+}
+.contactTrigger svg {
+  width: 18px;
+  height: 18px;
+}
+.iconLink {
+  min-width: 44px;
+  min-height: 44px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid #d8cabb;
+  border-radius: 12px;
+  color: #3a2418;
+  text-decoration: none;
+}
+.iconLink:hover,
+.contactTrigger:hover {
+  background: #eee4d7;
+}
+.accountText {
+  display: inline;
+  max-width: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.iconLink:has(.accountText) {
+  padding-inline: 6px;
+}
+.badge {
+  position: absolute;
+  top: -5px;
+  inset-inline-end: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 3px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #c99a3d;
+  color: #171411;
+  font:
+    700 10px/1 "Vazirmatn Variable",
+    sans-serif;
+  border: 1px solid #fffcf7;
+}
+.offlineNotice {
+  margin: 0;
+  padding: 8px 16px;
+  background: #fff1d9;
+  color: #5d3600;
+  font-size: 12px;
+  line-height: 1.7;
+  border-block-end: 1px solid #e6c594;
+}
+.main {
+  width: 100%;
+  flex: 1;
+  padding: 22px 16px 32px;
+}
+.hero {
+  padding: 28px 22px;
+  min-height: 230px;
+  border-radius: 18px;
+  background: #fffcf7;
+  border: 1px solid #d8cabb;
+  box-shadow: 0 6px 24px rgb(58 36 24 / 5%);
+}
+.heroEyebrow {
+  display: inline-block;
+  padding: 4px 10px;
+  color: #5b3b1e;
+  background: #eee4d7;
+  border-radius: 99px;
+  font-size: 12px;
+}
+.hero h1 {
+  margin: 18px 0 8px;
+  font-size: clamp(23px, 7vw, 31px);
+  line-height: 1.5;
+}
+.hero p {
+  margin: 0;
+  color: #6f6259;
+  line-height: 1.9;
+  font-size: 14px;
+}
+.footer {
+  text-align: center;
+  padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
+  background: #fffcf7;
+  border-block-start: 1px solid #d8cabb;
+  color: #6f6259;
+  font-size: 11px;
+  line-height: 1.9;
+}
+.footer p {
+  margin: 0;
+}
+.footer a {
+  color: #3a2418;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+.sheetPaper {
+  width: min(100%, 480px) !important;
+  max-height: min(84dvh, 760px) !important;
+  margin-inline: auto;
+  padding: 8px 16px calc(14px + env(safe-area-inset-bottom));
+  border-radius: 24px 24px 0 0 !important;
+  background: #fffcf7 !important;
+  overflow: hidden;
+}
+.sheetHandle {
+  width: 40px;
+  height: 5px;
+  border-radius: 5px;
+  background: #c8bfb6;
+  margin: 2px auto 15px;
+}
+.sheetHeading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding-block-end: 14px;
+  border-block-end: 1px solid #d8cabb;
+}
+.sheetHeading h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.5;
+}
+.sheetHeading p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: #6f6259;
+}
+.sheetClose {
+  flex: none;
+  background: #eee4d7 !important;
+}
+.sheetContent {
+  overflow-y: auto;
+  min-height: 60px;
+  padding-block: 14px;
+}
+.contactList {
+  display: grid;
+  gap: 9px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.contactList a {
+  min-height: 64px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-radius: 14px;
+  border: 1px solid #d8cabb;
+  background: #f7f2ea;
+  color: #211a16;
+  text-decoration: none;
+}
+.contactList a:hover {
+  background: #eee4d7;
+}
+.contactIcon {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #fffcf7;
+  border: 1px solid #d8cabb;
+  border-radius: 11px;
+}
+.contactText {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1px;
+}
+.contactText strong {
+  font-size: 14px;
+}
+.contactText small {
+  color: #6f6259;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+.contactArrow {
+  flex: none;
+  width: 17px;
+  height: 17px;
+}
+.emptyContacts,
+.address {
+  color: #6f6259;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.sheetDismiss {
+  width: 100%;
+  flex: none;
+}
+@media (min-width: 380px) {
+  .headerInner {
+    padding-inline: 12px;
+    gap: 6px;
+  }
+  .iconLink:has(.accountText) {
+    padding-inline: 8px;
+  }
+}
+@media (min-width: 420px) {
+  .headerInner {
+    padding-inline: 16px;
+    gap: 8px;
+  }
+  .brand small {
+    display: block;
+  }
+  .accountText {
+    max-width: 66px;
+  }
+}
+@media (max-width: 370px) {
+  .brand img {
+    width: 34px;
+    height: 34px;
+  }
+  .brand strong {
+    font-size: 13px;
+  }
+  .contactTrigger {
+    font-size: 10px !important;
+  }
+}
