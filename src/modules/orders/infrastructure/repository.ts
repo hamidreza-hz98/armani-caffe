@@ -61,6 +61,7 @@ export type OrderPorts = {
     requestId: string,
   ) => Promise<void>;
   reverse: (session: ClientSession, id: string, requestId: string) => Promise<void>;
+  invoice: (session: ClientSession, order: OrderView, requestId: string) => Promise<void>;
   record: (
     session: ClientSession,
     id: string,
@@ -345,6 +346,7 @@ export class MongoOrderRepository implements OrderOperations {
       updatedAt: this.now(),
     };
     await this.orders().insertOne(row, { session });
+    await this.ports.invoice(session, orderDto(row), requestId);
     await this.sales(session, row, 1);
     await this.ports.close(session, String(intent.cartId), String(intent._id));
     await this.intents().updateOne(

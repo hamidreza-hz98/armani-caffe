@@ -14,6 +14,7 @@ import { SettingsVault } from "./infrastructure/vault.ts";
 
 export { SettingsService } from "./application/service.ts";
 export { createSettingsHttpHandler } from "./infrastructure/http.ts";
+export { invoiceIdentitySettings } from "./infrastructure/invoice-identity.ts";
 export { settingsReceiptSchema, settingsSchema } from "./infrastructure/schema.ts";
 export { SettingsVault } from "./infrastructure/vault.ts";
 

@@ -22,7 +22,7 @@ import {
   productConsumptionRuleSchema,
   stockApprovalRequestSchema,
 } from "../../modules/inventory/server.ts";
-import { invoiceSchema } from "../../modules/invoices/server.ts";
+import { invoiceReprintSchema, invoiceSchema } from "../../modules/invoices/server.ts";
 import {
   mediaAssetSchema,
   mediaCleanupSchema,
@@ -59,6 +59,7 @@ const schemas = [
   inventoryMovementSchema,
   stockApprovalRequestSchema,
   invoiceSchema,
+  invoiceReprintSchema,
   printJobSchema,
   settingsSchema,
   settingsReceiptSchema,

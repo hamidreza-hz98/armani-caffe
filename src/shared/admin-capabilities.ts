@@ -20,6 +20,7 @@ export const adminCapabilities = [
   "inventory.request",
   "inventory.approve",
   "invoices.read",
+  "invoices.reprint",
   "printing.read",
   "printing.manage",
   "analytics.read",
@@ -41,6 +42,7 @@ export const adminCapabilityMap: Readonly<Record<AdminActor["role"], readonly Ad
       "inventory.read",
       "inventory.request",
       "invoices.read",
+      "invoices.reprint",
       "printing.read",
     ] as AdminCapability[]),
   });

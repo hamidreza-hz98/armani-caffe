@@ -20,6 +20,7 @@ import {
 } from "../../modules/orders/server.ts";
 import { paymentReceipt } from "../../modules/payments/server.ts";
 import { ApplicationError } from "../../shared/errors.ts";
+import { composeInvoiceRepository } from "./invoices.ts";
 export function composeOrderService(
   connection: Connection,
   keys: { customerSessionSecret: string; adminSessionSecret: string },
@@ -30,6 +31,7 @@ export function composeOrderService(
   const authorize: OrderPorts["admin"] = (token, capability, session) =>
     admin.store.authorize(token, capability, session);
   const inventory = createInventoryService(connection, authorize, now).repository;
+  const invoices = composeInvoiceRepository(connection, keys, now);
   const cart = cartCheckoutPort(connection, now),
     customers = new MongoCustomerRepository(connection, now);
   const ports: OrderPorts = {
@@ -43,6 +45,9 @@ export function composeOrderService(
     consume: (session, id, stock, requestId) =>
       inventory.consumeOrder(session, id, stock, requestId),
     reverse: (session, id, requestId) => inventory.reverseOrder(session, id, requestId),
+    invoice: async (session, order, requestId) => {
+      await invoices.issueInside(session, order, requestId);
+    },
     quote: async (session, customerId, cartId, revision) => {
       const source = await cart.read(session, cartId, customerId, revision);
       const ids = [...new Set(source.items.map((i) => i.productId))];

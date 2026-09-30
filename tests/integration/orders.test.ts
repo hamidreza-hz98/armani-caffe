@@ -15,6 +15,7 @@ import {
   SettingsVault,
 } from "@/modules/settings/server";
 import { composeCartService } from "@/server/commerce/carts";
+import { composeInvoiceRepository } from "@/server/commerce/invoices";
 import { createOrderHttpHandler } from "@/server/commerce/order-http";
 import { composeOrderService } from "@/server/commerce/orders";
 import { composePaymentFramework } from "@/server/commerce/payments";
@@ -119,6 +120,8 @@ beforeEach(async () => {
     .updateMany({}, { $set: { displayName: null } });
   for (const collection of [
     "orders",
+    "invoices",
+    "invoice_reprints",
     "checkout_intents",
     "order_counters",
     "order_sales_projection",
@@ -286,6 +289,10 @@ test("verified payment atomically creates one coded order, closes cart, deducts 
   });
   expect(await balance()).toBe(800);
   expect(await db().collection("orders").countDocuments({})).toBe(1);
+  expect(await db().collection("invoices").countDocuments({})).toBe(1);
+  expect(
+    await db().collection("outbox_events").countDocuments({ eventType: "invoice.issued" }),
+  ).toBe(1);
   expect(await db().collection("inventory_movements").countDocuments({ reason: "sale" })).toBe(1);
   expect(await db().collection("order_sales_projection").findOne({ _id: productId })).toMatchObject(
     { count: 2 },
@@ -304,6 +311,115 @@ test("verified payment atomically creates one coded order, closes cart, deducts 
   expect(JSON.stringify(await db().collection("audit_events").find({}).toArray())).not.toContain(
     "09123456789",
   );
+});
+test("invoice freezes settings and order snapshots and event replay returns the same document", async () => {
+  const settings = new SettingsService(
+    createSettingsRepository(connection, new SettingsVault(key, undefined, clock), clock),
+  );
+  await settings.update(
+    { id: ownerId, role: "OWNER" },
+    "business",
+    "invoice-business",
+    { revision: 0, values: { ...settingsDefaults("business"), title: "کافه آرمانی" } },
+    "settings",
+  );
+  await settings.update(
+    { id: ownerId, role: "OWNER" },
+    "printing",
+    "invoice-printing",
+    {
+      revision: 0,
+      values: { ...settingsDefaults("printing"), paperWidthMm: 58, footer: "سپاس از شما" },
+    },
+    "settings",
+  );
+  const { intent, payment } = await checkout();
+  await settle(payment);
+  const invoices = composeInvoiceRepository(
+    connection,
+    { customerSessionSecret: secret, adminSessionSecret: secret + "-admin-isolated" },
+    clock,
+  );
+  const original = await invoices.read(token, intent.id, true);
+  expect(original).toMatchObject({
+    number: "INV-AC-0000001",
+    identity: { title: "کافه آرمانی", footer: "سپاس از شما" },
+    paperWidthMm: 58,
+    customer: { phone: "+989123456789" },
+    transaction: { reference: "reference-" + payment.id },
+  });
+  expect(original.lines[0]).toMatchObject({
+    productName: "لاته",
+    quantity: 2,
+    additions: [{ name: "شیر", priceToman: 10000 }],
+  });
+  await db()
+    .collection("products")
+    .updateOne({ _id: productId }, { $set: { name: "بعداً تغییر یافت", basePriceToman: 1 } });
+  await settings.update(
+    { id: ownerId, role: "OWNER" },
+    "business",
+    "invoice-business-edit",
+    { revision: 1, values: { ...settingsDefaults("business"), title: "نام تازه" } },
+    "settings",
+  );
+  await orders.service.confirm(payment.id, "replayed");
+  expect(await invoices.onOrderConfirmed(intent.id)).toEqual(original);
+  expect(await invoices.read(ownerToken, intent.id, false)).toEqual(original);
+  await expect(invoices.read(otherToken, intent.id, true)).rejects.toMatchObject({
+    code: "NOT_FOUND",
+  });
+  expect(await db().collection("invoices").countDocuments({})).toBe(1);
+});
+test("owner and cashier reprints are audited exactly once per key without replacing invoice", async () => {
+  const { intent, payment } = await checkout();
+  await settle(payment);
+  const invoices = composeInvoiceRepository(
+    connection,
+    { customerSessionSecret: secret, adminSessionSecret: secret + "-admin-isolated" },
+    clock,
+  );
+  const first = await invoices.reprint(
+    ownerToken,
+    intent.id,
+    { idempotencyKey: "receipt-key-001", paperWidthMm: 58 },
+    "owner-reprint",
+  );
+  expect(
+    await invoices.reprint(
+      ownerToken,
+      intent.id,
+      { idempotencyKey: "receipt-key-001", paperWidthMm: 58 },
+      "owner-retry",
+    ),
+  ).toEqual(first);
+  await expect(
+    invoices.reprint(
+      ownerToken,
+      intent.id,
+      { idempotencyKey: "receipt-key-001", paperWidthMm: 80 },
+      "conflict",
+    ),
+  ).rejects.toMatchObject({ code: "CONFLICT" });
+  await invoices.reprint(
+    cashierToken,
+    intent.id,
+    { idempotencyKey: "cashier-key-001" },
+    "cashier-reprint",
+  );
+  await expect(
+    invoices.reprint(token, intent.id, { idempotencyKey: "customer-key-001" }, "denied"),
+  ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+  expect(await db().collection("invoices").countDocuments({})).toBe(1);
+  expect(await db().collection("invoice_reprints").countDocuments({})).toBe(2);
+  expect(
+    await db().collection("audit_events").countDocuments({ action: "invoice.reprint_requested" }),
+  ).toBe(2);
+  expect(
+    await db()
+      .collection("outbox_events")
+      .countDocuments({ eventType: "invoice.reprint_requested" }),
+  ).toBe(2);
 });
 test("frozen customer/catalog/addition/stock snapshots survive later edits and prices cannot be supplied", async () => {
   const { intent, payment } = await checkout();
@@ -402,6 +518,13 @@ test("late outbox failure rolls back payment status, stock, counter, cart, order
   expect(await db().collection("orders").countDocuments({})).toBe(0);
   expect(await db().collection("inventory_movements").countDocuments({ reason: "sale" })).toBe(0);
   expect(await db().collection("order_sales_projection").countDocuments({})).toBe(0);
+  expect(await db().collection("invoices").countDocuments({})).toBe(0);
+  expect(await db().collection("audit_events").countDocuments({ action: "invoice.issued" })).toBe(
+    0,
+  );
+  expect(
+    await db().collection("outbox_events").countDocuments({ eventType: "invoice.issued" }),
+  ).toBe(0);
   expect(
     await db()
       .collection("checkout_intents")
