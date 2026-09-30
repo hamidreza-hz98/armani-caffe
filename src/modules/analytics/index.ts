@@ -1,2 +1,1 @@
-// Browser-safe public boundary. Export only contracts and pure domain types.
-export {};
+export type { DashboardAnalytics, SalesWindow } from "./contracts/index.ts";

@@ -1,2 +1,1 @@
-// Domain entities, value objects, and invariants belong here.
-export {};
+export { tehranDashboardPeriod } from "./period.ts";

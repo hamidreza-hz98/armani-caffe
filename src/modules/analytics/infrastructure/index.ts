@@ -1,4 +1,4 @@
 import "server-only";
 
-// Persistence and external-service adapters belong here.
-export {};
+export { createDashboardAnalyticsHttp } from "./http.ts";
+export { MongoDashboardAnalytics } from "./repository.ts";

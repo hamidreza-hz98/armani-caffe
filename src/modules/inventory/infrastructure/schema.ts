@@ -24,6 +24,10 @@ export const inventoryItemSchema = new Schema(
 inventoryItemSchema.index({ name: 1 }, { unique: true, name: "inventory_name_unique" });
 inventoryItemSchema.index({ status: 1, updatedAt: -1 }, { name: "inventory_status_updated" });
 inventoryItemSchema.index(
+  { status: 1, onHand: 1, _id: 1 },
+  { name: "inventory_low_stock_dashboard" },
+);
+inventoryItemSchema.index(
   { name: "text" },
   { name: "inventory_name_search", default_language: "none" },
 );

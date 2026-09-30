@@ -1,2 +1,1 @@
-// Transport-safe input and output contracts belong here.
-export {};
+export type { DashboardAnalytics, SalesWindow } from "./dashboard.ts";
