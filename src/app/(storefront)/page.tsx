@@ -1,14 +1,23 @@
-import styles from "@/storefront/storefront.module.css";
+import { Suspense } from "react";
+
+import { cachedPublicMenu } from "@/server/catalog/menu-cache";
+import { menuCards } from "@/storefront/menu-model";
+import { MenuFailure, MenuSkeleton, MenuView } from "@/storefront/menu-view";
+
+async function MenuContent() {
+  let categories;
+  try {
+    categories = menuCards(await cachedPublicMenu());
+  } catch {
+    categories = null;
+  }
+  return categories ? <MenuView categories={categories} /> : <MenuFailure />;
+}
 
 export default function Home() {
   return (
-    <section className={styles.hero} aria-labelledby="home-title">
-      <span className={styles.heroEyebrow}>سفارش آنلاین کافه آرمانی</span>
-      <h1 id="home-title">آرمانی کافه</h1>
-      <p>
-        به‌زودی منوی تازهٔ کافه اینجا در دسترس خواهد بود. برای ارتباط و مسیریابی از دکمهٔ «ارتباط با
-        ما» استفاده کنید.
-      </p>
-    </section>
+    <Suspense fallback={<MenuSkeleton />}>
+      <MenuContent />
+    </Suspense>
   );
 }

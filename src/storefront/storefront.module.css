@@ -36,6 +36,13 @@
   justify-content: space-between;
   gap: 6px;
 }
+.headerSkeleton {
+  width: 150px;
+  height: 44px;
+  border-radius: 12px;
+  background: #eee4d7;
+  flex: none;
+}
 .brand {
   display: flex;
   align-items: center;

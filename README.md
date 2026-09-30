@@ -1,5 +1,7 @@
 # Armani Caffe
 
+The mobile storefront menu, cache invalidation, basic no-JavaScript version, and performance budgets are documented in [Storefront menu](docs/storefront-menu.md).
+
 Atomic order confirmation, immutable checkout snapshots, cancellation/refund controls and stock recovery are documented in [Orders](docs/orders.md). Apply migration 11 and indexes explicitly before rollout.
 
 Product lifecycle, additions, public menu, stock mappings, and rollout are documented in [Products](docs/products.md).

@@ -184,9 +184,11 @@ export class MongoProductRepository implements ProductRepository {
           },
         )
         .sort({ categoryId: 1, sortOrder: 1, _id: 1 })
-        .limit(500)
+        .limit(501)
         .maxTimeMS(2500)
         .toArray();
+      if (rows.length > 500)
+        throw new ApplicationError("CONFLICT", "Menu has too many products for a bounded response");
       const ids = rows.map((r) => String(r._id));
       const additions = await this.additions()
         .find(

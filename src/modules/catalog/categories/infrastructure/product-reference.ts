@@ -36,8 +36,10 @@ export async function publicProductCategories(connection: Connection, session: C
       { session, projection: { name: 1, sortOrder: 1 } },
     )
     .sort({ sortOrder: 1, _id: 1 })
-    .limit(500)
+    .limit(501)
     .toArray();
+  if (rows.length > 500)
+    throw new ApplicationError("CONFLICT", "Menu has too many categories for a bounded response");
   return rows.map((r) => ({
     id: String(r._id),
     name: String(r.name),

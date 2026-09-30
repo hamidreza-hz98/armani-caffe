@@ -9,13 +9,7 @@ import type { StorefrontShellData } from "./data";
 import { StorefrontIcon } from "./icons";
 import styles from "./storefront.module.css";
 
-export function StorefrontShell({
-  data,
-  children,
-}: {
-  data: StorefrontShellData;
-  children: ReactNode;
-}) {
+export function StorefrontHeader({ data }: { data: StorefrontShellData }) {
   const accountLabel =
     data.account.state === "customer"
       ? data.account.name || "حساب من"
@@ -23,10 +17,7 @@ export function StorefrontShell({
         ? "ورود"
         : "حساب نامشخص";
   return (
-    <div className={styles.shell}>
-      <a className={styles.skipLink} href="#storefront-content">
-        رفتن به محتوای اصلی
-      </a>
+    <>
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand} aria-label="صفحه اصلی کافه آرمانی">
@@ -73,6 +64,34 @@ export function StorefrontShell({
           برخی اطلاعات فروشگاه در دسترس نیست. لطفاً اتصال خود را بررسی و صفحه را تازه‌سازی کنید.
         </p>
       )}
+    </>
+  );
+}
+
+export function StorefrontHeaderFallback() {
+  return (
+    <header className={styles.header} aria-label="در حال آماده‌سازی ابزارهای فروشگاه">
+      <div className={styles.headerInner}>
+        <span className={styles.brand}>
+          <Image src="/icon.svg" alt="" width={42} height={42} priority />
+          <span>
+            <strong>کافه آرمانی</strong>
+            <small>کافه و سفارش آنلاین</small>
+          </span>
+        </span>
+        <span className={styles.headerSkeleton} aria-hidden="true" />
+      </div>
+    </header>
+  );
+}
+
+export function StorefrontFrame({ header, children }: { header: ReactNode; children: ReactNode }) {
+  return (
+    <div className={styles.shell}>
+      <a className={styles.skipLink} href="#storefront-content">
+        رفتن به محتوای اصلی
+      </a>
+      {header}
       <main id="storefront-content" className={styles.main}>
         {children}
       </main>
@@ -91,4 +110,14 @@ export function StorefrontShell({
       </footer>
     </div>
   );
+}
+
+export function StorefrontShell({
+  data,
+  children,
+}: {
+  data: StorefrontShellData;
+  children: ReactNode;
+}) {
+  return <StorefrontFrame header={<StorefrontHeader data={data} />}>{children}</StorefrontFrame>;
 }

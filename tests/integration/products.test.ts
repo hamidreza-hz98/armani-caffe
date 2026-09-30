@@ -346,11 +346,7 @@ test("additions and rules replace atomically, preserve IDs and reject stale conc
 test("public menu is active-only, stock-aware, ordered and excludes internal fields", async () => {
   const { product, cat, item } = await setup();
   await products.transition(ownerToken, product.id, { revision: 0 }, "published", "publish");
-  type Menu = {
-    id: string;
-    products: { id: string; orderable: boolean; additions: unknown[] }[];
-  }[];
-  let menu = (await products.menu()) as Menu;
+  let menu = await products.menu();
   expect(menu[0].products[0]).toMatchObject({ id: product.id, orderable: false });
   expect(menu[0].products[0].additions).toHaveLength(1);
   const pending = await inventory.repository.request(
@@ -366,7 +362,7 @@ test("public menu is active-only, stock-aware, ordered and excludes internal fie
     "purchase",
   );
   await inventory.repository.decide(ownerToken, pending.id, { decision: "approved" }, "approve");
-  menu = (await products.menu()) as Menu;
+  menu = await products.menu();
   expect(menu[0].products[0].orderable).toBe(true);
   const serialized = JSON.stringify(menu);
   for (const internal of [

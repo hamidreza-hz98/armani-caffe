@@ -1,9 +1,10 @@
+import type { MenuCategory } from "../contracts/menu.ts";
 import type { ProductFields } from "../contracts/product.ts";
 import { parseProduct, parseRevision, productId } from "../contracts/product.ts";
 export interface ProductRepository {
   list(token: string | null): Promise<unknown>;
   detail(token: string | null, id: string): Promise<unknown>;
-  menu(): Promise<unknown>;
+  menu(): Promise<MenuCategory[]>;
   write(
     token: string | null,
     id: string | null,

@@ -1,11 +1,29 @@
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 
 import { loadStorefrontShell } from "@/storefront/data";
-import { StorefrontShell } from "@/storefront/storefront-shell";
+import {
+  StorefrontFrame,
+  StorefrontHeader,
+  StorefrontHeaderFallback,
+} from "@/storefront/storefront-shell";
 
 export const dynamic = "force-dynamic";
 
-export default async function StorefrontLayout({ children }: { children: ReactNode }) {
+async function LiveHeader() {
   const data = await loadStorefrontShell();
-  return <StorefrontShell data={data}>{children}</StorefrontShell>;
+  return <StorefrontHeader data={data} />;
+}
+
+export default function StorefrontLayout({ children }: { children: ReactNode }) {
+  return (
+    <StorefrontFrame
+      header={
+        <Suspense fallback={<StorefrontHeaderFallback />}>
+          <LiveHeader />
+        </Suspense>
+      }
+    >
+      {children}
+    </StorefrontFrame>
+  );
 }
