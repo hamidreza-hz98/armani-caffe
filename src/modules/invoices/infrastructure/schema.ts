@@ -43,6 +43,7 @@ export const invoiceSchema = new Schema(
     issuedAt: { ...utcDateField(), immutable: true },
     jalaliDateTime: { type: String, maxlength: 24, immutable: true },
     paperWidthMm: { type: Number, enum: [58, 80], immutable: true },
+    printing: { type: Schema.Types.Mixed, immutable: true },
     status: { type: String, required: true, enum: ["issued", "voided"], default: "issued" },
     voidedAt: { type: Date, default: null },
   },

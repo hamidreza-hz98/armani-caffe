@@ -15,7 +15,13 @@ test("liveness stays up while unavailable dependencies make readiness fail", asy
   expect(ready.status()).toBe(503);
   const payload = await ready.json();
   expect(payload.status).toBe("not_ready");
-  expect(payload.checks).toEqual({ mongodb: "down", redis: "down", minio: "down" });
+  expect(payload.checks).toEqual({
+    mongodb: "down",
+    redis: "down",
+    minio: "down",
+    queue: "down",
+    realtime: "down",
+  });
   expect(JSON.stringify(payload)).not.toContain("test_secret_key");
 });
 

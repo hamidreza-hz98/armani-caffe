@@ -28,6 +28,7 @@
     "admin:bootstrap": "node --conditions=react-server scripts/admin-bootstrap.mjs",
     "db:smoke": "node --conditions=react-server scripts/db.mjs smoke",
     "outbox:work": "node --conditions=react-server scripts/outbox.mjs work",
+    "realtime:work": "node --conditions=react-server scripts/realtime.mjs",
     "outbox:replay": "node --conditions=react-server scripts/outbox.mjs replay",
     "media:cleanup": "node --conditions=react-server scripts/media-cleanup.mjs",
     "payment:inquire": "node --conditions=react-server scripts/payments.mjs inquire",
@@ -63,9 +64,11 @@
     "next": "16.3.6",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "redis": "6.3.0",
     "server-only": "0.0.1",
     "sharp": "0.35.5",
-    "stylis": "4.3.6"
+    "stylis": "4.3.6",
+    "ws": "8.22.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -77,6 +80,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/stylis": "4.2.7",
+    "@types/ws": "8.18.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
     "eslint-config-prettier": "10.1.8",

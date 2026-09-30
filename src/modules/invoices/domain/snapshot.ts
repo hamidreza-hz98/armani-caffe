@@ -37,6 +37,7 @@ export type IssuedInvoice = Readonly<{
   issuedAt: UtcTimestamp;
   jalaliDateTime: string;
   paperWidthMm: 58 | 80;
+  printing: Readonly<{ automatic: boolean; printerId: string }>;
   status: "issued";
 }>;
 export type ConfirmedOrderSource = Readonly<{
@@ -82,7 +83,11 @@ export function jalaliReceiptDate(utc: string): string {
 }
 export function makeIssuedInvoice(
   source: ConfirmedOrderSource,
-  settings: { identity: InvoiceIdentity; paperWidthMm: 58 | 80 },
+  settings: {
+    identity: InvoiceIdentity;
+    paperWidthMm: 58 | 80;
+    printing?: { automatic: boolean; printerId: string };
+  },
 ): Omit<IssuedInvoice, "id"> {
   if (
     !/^[a-f\d]{24}$/u.test(source.id) ||
@@ -108,6 +113,9 @@ export function makeIssuedInvoice(
     throw new ApplicationError("VALIDATION", "Invoice totals differ from confirmed order");
   if (![58, 80].includes(settings.paperWidthMm) || !settings.identity.title.trim())
     throw new ApplicationError("VALIDATION", "Invalid invoice identity");
+  const printing = settings.printing ?? { automatic: false, printerId: "" };
+  if (printing.automatic && !/^[a-zA-Z0-9_-]{1,64}$/u.test(printing.printerId))
+    throw new ApplicationError("VALIDATION", "Invalid automatic printer");
   const issuedAt = asUtcTimestamp(source.placedAt);
   return Object.freeze({
     orderId: source.id,
@@ -131,6 +139,7 @@ export function makeIssuedInvoice(
     issuedAt,
     jalaliDateTime: jalaliReceiptDate(issuedAt),
     paperWidthMm: settings.paperWidthMm,
+    printing: Object.freeze({ ...printing }),
     status: "issued" as const,
   });
 }

@@ -1,8 +1,5 @@
 import "server-only";
 
-import { readFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-
 import { adminTokenFromRequest, readCustomerCookie } from "../../modules/auth/server.ts";
 import { renderInvoiceHtml } from "../../modules/invoices/index.ts";
 import type { MongoInvoiceRepository } from "../../modules/invoices/server.ts";
@@ -11,16 +8,8 @@ import { runSafeAction } from "../actions.ts";
 import { readJsonBody } from "../http/json.ts";
 import { requestIdFromHeader } from "../observability/index.ts";
 import { getServerConfig } from "../secrets/config.ts";
+import { receiptFontDataUrl } from "./invoice-font.ts";
 import { configuredInvoiceRepository } from "./invoices.ts";
-
-const require = createRequire(import.meta.url);
-let fontPromise: Promise<string> | undefined;
-function receiptFont(): Promise<string> {
-  fontPromise ??= readFile(
-    require.resolve("@fontsource-variable/vazirmatn/files/vazirmatn-arabic-wght-normal.woff2"),
-  ).then((bytes) => `data:font/woff2;base64,${bytes.toString("base64")}`);
-  return fontPromise;
-}
 type Operation = "read" | "print" | "reprint";
 export function createInvoiceHttpHandler(options: {
   invoices: () => Promise<MongoInvoiceRepository>;
@@ -113,5 +102,5 @@ export const handleInvoiceHttp = createInvoiceHttpHandler({
     new URL(getServerConfig().appUrl).origin,
     new URL(getServerConfig().adminUrl).origin,
   ],
-  font: receiptFont,
+  font: receiptFontDataUrl,
 });

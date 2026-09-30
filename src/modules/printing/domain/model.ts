@@ -4,7 +4,7 @@ export type PrintJob = EntityDto &
   Readonly<{
     orderId: string;
     printerId: string;
-    status: "queued" | "printing" | "printed" | "failed";
+    status: "queued" | "printing" | "printed" | "dead";
     attempts: number;
     nextAttemptAt: UtcTimestamp | null;
     printedAt: UtcTimestamp | null;
@@ -12,10 +12,10 @@ export type PrintJob = EntityDto &
   }>;
 
 const allowed: Record<PrintJob["status"], readonly PrintJob["status"][]> = {
-  queued: ["printing", "failed"],
-  printing: ["printed", "queued", "failed"],
+  queued: ["printing", "dead"],
+  printing: ["printed", "queued", "dead"],
   printed: [],
-  failed: ["queued"],
+  dead: [],
 };
 export function assertPrintTransition(from: PrintJob["status"], to: PrintJob["status"]): void {
   if (!allowed[from].includes(to))

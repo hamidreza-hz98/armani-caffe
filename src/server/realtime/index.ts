@@ -1,4 +1,12 @@
 import "server-only";
 
-// Realtime transports register their close functions with the lifecycle registry when started.
-export async function closeRealtimeResources(): Promise<void> {}
+export { startPrintRealtime } from "./print-server.ts";
+let closeActive: (() => Promise<void>) | null = null;
+export function registerRealtimeCloser(close: () => Promise<void>): void {
+  closeActive = close;
+}
+export async function closeRealtimeResources(): Promise<void> {
+  const close = closeActive;
+  closeActive = null;
+  if (close) await close();
+}

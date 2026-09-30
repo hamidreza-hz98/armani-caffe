@@ -51,6 +51,7 @@ npm run test:e2e:debug # اشکال‌زدایی Playwright
 npm run test:e2e:ui # رابط محلی Playwright
 npm run validate    # همهٔ بررسی‌های پایه
 npm run start:local # ساخت و اجرای محلی نسخهٔ production
+npm run realtime:work # اجرای جداگانهٔ WebSocket و صف چاپ
 ```
 
 `npm run env:init` فایل محلی `.env.local` را از `.env.example` می‌سازد و رازهای تصادفی لازم را تولید می‌کند؛ فایل موجود را بازنویسی نمی‌کند. فایل‌های واقعی محیطی در Git ثبت نمی‌شوند. بدون تنظیمات معتبر، سرور هنگام شروع با فهرست نام متغیرهای مشکل‌دار متوقف می‌شود. رازها هرگز نباید پیشوند `NEXT_PUBLIC_` داشته باشند.
@@ -92,6 +93,8 @@ npm run start:local # ساخت و اجرای محلی نسخهٔ production
 مرزهای ماژول‌ها، مسئولیت‌ها و جریان درخواست در [راهنمای معماری](docs/architecture.md) ثبت شده‌اند. `npm run check:architecture` جهت وابستگی‌ها و چرخه‌های import را بررسی می‌کند.
 
 صدور فاکتور غیرقابل‌تغییر، رسیدهای ۵۸/۸۰ میلی‌متری، نمای چاپ/PDF و بازچاپ ممیزی‌شده در [راهنمای فاکتور](docs/invoices.md) شرح داده شده‌اند.
+
+سرور بلادرنگ، صف پایدار Redis و قرارداد پل چاپگر در [راهنمای چاپ بلادرنگ](docs/printing-realtime.md) آمده‌اند.
 
 قراردادهای پایگاه داده، migration، index و seed در [راهنمای پایگاه داده](docs/database.md) آمده‌اند. هیچ migration یا همگام‌سازی index هنگام درخواست عادی اجرا نمی‌شود.
 

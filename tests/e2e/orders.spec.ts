@@ -6,6 +6,7 @@ test("orders, checkout and recovery reject forged identity without downstream co
     "/api/customer/orders",
     "/api/admin/orders",
     "/api/admin/orders/recovery",
+    "/api/admin/orders/000000000000000000000001/print",
     "/api/checkout/000000000000000000000001",
   ]) {
     const response = await request.get(path, {

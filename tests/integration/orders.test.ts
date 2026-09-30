@@ -7,7 +7,9 @@ import { afterAll, beforeAll, beforeEach, expect, test, vi } from "vitest";
 
 import { createAdminSecurity, createCustomerSecurity } from "@/modules/auth/server";
 import { createInventoryService } from "@/modules/inventory/server";
+import { OutboxWorker } from "@/modules/notifications/server";
 import { MongoFakeLedger } from "@/modules/payments/server";
+import { MongoPrintJobs } from "@/modules/printing/server";
 import { settingsDefaults } from "@/modules/settings";
 import {
   createSettingsRepository,
@@ -19,7 +21,9 @@ import { composeInvoiceRepository } from "@/server/commerce/invoices";
 import { createOrderHttpHandler } from "@/server/commerce/order-http";
 import { composeOrderService } from "@/server/commerce/orders";
 import { composePaymentFramework } from "@/server/commerce/payments";
+import { printOutboxHandlers } from "@/server/commerce/print-outbox";
 import { applyDatabaseIndexes, applyMigrations } from "@/server/database/operations";
+import type { PrintSchedule } from "@/server/queue";
 
 import { testEnv } from "../fixtures/config.mjs";
 import { isolatedResources } from "../fixtures/isolation";
@@ -122,6 +126,7 @@ beforeEach(async () => {
     "orders",
     "invoices",
     "invoice_reprints",
+    "print_jobs",
     "checkout_intents",
     "order_counters",
     "order_sales_projection",
@@ -420,6 +425,78 @@ test("owner and cashier reprints are audited exactly once per key without replac
       .collection("outbox_events")
       .countDocuments({ eventType: "invoice.reprint_requested" }),
   ).toBe(2);
+});
+test("paid order outbox makes one active automatic print job and audited reprint makes a second linked job", async () => {
+  const settings = new SettingsService(
+    createSettingsRepository(connection, new SettingsVault(key, undefined, clock), clock),
+  );
+  await settings.update(
+    { id: ownerId, role: "OWNER" },
+    "printing",
+    "enable-auto-print",
+    {
+      revision: 0,
+      values: {
+        ...settingsDefaults("printing"),
+        enabled: true,
+        automaticPrint: true,
+        bridgeId: "test-bridge",
+      },
+      secrets: { bridgeToken: "test_printer_bridge_token_32_characters" },
+    },
+    "settings",
+  );
+  const { intent, payment } = await checkout();
+  await settle(payment);
+  const invoice = await composeInvoiceRepository(
+    connection,
+    { customerSessionSecret: secret, adminSessionSecret: secret + "-admin-isolated" },
+    clock,
+  ).read(ownerToken, intent.id, false);
+  expect(invoice.printing).toEqual({ automatic: true, printerId: "test-bridge" });
+  const due = new Map<string, number>();
+  const schedule: PrintSchedule = {
+    schedule: async (id, at) => {
+      due.set(id, at.getTime());
+    },
+    due: async () => [...due.keys()],
+    remove: async (id) => {
+      due.delete(id);
+    },
+    acquirePresence: async () => true,
+    refreshPresence: async () => true,
+    releasePresence: async () => {},
+    ping: async () => {},
+    close: async () => {},
+  };
+  const worker = new OutboxWorker(
+    connection,
+    printOutboxHandlers(connection, schedule, "test-bridge", clock),
+    { workerId: "invoice-print-test", now: clock },
+  );
+  expect(await worker.runOnce()).toBe(true);
+  expect(await worker.runOnce()).toBe(false);
+  const repository = new MongoPrintJobs(connection, clock);
+  expect(await repository.byOrder(intent.id)).toMatchObject([
+    { invoiceId: invoice.id, source: "automatic", status: "queued", printerId: "test-bridge" },
+  ]);
+  expect(due.size).toBe(1);
+  await composeInvoiceRepository(
+    connection,
+    { customerSessionSecret: secret, adminSessionSecret: secret + "-admin-isolated" },
+    clock,
+  ).reprint(
+    ownerToken,
+    intent.id,
+    { idempotencyKey: "print-replay-001", paperWidthMm: 80 },
+    "manual-reprint",
+  );
+  expect(await worker.runOnce()).toBe(true);
+  expect(await repository.byOrder(intent.id)).toMatchObject([
+    { source: "automatic" },
+    { source: "reprint", paperWidthMm: 80 },
+  ]);
+  expect(await db().collection("invoices").countDocuments({})).toBe(1);
 });
 test("frozen customer/catalog/addition/stock snapshots survive later edits and prices cannot be supplied", async () => {
   const { intent, payment } = await checkout();

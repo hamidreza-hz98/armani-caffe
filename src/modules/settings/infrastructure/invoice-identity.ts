@@ -42,5 +42,9 @@ export async function invoiceIdentitySettings(connection: Connection, session: C
       footer: printing.footer,
     },
     paperWidthMm: printing.paperWidthMm,
+    printing: {
+      automatic: printing.enabled && printing.automaticPrint,
+      printerId: printing.bridgeId,
+    },
   };
 }

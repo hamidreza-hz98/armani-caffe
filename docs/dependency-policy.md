@@ -32,3 +32,5 @@ Typed settings adds no dependency: Node `crypto` supplies AES-GCM/HMAC and the e
 | `mongodb-memory-server`                     | Isolated replica-set integration tests without dev data                               | Shared local database, unsafe for parallel tests   |
 
 Private media adds exact-pinned `@aws-sdk/client-s3`, `@aws-sdk/lib-storage`, `@aws-sdk/s3-presigned-post`, and `@aws-sdk/s3-request-presigner` for S3 signing, bounded multipart transfer, and private object operations, plus `sharp` for decoded-type validation and metadata-free image variants. These are server-only and justified in [ADR 0003](adr/0003-private-media-storage.md).
+
+Realtime printing adds exact-pinned `redis` (AOF-backed queue schedule and presence), `ws` (Node WebSocket server), and development-only `@types/ws` (transport typing). Node does not provide a production WebSocket server. Ownership, secrets, failure/recovery, retention and alternatives are recorded in [ADR 0004](adr/0004-realtime-printing.md).

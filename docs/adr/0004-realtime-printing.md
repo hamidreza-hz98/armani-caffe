@@ -1,0 +1,13 @@
+# ADR 0004 — Durable realtime printing
+
+Status: accepted for local modular-monolith development.
+
+The Next.js process does not own WebSocket upgrades. A separate Node process uses exact-pinned `ws` for the server transport and the official `redis` Node client for AOF-backed due-job scheduling and short-lived printer presence. Node's built-in WebSocket is a client API, not a production WebSocket server. The existing MongoDB transaction/outbox remains the durable business source of truth; Redis is a recoverable schedule and coordination layer, not the only copy of a job. No new browser dependency is added.
+
+The invoice-issued outbox consumer creates an automatic PrintJob only when the invoice captured `printing.automatic=true`; an audited reprint event creates a distinct job linked to the same invoice. Unique idempotency keys prevent duplicate jobs on outbox retries. Redis contains job IDs and due times, not receipts, secrets, or customer data. Conditional MongoDB claims prevent two workers from delivering the same attempt concurrently. A claim has a lease, attempt number and random delivery ID. A WebSocket send does not mark success; only a matching bridge ACK does. On timeout or printer error the job is retried with bounded backoff, then dead-lettered. Restart reconciliation repopulates Redis from queued MongoDB jobs and expires lost leases.
+
+Bridge credentials are encrypted in printing settings and checked only inside the realtime process. The environment bridge credential is a local/manual-print fallback when settings printing is disabled. Tokens are never placed in URLs, Redis, logs, or outbound messages. Presence uses a Redis compare-and-renew lease so concurrent server instances cannot register the same printer. Browser admin sockets require a valid admin cookie, an allowed Origin, and `printing.read`; their only room is the fixed single-tenant print-status room. They cannot send commands or join arbitrary rooms.
+
+An at-least-once queue cannot guarantee that a physical receipt is printed exactly once when the printer succeeds but its ACK is lost. A bridge must persist a local spool keyed by job ID and, on redelivery, ACK an already printed job without feeding paper again. Physical printer drivers, bridge packaging and TLS/reverse-proxy deployment remain outside this ADR. If Redis is unavailable, outbox delivery retries; if Redis loses its schedule, MongoDB reconciliation restores it. Dead jobs require deliberate operator intervention rather than silent replay.
+
+Sources: [ws server documentation](https://github.com/websockets/ws/blob/master/doc/ws.md), [Redis Node client](https://github.com/redis/node-redis), [Redis sorted sets](https://redis.io/docs/latest/develop/data-types/sorted-sets/).

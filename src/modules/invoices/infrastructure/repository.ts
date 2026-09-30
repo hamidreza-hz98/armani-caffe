@@ -12,9 +12,11 @@ import {
 } from "../domain/snapshot.ts";
 
 export type InvoicePorts = {
-  settings: (
-    session: ClientSession,
-  ) => Promise<{ identity: InvoiceIdentity; paperWidthMm: 58 | 80 }>;
+  settings: (session: ClientSession) => Promise<{
+    identity: InvoiceIdentity;
+    paperWidthMm: 58 | 80;
+    printing: { automatic: boolean; printerId: string };
+  }>;
   admin: AdminAuthorizer;
   customer: (token: string | null, session: ClientSession) => Promise<{ id: string }>;
   record: (
@@ -83,6 +85,7 @@ const dto = (row: Row): IssuedInvoice => ({
   issuedAt: row.issuedAt.toISOString() as IssuedInvoice["issuedAt"],
   jalaliDateTime: row.jalaliDateTime,
   paperWidthMm: row.paperWidthMm,
+  printing: row.printing ?? { automatic: false, printerId: "" },
   status: row.status,
 });
 const reprintDto = (row: Reprint) => ({

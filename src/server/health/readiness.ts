@@ -5,7 +5,7 @@ import { performance } from "node:perf_hooks";
 import { logEvent } from "../observability/index.ts";
 import { dependencyProbes } from "./probes.ts";
 
-export type DependencyName = "mongodb" | "redis" | "minio";
+export type DependencyName = "mongodb" | "redis" | "minio" | "queue" | "realtime";
 export type Readiness = Readonly<{
   status: "ready" | "not_ready";
   checks: Record<DependencyName, "up" | "down">;
@@ -14,7 +14,7 @@ export type Readiness = Readonly<{
 export async function checkReadiness(
   probes: Record<DependencyName, () => Promise<void>> = dependencyProbes,
 ): Promise<Readiness> {
-  const names: DependencyName[] = ["mongodb", "redis", "minio"];
+  const names: DependencyName[] = ["mongodb", "redis", "minio", "queue", "realtime"];
   const checks = {} as Record<DependencyName, "up" | "down">;
   await Promise.all(
     names.map(async (name) => {

@@ -7,6 +7,7 @@ import { HeadBucketCommand } from "@aws-sdk/client-s3";
 
 import { getDatabaseConnection } from "../database/connection.ts";
 import { configuredMinioClient } from "../minio/index.ts";
+import { createPrintRedis } from "../queue/index.ts";
 import { getServerConfig } from "../secrets/config.ts";
 
 const timeoutMs = 2500;
@@ -101,4 +102,29 @@ export async function probeMinio(): Promise<void> {
   }
 }
 
-export const dependencyProbes = { mongodb: probeMongo, redis: probeRedis, minio: probeMinio };
+export async function probePrintQueue(): Promise<void> {
+  const config = getServerConfig();
+  const prefix =
+    config.mode === "test" ? (process.env.TEST_REDIS_PREFIX ?? "armani-test") : "armani";
+  const queue = await bounded(createPrintRedis(config.redisUrl, prefix), "Print queue connection");
+  try {
+    await bounded(queue.ping(), "Print queue ping");
+  } finally {
+    await queue.close();
+  }
+}
+export async function probeRealtime(): Promise<void> {
+  const config = getServerConfig();
+  const response = await fetch(`http://127.0.0.1:${config.webSocket.port}/ready`, {
+    signal: AbortSignal.timeout(timeoutMs),
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error("Realtime service not ready");
+}
+export const dependencyProbes = {
+  mongodb: probeMongo,
+  redis: probeRedis,
+  minio: probeMinio,
+  queue: probePrintQueue,
+  realtime: probeRealtime,
+};

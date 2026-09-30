@@ -15,6 +15,7 @@ import * as cartWorkflows from "./migrations/0009-cart-workflows.ts";
 import * as paymentFramework from "./migrations/0010-payment-framework.ts";
 import * as orderConfirmation from "./migrations/0011-order-confirmation.ts";
 import * as immutableInvoices from "./migrations/0012-immutable-invoices.ts";
+import * as durablePrintJobs from "./migrations/0013-durable-print-jobs.ts";
 
 export const migrations = [
   baseline,
@@ -29,6 +30,7 @@ export const migrations = [
   paymentFramework,
   orderConfirmation,
   immutableInvoices,
+  durablePrintJobs,
 ] as const;
 
 export const databaseIndexes = [

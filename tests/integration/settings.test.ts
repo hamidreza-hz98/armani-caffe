@@ -310,7 +310,9 @@ test("legacy settings require intentional migration; unknown fields and old cred
     encryptedPayload: null,
   });
   await expect(service.publicSettings()).rejects.toMatchObject({ code: "UNAVAILABLE" });
-  expect(await applyMigrations(connection, clock)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+  expect(await applyMigrations(connection, clock)).toEqual([
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+  ]);
   expect((await service.publicSettings()).business.title).toBe("قدیمی");
   await connection.db!.collection("_schema_migrations").deleteOne({ _id: 3 } as never);
   await connection.db!.collection("settings").deleteMany({});

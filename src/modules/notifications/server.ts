@@ -8,6 +8,7 @@ import { appendAudit } from "../audit/server.ts";
 import type { OutboxDraft } from "./domain/model.ts";
 import { appendOutbox } from "./infrastructure/repository.ts";
 
+export type { ClaimedOutbox } from "./infrastructure/repository.ts";
 export { outboxModel, replayOutbox } from "./infrastructure/repository.ts";
 export { appendOutbox } from "./infrastructure/repository.ts";
 export { outboxEventSchema } from "./infrastructure/schema.ts";

@@ -1,6 +1,14 @@
 import "server-only";
 
-// Queue producers and consumers belong in this server-only boundary.
+export { PrintDispatcher } from "./print-dispatcher.ts";
+export { createPrintRedis, type PrintSchedule } from "./print-redis.ts";
 
-// Queue adapters register their close functions with the lifecycle registry when started.
-export async function closeQueueResources(): Promise<void> {}
+let closeActive: (() => Promise<void>) | null = null;
+export function registerQueueCloser(close: () => Promise<void>): void {
+  closeActive = close;
+}
+export async function closeQueueResources(): Promise<void> {
+  const close = closeActive;
+  closeActive = null;
+  if (close) await close();
+}
