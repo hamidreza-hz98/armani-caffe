@@ -18,11 +18,11 @@ Migration 8 fills missing excerpts from description (first 300 characters), defa
 ## Contracts
 
 - `GET /api/products`: OWNER/CASHIER admin list, newest first, maximum 200 records.
-- `GET /api/products/[id]`: admin detail with additions, current consumption rules and sold count.
+- `GET /api/products/[id]`: admin detail with at most 40 additions, current consumption rules and sold count; malformed legacy over-cap data returns 409 rather than a partial list.
 - `POST /api/products`: OWNER creates a draft; `{ name, categoryId, basePriceToman?, description?, excerpt?, ingredients?, mediaIds?, available?, sortOrder?, additions?, consumptionRules? }`.
 - `PATCH /api/products/[id]`: OWNER edits the same fields with required `revision`; at least one field must change.
 - `POST /api/products/[id]/publish`, `/unpublish`, `/archive`: OWNER explicit transitions; `{ revision }`.
-- `GET /api/products/menu`: public category-grouped menu, published categories/products only, maximum 500 products.
+- `GET /api/products/menu`: public category-grouped menu, published categories/products only, maximum 500 products and 5,000 available additions; over-cap data returns 409 rather than a partial list.
 
 Mutations require exact configured Origin, bounded JSON, verified admin capability inside the transaction, and optimistic product revision. CASHIER has catalog reads only. Slugs are generated server-side using Persian-aware normalization and collision suffixes; name edits preserve links. Clients cannot set slug, status, sold count, internal cost fields or database metadata. Prices are nonnegative safe integers in toman; published base price must be positive.
 

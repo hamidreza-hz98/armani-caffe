@@ -1,6 +1,8 @@
 import "server-only";
 
 import { type ClientSession, type Connection, Types } from "mongoose";
+
+import { ApplicationError } from "../../../../shared/errors.ts";
 export async function productMediaUsages(
   connection: Connection,
   session: ClientSession | null,
@@ -12,6 +14,7 @@ export async function productMediaUsages(
       { mediaIds: new Types.ObjectId(mediaId) },
       { session: session ?? undefined, projection: { _id: 1 } },
     )
+    .limit(101)
     .maxTimeMS(2500)
     .toArray();
   const additions = await connection
@@ -20,8 +23,14 @@ export async function productMediaUsages(
       { mediaId: new Types.ObjectId(mediaId) },
       { session: session ?? undefined, projection: { productId: 1 } },
     )
+    .limit(101)
     .maxTimeMS(2500)
     .toArray();
+  if (rows.length > 100 || additions.length > 100)
+    throw new ApplicationError(
+      "CONFLICT",
+      "Media has too many references for a bounded usage view",
+    );
   return [
     ...rows.map((r) => ({
       entityKind: "product" as const,

@@ -458,8 +458,19 @@ export class MongoMediaRepository implements MediaRepository {
       .find({ mediaId: id })
       .session(session)
       .select("entityKind entityId field")
+      .limit(101)
       .lean();
+    if (references.length > 100)
+      throw new ApplicationError(
+        "CONFLICT",
+        "Media has too many references for a bounded usage view",
+      );
     const external = await this.bridge.usages(session, id);
+    if (external.length > 100)
+      throw new ApplicationError(
+        "CONFLICT",
+        "Media has too many references for a bounded usage view",
+      );
     const unique = new Map<string, MediaUsage>();
     for (const usage of [
       ...external,
@@ -470,6 +481,11 @@ export class MongoMediaRepository implements MediaRepository {
       })),
     ])
       unique.set(`${usage.entityKind}:${usage.entityId}:${usage.field}`, usage);
+    if (unique.size > 100)
+      throw new ApplicationError(
+        "CONFLICT",
+        "Media has too many references for a bounded usage view",
+      );
     return [...unique.values()];
   }
   usages(id: string) {

@@ -247,6 +247,19 @@ test("in-use deletion is blocked and replacement rewrites real product reference
   expect((await service.delete(owner, replacement.id, "delete-now-unused")).status).toBe("deleted");
 });
 
+test("media usage endpoint rejects an oversized reference set instead of returning a partial list", async () => {
+  const asset = await ready("usage-cap-example", "public");
+  await connection.db!.collection("products").insertMany(
+    Array.from({ length: 101 }, (_, index) => ({
+      _id: new mongoose.Types.ObjectId(),
+      slug: `usage-cap-${index}`,
+      mediaIds: [new mongoose.Types.ObjectId(asset.id)],
+      deletedAt: null,
+    })),
+  );
+  await expect(service.usages(owner, asset.id)).rejects.toMatchObject({ code: "CONFLICT" });
+});
+
 test("replacement updates addition images and parent revision without changing addition price", async () => {
   const from = await ready("addition-image-old", "public"),
     to = await ready("addition-image-new", "public");

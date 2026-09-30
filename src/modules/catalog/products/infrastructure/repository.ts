@@ -143,7 +143,11 @@ export class MongoProductRepository implements ProductRepository {
     const additions = await this.additions()
       .find({ productId: row._id }, { session })
       .sort({ sortOrder: 1, _id: 1 })
+      .limit(41)
+      .maxTimeMS(2500)
       .toArray();
+    if (additions.length > 40)
+      throw new ApplicationError("CONFLICT", "Product has too many additions for a bounded detail");
     const stock = await this.ports.stock(session, [String(row._id)]),
       sold = await this.ports.sold(session, [String(row._id)]);
     return {
@@ -200,8 +204,14 @@ export class MongoProductRepository implements ProductRepository {
           },
         )
         .sort({ productId: 1, sortOrder: 1, _id: 1 })
+        .limit(5001)
         .maxTimeMS(2500)
         .toArray();
+      if (additions.length > 5000)
+        throw new ApplicationError(
+          "CONFLICT",
+          "Menu has too many additions for a bounded response",
+        );
       const stock = await this.ports.stock(session, ids),
         sold = await this.ports.sold(session, ids);
       const byCategory = new Map<string, Row[]>(),

@@ -383,6 +383,21 @@ test("public menu is active-only, stock-aware, ordered and excludes internal fie
   expect(await products.menu()).toEqual([]);
 });
 
+test("legacy oversized addition list fails closed rather than returning an unbounded detail", async () => {
+  const { product } = await setup();
+  await connection.db!.collection("product_additions").insertMany(
+    Array.from({ length: 39 }, (_, index) => ({
+      _id: new mongoose.Types.ObjectId(),
+      productId: new mongoose.Types.ObjectId(product.id),
+      name: `Legacy extra ${index}`,
+      priceToman: 100,
+      available: true,
+      sortOrder: index + 2,
+    })),
+  );
+  await expect(products.detail(ownerToken, product.id)).rejects.toMatchObject({ code: "CONFLICT" });
+});
+
 test("product edits preserve historical order/invoice snapshots and sold count derives from completed paid orders", async () => {
   const { product, cat } = await setup();
   const snapshot = makeOrderItemSnapshot({
