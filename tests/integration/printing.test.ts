@@ -1,19 +1,28 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import { MongoMemoryReplSet } from "mongodb-memory-server";
 import mongoose from "mongoose";
 import { afterAll, beforeAll, beforeEach, expect, test } from "vitest";
 import { WebSocket } from "ws";
 
+import { makeIssuedInvoice, renderInvoiceHtml } from "@/modules/invoices";
 import type { ClaimedOutbox } from "@/modules/notifications/server";
 import { MongoPrintJobs } from "@/modules/printing/server";
+import { receiptFontDataUrl } from "@/server/commerce/invoice-font";
 import { printOutboxHandlers } from "@/server/commerce/print-outbox";
 import { applyDatabaseIndexes, applyMigrations } from "@/server/database/operations";
 import type { PrintSchedule } from "@/server/queue";
 import { PrintDispatcher } from "@/server/queue";
 import { startPrintRealtime } from "@/server/realtime";
 
+import { FilePrinter } from "../../bridge/adapters.ts";
+import { PrintBridge } from "../../bridge/client.ts";
+import { ReceiptRenderer } from "../../bridge/receipt.ts";
 import { testEnv } from "../fixtures/config.mjs";
 import { isolatedResources } from "../fixtures/isolation";
 
@@ -386,5 +395,120 @@ test("admin WebSocket uses an authenticated fixed room and rejects client room c
     await new Promise<void>((resolve) => rejected.once("error", () => resolve()));
   } finally {
     await server.close();
+  }
+});
+
+test("invoice outbox reaches a restarted-safe file bridge as Persian ESC/POS and receives authoritative ACK", async () => {
+  const path = await mkdtemp(join(tmpdir(), "armani-print-integration-"));
+  const actualJobs = new MongoPrintJobs(connection);
+  const renderer = new ReceiptRenderer(process.platform === "win32" ? "chrome" : undefined);
+  const issued = makeIssuedInvoice(
+    {
+      id: orderId.toString(),
+      code: "AC-0008932",
+      customer: {
+        id: new mongoose.Types.ObjectId().toString(),
+        displayName: "علی محمدی",
+        phone: "+989123456789",
+      },
+      items: [
+        {
+          productName: "لاته ویژه",
+          categoryName: "قهوه",
+          additions: [{ name: "شیر بادام", priceToman: 10000 }],
+          quantity: 1,
+          unitPriceToman: 120000,
+          lineTotalToman: 120000,
+        },
+      ],
+      pricing: { subtotalToman: 120000, discountToman: 0, deliveryToman: 0, totalToman: 120000 },
+      transaction: { provider: "fake", reference: "REF-123" },
+      notes: "داغ باشد",
+      placedAt: "2026-01-01T00:00:00.000Z",
+    },
+    {
+      identity: {
+        title: "کافه آرمانی",
+        legalName: "",
+        address: "تهران",
+        phone: "",
+        email: "",
+        footer: "سپاس",
+      },
+      paperWidthMm: 58,
+      printing: { automatic: true, printerId: "test-bridge" },
+    },
+  );
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: [],
+    authorizeBridge: async (printerId, token) =>
+      printerId === "test-bridge" && token === "test_printer_bridge_token_32_characters",
+    schedule,
+    jobs: actualJobs,
+    authenticateAdmin: async () => false,
+    payload: async (job) => ({
+      jobId: job.id,
+      invoiceId: job.invoiceId,
+      printerId: job.printerId,
+      attempt: job.attempts,
+      deliveryId: job.deliveryId,
+      paperWidthMm: job.paperWidthMm,
+      html: renderInvoiceHtml(
+        { ...issued, id: job.invoiceId },
+        job.paperWidthMm,
+        await receiptFontDataUrl(),
+      ),
+    }),
+  });
+  const controller = new AbortController();
+  const bridge = new PrintBridge(
+    {
+      url: `ws://127.0.0.1:${server.port}/ws?role=bridge`,
+      printerId: "test-bridge",
+      token: "test_printer_bridge_token_32_characters",
+      journalDirectory: join(path, "journal"),
+    },
+    new FilePrinter(join(path, "receipts")),
+    (job) => renderer.render(job),
+    () => undefined,
+  );
+  const running = bridge.run(controller.signal);
+  try {
+    await printOutboxHandlers(connection, schedule, "fallback")["invoice.issued"](
+      event("invoice.issued"),
+    );
+    for (let i = 0; i < 100 && !server.available("test-bridge"); i++) await delay(100);
+    expect(server.available("test-bridge")).toBe(true);
+    const dispatcher = new PrintDispatcher(actualJobs, schedule, server.deliver, server.available);
+    await dispatcher.runOnce();
+    const [job] = await actualJobs.byOrder(orderId.toString());
+    for (let i = 0; i < 300 && (await actualJobs.get(job.id))?.status !== "printed"; i++)
+      await delay(100);
+    expect((await actualJobs.get(job.id))?.status).toBe("printed");
+    const bytes = await readFile(join(path, "receipts", `${job.id}.escpos`));
+    expect([...bytes.subarray(0, 8)]).toEqual([27, 64, 29, 118, 48, 0, 48, 0]);
+    expect(bytes.byteLength).toBeGreaterThan(1000);
+    expect((await bridge.journal.read(job.id))?.state).toMatch(/printed|acknowledged/u);
+    await bridge.handle({
+      v: 1,
+      type: "print.job",
+      jobId: job.id,
+      invoiceId: job.invoiceId,
+      printerId: job.printerId,
+      attempt: 2,
+      deliveryId: "12345678-1234-1234-1234-123456789012",
+      paperWidthMm: 58,
+      html: renderInvoiceHtml({ ...issued, id: job.invoiceId }, 58, await receiptFontDataUrl()),
+    });
+    expect(await readFile(join(path, "receipts", `${job.id}.escpos`))).toEqual(bytes);
+  } finally {
+    controller.abort();
+    await running;
+    await renderer.close();
+    await server.close();
+    await rm(path, { recursive: true, force: true });
   }
 });
