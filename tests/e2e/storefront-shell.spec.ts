@@ -12,7 +12,7 @@ for (const [width, height] of [
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "آرمانی کافه" })).toBeVisible();
     await expect(page.getByRole("button", { name: "ارتباط با ما" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "ورود" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "ورود یا ثبت‌نام" })).toBeVisible();
     await expect(page.getByText("ورود", { exact: true })).toBeVisible();
     await expect(page.getByRole("link", { name: "سبد خرید، ۰ کالا" })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(

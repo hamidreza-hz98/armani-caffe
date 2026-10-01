@@ -108,6 +108,9 @@
   border-radius: 12px;
   color: #3a2418;
   text-decoration: none;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }
 .iconLink:hover,
 .contactTrigger:hover {
@@ -181,6 +184,23 @@
   color: #6f6259;
   line-height: 1.9;
   font-size: 14px;
+}
+.accountActions {
+  margin-top: 20px;
+}
+.accountActions button {
+  min-height: 46px;
+  padding: 9px 18px;
+  border: 0;
+  border-radius: 12px;
+  background: #211a16;
+  color: #f5cc70;
+  font: inherit;
+  cursor: pointer;
+}
+.accountActions button:focus-visible {
+  outline: 3px solid #b87f18;
+  outline-offset: 2px;
 }
 .footer {
   text-align: center;

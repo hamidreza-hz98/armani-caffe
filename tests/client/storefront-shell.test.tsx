@@ -1,5 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { ContactSheet } from "../../src/storefront/contact-sheet.tsx";
 import { StorefrontShell } from "../../src/storefront/storefront-shell.tsx";

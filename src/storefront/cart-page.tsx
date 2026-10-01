@@ -7,6 +7,7 @@ import { cartItemKey, type CartItemSnapshot } from "@/modules/carts";
 import { formatPersianNumber, formatToman } from "@/theme/format";
 
 import { CartLineControl } from "./cart-line-control";
+import { openCustomerAuth } from "./customer-auth-events";
 import styles from "./menu.module.css";
 import { MenuCartProvider, useMenuCart } from "./menu-cart";
 
@@ -57,7 +58,11 @@ function CartContent() {
         <p role="status">در حال بارگذاری سبد…</p>
       ) : status === "guest" ? (
         <p>
-          برای دیدن سبد، <Link href="/account">وارد شوید</Link>.
+          برای دیدن سبد،{" "}
+          <button type="button" onClick={() => openCustomerAuth()}>
+            وارد شوید
+          </button>
+          .
         </p>
       ) : status === "error" ? (
         <div role="alert">

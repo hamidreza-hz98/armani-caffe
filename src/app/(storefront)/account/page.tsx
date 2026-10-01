@@ -1,18 +1,22 @@
-import Link from "next/link";
-
+import { AccountActions } from "@/storefront/customer-account-control";
+import { loadStorefrontShell } from "@/storefront/data";
 import styles from "@/storefront/storefront.module.css";
 
-export default function AccountPage() {
+export default async function AccountPage() {
+  const { account } = await loadStorefrontShell();
   return (
     <section className={styles.hero}>
       <h1>حساب کاربری</h1>
       <p>
-        ورود و مدیریت حساب در مرحلهٔ بعدی فروشگاه تکمیل می‌شود. فعلاً می‌توانید از راه‌های ارتباطی
-        بالای صفحه با کافه در تماس باشید.
+        {account.state === "customer"
+          ? `${account.name ?? "مشتری عزیز"}، به حساب خود خوش آمدید.`
+          : account.state === "guest"
+            ? "برای مشاهده سفارش‌ها و مدیریت حساب وارد شوید."
+            : "وضعیت حساب در دسترس نیست. اتصال خود را بررسی کنید."}
       </p>
-      <p>
-        <Link href="/">بازگشت به صفحهٔ اصلی</Link>
-      </p>
+      <div className={styles.accountActions}>
+        <AccountActions customer={account.state === "customer"} />
+      </div>
     </section>
   );
 }

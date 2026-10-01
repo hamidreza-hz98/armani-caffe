@@ -1,0 +1,237 @@
+.dialog {
+  position: fixed;
+  inset: auto 0 0;
+  width: min(100%, 480px);
+  max-height: min(90dvh, 850px);
+  margin: 0 auto;
+  padding: 10px 0 calc(16px + env(safe-area-inset-bottom));
+  border: 1px solid #d8cabb;
+  border-bottom: 0;
+  border-radius: 28px 28px 0 0;
+  background: #fffcf7;
+  color: #211a16;
+  box-shadow: 0 -16px 45px rgb(23 20 17 / 22%);
+  overflow-y: auto;
+}
+.dialog::backdrop {
+  background: rgb(23 20 17 / 58%);
+  backdrop-filter: blur(2px);
+}
+.handle {
+  width: 40px;
+  height: 5px;
+  margin: 0 auto 17px;
+  border-radius: 6px;
+  background: #d8cabb;
+}
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 20px 17px;
+  border-bottom: 1px solid #e6dbd0;
+}
+.headingIcon {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dfd1c1;
+  border-radius: 13px;
+  background: #f7f2ea;
+  color: #b87f18;
+  font-size: 23px;
+}
+.heading div {
+  min-width: 0;
+  flex: 1;
+}
+.heading h2 {
+  margin: 0;
+  font-size: 19px;
+  line-height: 1.5;
+}
+.heading p {
+  margin: 0;
+  color: #6f6259;
+  font-size: 12px;
+}
+.close {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border: 0;
+  border-radius: 50%;
+  background: #f7f2ea;
+  color: #3a2418;
+  font-size: 25px;
+  cursor: pointer;
+}
+.form {
+  display: grid;
+  gap: 17px;
+  padding: 20px 24px 0;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.field label,
+.birth legend {
+  font-size: 13px;
+  font-weight: 700;
+}
+.field label span {
+  color: #b82b22;
+}
+.field input,
+.dateRow select {
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 12px;
+  border: 1px solid #d7c5b1;
+  border-radius: 14px;
+  background: #f7f2ea;
+  color: #211a16;
+  font: inherit;
+  font-size: 14px;
+}
+.field input:focus-visible,
+.dateRow select:focus-visible,
+.dialog button:focus-visible {
+  outline: 3px solid #b87f18;
+  outline-offset: 2px;
+}
+.field input[aria-invalid="true"],
+.dateRow select[aria-invalid="true"] {
+  border-color: #b82b22;
+}
+.field small,
+.birth small {
+  color: #6f6259;
+  font-size: 11px;
+}
+.field small[role="alert"],
+.birth small[role="alert"] {
+  color: #ae2119;
+}
+.phoneRow,
+.passwordRow {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.phoneRow input {
+  text-align: left;
+  padding-inline-end: 74px;
+}
+.phoneRow span {
+  position: absolute;
+  inset-inline-end: 12px;
+  color: #4f4034;
+  font-size: 12px;
+  padding-inline-start: 9px;
+  border-inline-start: 1px solid #d7c5b1;
+}
+.passwordRow input {
+  padding-inline-end: 70px;
+}
+.passwordRow button {
+  position: absolute;
+  inset-inline-end: 7px;
+  min-width: 58px;
+  min-height: 40px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #5b3b1e;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+}
+.birth {
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+.birth legend {
+  margin-bottom: 8px;
+}
+.birth legend small {
+  font-weight: 400;
+}
+.dateRow {
+  display: grid;
+  grid-template-columns: 0.8fr 1.4fr 1fr;
+  gap: 6px;
+}
+.dateRow select {
+  min-width: 0;
+  padding-inline: 7px;
+  font-size: 12px;
+}
+.error {
+  margin: 0;
+  padding: 12px;
+  border: 1px solid #e68b83;
+  border-radius: 12px;
+  background: #fbe9e6;
+  color: #a92119;
+  line-height: 1.8;
+  font-size: 13px;
+}
+.submit {
+  min-height: 54px;
+  width: 100%;
+  border: 0;
+  border-radius: 14px;
+  background: #1c1815;
+  color: #dfae4c;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.submit:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+.switch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  padding-top: 11px;
+  border-top: 1px solid #e6dbd0;
+  font-size: 12px;
+  color: #6f6259;
+}
+.switch button {
+  border: 0;
+  background: transparent;
+  color: #3a2418;
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+@media (max-width: 370px) {
+  .form {
+    padding-inline: 16px;
+  }
+  .heading {
+    padding-inline: 16px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .dialog[open] {
+    animation: rise 0.2s ease-out;
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(20px);
+      opacity: 0.8;
+    }
+  }
+}

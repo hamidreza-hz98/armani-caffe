@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { formatPersianNumber } from "@/theme/format";
 
 import { ContactSheet } from "./contact-sheet";
+import { CustomerAccountControl } from "./customer-account-control";
+import { CustomerAuthSheet } from "./customer-auth-sheet";
 import type { StorefrontShellData } from "./data";
 import { StorefrontIcon } from "./icons";
 import styles from "./storefront.module.css";
@@ -29,15 +31,7 @@ export function StorefrontHeader({ data }: { data: StorefrontShellData }) {
           </Link>
           <nav className={styles.actions} aria-label="ابزارهای فروشگاه">
             <ContactSheet links={data.contacts} address={data.contactAddress} />
-            <Link
-              className={styles.iconLink}
-              href="/account"
-              aria-label={data.account.state === "customer" ? `حساب ${accountLabel}` : accountLabel}
-              title={accountLabel}
-            >
-              <StorefrontIcon name="user" />
-              <span className={styles.accountText}>{accountLabel}</span>
-            </Link>
+            <CustomerAccountControl state={data.account.state} label={accountLabel} />
             <Link
               className={styles.iconLink}
               href="/cart"
@@ -92,6 +86,7 @@ export function StorefrontFrame({ header, children }: { header: ReactNode; child
         رفتن به محتوای اصلی
       </a>
       {header}
+      <CustomerAuthSheet />
       <main id="storefront-content" className={styles.main}>
         {children}
       </main>

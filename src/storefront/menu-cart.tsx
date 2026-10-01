@@ -9,6 +9,7 @@ import { cartItemKey, type CartItemSnapshot, makeCartItemSnapshot } from "@/modu
 import { asToman } from "@/shared/domain";
 import { formatPersianNumber, formatToman } from "@/theme/format";
 
+import { CUSTOMER_AUTHENTICATED, CUSTOMER_LOGGED_OUT } from "./customer-auth-events";
 import styles from "./menu.module.css";
 
 type Result =
@@ -183,6 +184,21 @@ export function MenuCartProvider({
     }
     publish();
   }
+  useEffect(() => {
+    const onAuthenticated = () => void reload();
+    const onLoggedOut = () => {
+      confirmed.current = null;
+      pending.current = [];
+      setCart(null);
+      setStatus("guest");
+    };
+    window.addEventListener(CUSTOMER_AUTHENTICATED, onAuthenticated);
+    window.addEventListener(CUSTOMER_LOGGED_OUT, onLoggedOut);
+    return () => {
+      window.removeEventListener(CUSTOMER_AUTHENTICATED, onAuthenticated);
+      window.removeEventListener(CUSTOMER_LOGGED_OUT, onLoggedOut);
+    };
+  });
   useEffect(() => {
     if (initialGuest) return;
     const started = generation.current;

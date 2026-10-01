@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { AccountActions } from "@/storefront/customer-account-control";
 import styles from "@/storefront/storefront.module.css";
 import { StorefrontShell } from "@/storefront/storefront-shell";
 
@@ -30,6 +31,7 @@ export default function StorefrontPreview() {
       <section className={styles.hero}>
         <h1>پیش‌نمایش حساب مشتری</h1>
         <p>این صفحه فقط برای بررسی ظاهر پوستهٔ فروشگاه است و به حساب واقعی متصل نیست.</p>
+        <AccountActions customer />
       </section>
     </StorefrontShell>
   );

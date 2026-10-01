@@ -161,7 +161,9 @@ test("guest sees login help; unavailable product offers no add control", async (
     </MenuCartProvider>,
   );
   fireEvent.click(screen.getByRole("button", { name: "+ افزودن" }));
-  await waitFor(() => expect(screen.getByRole("link", { name: "وارد شوید" })).toBeVisible());
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: "ورود و افزودن به سبد" })).toBeVisible(),
+  );
   view.rerender(
     <MenuCartProvider>
       <CartControl productId={id} orderable={false} />

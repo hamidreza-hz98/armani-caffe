@@ -7,6 +7,7 @@ import { cartItemKey } from "@/modules/carts";
 import { formatPersianNumber, formatToman } from "@/theme/format";
 
 import { CartLineControl } from "./cart-line-control";
+import { CUSTOMER_AUTHENTICATED, openCustomerAuth } from "./customer-auth-events";
 import styles from "./menu.module.css";
 import { useMenuCart } from "./menu-cart";
 
@@ -65,6 +66,7 @@ export function CartControl({
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
   const sequence = useRef(0);
+  const pendingAuth = useRef(false);
   const baseKey = cartItemKey(productId, []);
   const base = cart?.items.find(
     (item) =>
@@ -82,6 +84,32 @@ export function CartControl({
     if (open) dialog.current?.showModal();
     else dialog.current?.close();
   }, [open]);
+
+  useEffect(() => {
+    const resume = () => {
+      if (!pendingAuth.current || !options || !quote) return;
+      pendingAuth.current = false;
+      setOpen(true);
+      setSaving(true);
+      void dispatch({
+        type: "add",
+        productId,
+        productName: options.name,
+        additionIds: quote.additionIds,
+        additionNames: quote.additionIds.map(
+          (id) => options.additions.find((item) => item.id === id)?.name ?? "",
+        ),
+        quantity: quote.quantity,
+        note: note.trim() || undefined,
+        unitPriceToman: quote.unitPriceToman,
+      })
+        .then(() => setAdded(true))
+        .catch(() => setError("افزودن به سبد انجام نشد. قیمت و موجودی را دوباره بررسی کنید."))
+        .finally(() => setSaving(false));
+    };
+    window.addEventListener(CUSTOMER_AUTHENTICATED, resume);
+    return () => window.removeEventListener(CUSTOMER_AUTHENTICATED, resume);
+  }, [dispatch, note, options, productId, quote]);
 
   useEffect(() => {
     if (!open || !options) return;
@@ -115,6 +143,7 @@ export function CartControl({
 
   async function showOptions() {
     if (!orderable) return;
+    pendingAuth.current = false;
     setOpen(true);
     setAdded(false);
     setLoading(true);
@@ -286,9 +315,7 @@ export function CartControl({
               />
               <small className={styles.noteCount}>{formatPersianNumber(note.length)} / ۳۰۰</small>
               {status === "guest" && (
-                <p className={styles.optionsError}>
-                  برای افزودن به سبد، <Link href="/account">وارد شوید</Link>.
-                </p>
+                <p className={styles.optionsError}>برای افزودن به سبد وارد شوید.</p>
               )}
               {error && (
                 <p className={styles.optionsError} role="alert">
@@ -305,10 +332,21 @@ export function CartControl({
               </span>
               <button
                 type="button"
-                disabled={!quote || saving || status !== "ready"}
-                onClick={() => void add()}
+                disabled={!quote || saving || (status !== "ready" && status !== "guest")}
+                onClick={() => {
+                  if (status === "guest") {
+                    pendingAuth.current = true;
+                    dialog.current?.close();
+                    setOpen(false);
+                    openCustomerAuth();
+                  } else void add();
+                }}
               >
-                {saving ? "در حال افزودن…" : "افزودن به سبد"}
+                {saving
+                  ? "در حال افزودن…"
+                  : status === "guest"
+                    ? "ورود و افزودن به سبد"
+                    : "افزودن به سبد"}
               </button>
             </div>
           </>
