@@ -194,6 +194,7 @@ function CartContent({
         destination.password
       )
         throw new Error("Unsafe payment URL");
+      window.history.replaceState(null, "", `/payment/result/${intent.id}`);
       window.location.assign(destination.href);
     } catch {
       setError("اتصال به درگاه برقرار نشد. بدون ثبت سفارش تکراری دوباره تلاش کنید.");

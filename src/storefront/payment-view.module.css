@@ -1,0 +1,166 @@
+.page {
+  width: min(100%, 520px);
+  margin: 0 auto;
+  padding: 22px 16px 40px;
+  display: grid;
+  gap: 16px;
+  color: #26352e;
+}
+.hero {
+  text-align: center;
+  padding: 22px 14px 26px;
+  background: #eef4ed;
+  border-radius: 24px;
+}
+.hero h1 {
+  font-size: 1.45rem;
+  line-height: 1.6;
+  margin: 10px 0;
+}
+.hero p {
+  line-height: 1.9;
+  margin: 0;
+}
+.hero.failure {
+  background: #fff1e9;
+}
+.hero.pending {
+  background: #fff7e5;
+}
+.symbol {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin: auto;
+  border-radius: 50%;
+  font-size: 2rem;
+  font-weight: 700;
+  background: #d1e5d2;
+  color: #165c34;
+}
+.failure .symbol {
+  background: #ffe1d4;
+  color: #8d361c;
+}
+.pending .symbol {
+  background: #ffe9ab;
+  color: #765711;
+}
+.card {
+  border: 1px solid #e5e7dd;
+  border-radius: 20px;
+  padding: 18px;
+  background: #fff;
+}
+.card h2 {
+  font-size: 1.1rem;
+  margin: 0 0 14px;
+}
+.facts {
+  margin: 0;
+}
+.facts > div,
+.total {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #eeefe9;
+}
+.facts > div:last-child {
+  border: 0;
+}
+.facts dt {
+  color: #607167;
+}
+.facts dd {
+  margin: 0;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+.items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.items li {
+  border-bottom: 1px solid #eeefe9;
+  padding: 12px 0;
+  display: grid;
+  gap: 3px;
+}
+.items li > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.items small {
+  color: #607167;
+}
+.items b {
+  justify-self: end;
+}
+.total {
+  border: 0;
+  margin: 10px 0 0;
+}
+.actions {
+  display: grid;
+  gap: 10px;
+}
+.primary,
+.secondary,
+.support {
+  min-height: 48px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  text-align: center;
+  text-decoration: none;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+.primary {
+  background: #214b37;
+  color: #fff;
+}
+.secondary {
+  border: 1px solid #214b37;
+  color: #214b37;
+}
+.support,
+.back {
+  color: #214b37;
+  text-align: center;
+}
+.back {
+  justify-self: start;
+}
+.primary:focus-visible,
+.secondary:focus-visible,
+.support:focus-visible,
+.back:focus-visible {
+  outline: 3px solid #ad7c2e;
+  outline-offset: 3px;
+}
+@media (max-width: 380px) {
+  .page {
+    padding-inline: 12px;
+  }
+  .facts > div {
+    flex-wrap: wrap;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .primary,
+  .secondary {
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease;
+  }
+  .primary:hover,
+  .secondary:hover {
+    transform: translateY(-1px);
+  }
+}

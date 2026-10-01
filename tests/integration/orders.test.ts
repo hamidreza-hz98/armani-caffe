@@ -20,6 +20,7 @@ import { composeCartService } from "@/server/commerce/carts";
 import { composeInvoiceRepository } from "@/server/commerce/invoices";
 import { createOrderHttpHandler } from "@/server/commerce/order-http";
 import { composeOrderService } from "@/server/commerce/orders";
+import { readCustomerPaymentResult } from "@/server/commerce/payment-results";
 import { composePaymentFramework } from "@/server/commerce/payments";
 import { printOutboxHandlers } from "@/server/commerce/print-outbox";
 import { applyDatabaseIndexes, applyMigrations } from "@/server/database/operations";
@@ -884,4 +885,24 @@ test("HTTP checkout enforces origin, isolated cookies, ownership and never accep
   expect(response.headers.get("cache-control")).toBe("no-store");
   const result = await response.json();
   expect(result.value.payment.amountToman).toBe(100000);
+});
+
+test("customer result is owner-scoped, remains pending until confirmation and is idempotent on refresh", async () => {
+  const { intent, payment } = await checkout();
+  const pending = await readCustomerPaymentResult(connection, orders.service, token, intent.id);
+  expect(pending.payment).toMatchObject({ status: "pending", amountToman: payment.amountToman });
+  expect(pending.order).toBeNull();
+  await expect(
+    readCustomerPaymentResult(connection, orders.service, otherToken, intent.id),
+  ).rejects.toMatchObject({ code: "NOT_FOUND" });
+  await settle(payment);
+  const first = await readCustomerPaymentResult(connection, orders.service, token, intent.id);
+  const replay = await readCustomerPaymentResult(connection, orders.service, token, intent.id);
+  expect(first.checkout.state).toBe("CONFIRMED");
+  expect(first.payment?.status).toBe("succeeded");
+  expect(first.order?.code).toMatch(/^AC-\d{7,}$/u);
+  expect(replay).toEqual(first);
+  await expect(orders.service.detail(otherToken, first.order!.id, true)).rejects.toMatchObject({
+    code: "NOT_FOUND",
+  });
 });

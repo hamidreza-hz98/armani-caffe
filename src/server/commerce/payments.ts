@@ -177,3 +177,6 @@ export const handlePaymentCallback = createPaymentCallbackHandler({
   providerIds: () => ["fake", ...gatewayFactories.keys()],
   callbackOrigin: () => new URL(getServerConfig().paymentCallbackBaseUrl).origin,
 });
+export function paymentResultBaseUrl() {
+  return getServerConfig().appUrl;
+}
