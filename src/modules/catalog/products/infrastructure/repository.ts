@@ -6,6 +6,7 @@ import { ApplicationError } from "../../../../shared/errors.ts";
 import type { AdminAuthorizer } from "../../../../shared/security-ports.ts";
 import { persianSlug } from "../../../../shared/slug.ts";
 import type { ProductRepository } from "../application/service.ts";
+import type { ProductDetail, ProductListQuery, ProductPage } from "../contracts/admin.ts";
 import type { AdditionInput, ProductFields, RuleInput } from "../contracts/product.ts";
 import { assertProductTransition, validatePublished } from "../domain/lifecycle.ts";
 
@@ -70,6 +71,19 @@ const productDto = (r: Row) => ({
   updatedAt: r.updatedAt.toISOString(),
   deletedAt: r.deletedAt?.toISOString() ?? null,
 });
+const productSummaryDto = (r: Row) => ({
+  id: String(r._id),
+  name: r.name,
+  slug: r.slug,
+  categoryId: String(r.categoryId),
+  excerpt: r.excerpt,
+  basePriceToman: r.basePriceToman,
+  mediaIds: r.mediaIds.map(String),
+  available: r.available,
+  status: r.status,
+  revision: r.__v,
+  updatedAt: r.updatedAt.toISOString(),
+});
 const additionDto = (r: Addition) => ({
   id: String(r._id),
   name: r.name,
@@ -131,6 +145,46 @@ export class MongoProductRepository implements ProductRepository {
         .toArray()
     ).map(productDto);
   }
+  async listPage(token: string | null, query: ProductListQuery): Promise<ProductPage> {
+    await this.authorize(token, "catalog.read");
+    const filter: Record<string, unknown> = { deletedAt: null };
+    if (query.status !== "all") filter.status = query.status;
+    if (query.categoryId) filter.categoryId = id(query.categoryId);
+    if (query.available !== "all") filter.available = query.available === "yes";
+    if (query.q)
+      filter.name = { $regex: query.q.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), $options: "i" };
+    const sort: Record<string, 1 | -1> =
+      query.sort === "name"
+        ? { name: 1, _id: 1 }
+        : query.sort === "price"
+          ? { basePriceToman: -1, _id: -1 }
+          : { updatedAt: -1, _id: -1 };
+    const pageSize = 20;
+    const [rows, total] = await Promise.all([
+      this.rows()
+        .find(filter, {
+          projection: {
+            name: 1,
+            slug: 1,
+            categoryId: 1,
+            excerpt: 1,
+            basePriceToman: 1,
+            mediaIds: 1,
+            available: 1,
+            status: 1,
+            __v: 1,
+            updatedAt: 1,
+          },
+        })
+        .sort(sort)
+        .skip((query.page - 1) * pageSize)
+        .limit(pageSize)
+        .maxTimeMS(2500)
+        .toArray(),
+      this.rows().countDocuments(filter, { maxTimeMS: 2500 }),
+    ]);
+    return { items: rows.map(productSummaryDto), total, page: query.page, pageSize };
+  }
   async detail(token: string | null, productId: string) {
     await this.authorize(token, "catalog.read");
     return this.transaction(async (session) => {
@@ -139,7 +193,7 @@ export class MongoProductRepository implements ProductRepository {
       return this.details(session, row);
     });
   }
-  private async details(session: ClientSession, row: Row) {
+  private async details(session: ClientSession, row: Row): Promise<ProductDetail> {
     const additions = await this.additions()
       .find({ productId: row._id }, { session })
       .sort({ sortOrder: 1, _id: 1 })

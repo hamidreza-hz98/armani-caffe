@@ -1,16 +1,22 @@
 import type { BrowserContext } from "@playwright/test";
 import { expect, test as base } from "@playwright/test";
 
-export const test = base.extend<{ consoleGuard: void }>({
+export const test = base.extend<{ consoleGuard: void; expectedConsoleErrors: string[] }>({
+  expectedConsoleErrors: [[], { option: true }],
   consoleGuard: [
-    async ({ page }, use) => {
+    async ({ page, expectedConsoleErrors }, use) => {
       const errors: string[] = [];
       page.on("console", (message) => {
         if (message.type() === "error") errors.push(message.text());
       });
       page.on("pageerror", (error) => errors.push(error.message));
       await use();
-      expect(errors, "Browser console and page errors").toEqual([]);
+      expect(
+        errors.filter(
+          (error) => !expectedConsoleErrors.some((expected) => error.includes(expected)),
+        ),
+        "Unexpected browser console and page errors",
+      ).toEqual([]);
     },
     { auto: true },
   ],

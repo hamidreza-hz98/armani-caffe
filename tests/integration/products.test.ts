@@ -7,6 +7,7 @@ import { afterAll, beforeAll, beforeEach, expect, test } from "vitest";
 
 import { createAdminSecurity } from "@/modules/auth/server";
 import { createCategoryService } from "@/modules/catalog/categories/server";
+import { parseProductListQuery } from "@/modules/catalog/products";
 import { createInventoryService } from "@/modules/inventory/server";
 import { MongoMediaRepository } from "@/modules/media/infrastructure/repository";
 import { makeOrderItemSnapshot } from "@/modules/orders";
@@ -252,6 +253,47 @@ test("explicit lifecycle validates publication and keeps stable Persian slug", a
       "bad-publish",
     ),
   ).rejects.toMatchObject({ code: "VALIDATION" });
+});
+
+test("admin product pages are bounded, filterable and readable by cashier", async () => {
+  const { cat } = await setup();
+  await connection.db!.collection("products").insertMany(
+    Array.from({ length: 21 }, (_, index) => ({
+      _id: new mongoose.Types.ObjectId(),
+      categoryId: new mongoose.Types.ObjectId(cat.id),
+      name: `محصول ${index}`,
+      slug: `محصول-${index}`,
+      description: "",
+      excerpt: "",
+      ingredients: "",
+      basePriceToman: index * 1000,
+      mediaIds: [],
+      available: index % 2 === 0,
+      sortOrder: index,
+      status: "draft",
+      deletedAt: null,
+      createdAt: clock(),
+      updatedAt: clock(),
+      __v: 0,
+    })),
+  );
+  const first = await products.listPage(
+    ownerToken,
+    parseProductListQuery({ status: "draft", page: "1" }),
+  );
+  const second = await products.listPage(
+    cashierToken,
+    parseProductListQuery({ status: "draft", page: "2" }),
+  );
+  expect(first.total).toBe(22);
+  expect(first.items).toHaveLength(20);
+  expect(second.items).toHaveLength(2);
+  const search = await products.listPage(
+    cashierToken,
+    parseProductListQuery({ q: "قهوه", category: cat.id, available: "yes" }),
+  );
+  expect(search.items.map((item) => item.name)).toEqual(["قهوه ۱۲"]);
+  expect(JSON.stringify(search)).not.toMatch(/ingredients|description|consumptionRules/u);
 });
 
 test("owner mutations, cashier reads, and invalid category/media/units fail safely", async () => {

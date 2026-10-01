@@ -4,13 +4,17 @@ import net from "node:net";
 import path from "node:path";
 
 import { MongoMemoryReplSet } from "mongodb-memory-server";
+import mongoose from "mongoose";
 
 import { testEnv } from "../tests/fixtures/config.mjs";
 import { isolatedResources } from "../tests/fixtures/isolation.ts";
 
 const resources = isolatedResources("e2e");
-const withAdminDb = process.argv.includes("--with-admin-db");
-const testArgs = process.argv.slice(2).filter((arg) => arg !== "--with-admin-db");
+const withProductFixtures = process.argv.includes("--with-product-fixtures");
+const withAdminDb = process.argv.includes("--with-admin-db") || withProductFixtures;
+const testArgs = process.argv
+  .slice(2)
+  .filter((arg) => !["--with-admin-db", "--with-product-fixtures"].includes(arg));
 let replica;
 if (withAdminDb) {
   const installed = "C:\\Program Files\\MongoDB\\Server\\8.0\\bin\\mongod.exe";
@@ -56,6 +60,7 @@ if (withAdminDb) {
   env.NEXT_PUBLIC_APP_URL = url;
   env.PAYMENT_CALLBACK_BASE_URL = url;
   env.E2E_ADMIN_DB = "1";
+  if (withProductFixtures) env.E2E_PRODUCT_FIXTURES = "1";
 }
 
 async function run(args, input) {
@@ -86,6 +91,47 @@ try {
         role: "OWNER",
       }),
     );
+    if (withProductFixtures) {
+      const connection = await mongoose.createConnection(env.MONGODB_URI).asPromise();
+      try {
+        const owner = await connection.db.collection("admins").findOne({ username: "e2e-owner" });
+        if (!owner) throw new Error("E2E owner fixture is missing");
+        const imageId = new mongoose.Types.ObjectId();
+        await connection.db.collection("media_assets").insertOne({
+          _id: imageId,
+          objectKey: `e2e-image-${imageId}`,
+          bucket: resources.minioBucket,
+          mimeType: "image/webp",
+          byteSize: 100,
+          sha256: "a".repeat(64),
+          filename: "sample.webp",
+          objectVersion: String(imageId),
+          title: "تصویر آزمایشی محصول",
+          altText: "فنجان قهوه",
+          caption: "",
+          seo: { title: "", description: "", keywords: [] },
+          visibility: "public",
+          width: 100,
+          height: 100,
+          variants: [],
+          uploaderId: owner._id,
+          ownerId: owner._id,
+          initiationKey: String(imageId),
+          fingerprint: "b".repeat(64),
+          ticketCiphertext: "test-only",
+          stagingKey: "test-only",
+          expiresAt: new Date("2030-01-01"),
+          referenceGuard: 0,
+          status: "ready",
+          deletedAt: null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          __v: 0,
+        });
+      } finally {
+        await connection.close();
+      }
+    }
   }
   await run([path.join("node_modules", "next", "dist", "bin", "next"), "build"]);
   await run([path.join("node_modules", "@playwright", "test", "cli.js"), "test", ...testArgs]);

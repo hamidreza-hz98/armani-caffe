@@ -1,9 +1,11 @@
+import type { ProductDetail, ProductListQuery, ProductPage } from "../contracts/admin.ts";
 import type { MenuCategory } from "../contracts/menu.ts";
 import type { ProductFields } from "../contracts/product.ts";
 import { parseProduct, parseRevision, productId } from "../contracts/product.ts";
 export interface ProductRepository {
   list(token: string | null): Promise<unknown>;
-  detail(token: string | null, id: string): Promise<unknown>;
+  listPage(token: string | null, query: ProductListQuery): Promise<ProductPage>;
+  detail(token: string | null, id: string): Promise<ProductDetail>;
   menu(): Promise<MenuCategory[]>;
   write(
     token: string | null,
@@ -27,6 +29,9 @@ export class ProductService {
   }
   list(token: string | null) {
     return this.repository.list(token);
+  }
+  listPage(token: string | null, query: ProductListQuery) {
+    return this.repository.listPage(token, query);
   }
   detail(token: string | null, id: unknown) {
     return this.repository.detail(token, productId(id));
