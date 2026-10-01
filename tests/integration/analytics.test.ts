@@ -9,6 +9,7 @@ import {
   createDashboardAnalyticsHttp,
   DashboardAnalyticsService,
   MongoDashboardAnalytics,
+  MongoOverviewWidgets,
 } from "@/modules/analytics/server";
 import { applyDatabaseIndexes } from "@/server/database/operations";
 import { ApplicationError } from "@/shared/errors";
@@ -94,6 +95,12 @@ test("empty dashboard has zero monetary metrics and bounded empty lists", async 
   expect(dashboard.bestCustomers).toEqual([]);
   expect(dashboard.bestProducts).toEqual([]);
   expect(dashboard.lowStock).toEqual([]);
+  const overview = new MongoOverviewWidgets(connection, now);
+  expect((await overview.sales(30)).selected).toEqual(dashboard.thirtyDays);
+  expect(await overview.trend(30)).toHaveLength(30);
+  expect((await overview.trend(30)).every((point) => point.salesToman === 0)).toBe(true);
+  expect(await overview.attention()).toEqual({ count: 0, recent: [] });
+  expect(await overview.lowStock()).toEqual({ count: 0, items: [] });
 });
 
 test("paid snapshots reconcile across Tehran midnight; failed/refunded/cancelled are excluded", async () => {
@@ -136,6 +143,28 @@ test("paid snapshots reconcile across Tehran midnight; failed/refunded/cancelled
   expect(dashboard.latestOrders).toHaveLength(7);
   expect(dashboard.latestOrders.some((item) => item.paymentStatus === "refunded")).toBe(true);
   expect(JSON.stringify(dashboard)).not.toMatch(/phone|passwordHash|transactionId/u);
+  const overview = new MongoOverviewWidgets(connection, now);
+  const [sales, trend, attention, stock, latest, products, customers] = await Promise.all([
+    overview.sales(30),
+    overview.trend(30),
+    overview.attention(),
+    overview.lowStock(),
+    overview.latestOrders(),
+    overview.bestProducts(),
+    overview.bestCustomers(),
+  ]);
+  expect(sales.today).toEqual(dashboard.today);
+  expect(sales.selected).toEqual(dashboard.thirtyDays);
+  expect(trend).toHaveLength(30);
+  expect(trend.at(-1)).toMatchObject({ date: "2026-06-02", salesToman: 1400, orderCount: 3 });
+  expect(trend.at(-2)).toMatchObject({ date: "2026-06-01", salesToman: 100, orderCount: 1 });
+  expect(attention.count).toBe(3);
+  expect(stock.count).toBe(2);
+  expect(stock.items.map((item) => item.name)).toEqual(dashboard.lowStock.map((item) => item.name));
+  expect(latest).toEqual(dashboard.latestOrders);
+  expect(products).toEqual(dashboard.bestProducts);
+  expect(customers).toEqual(dashboard.bestCustomers);
+  expect((await overview.sales(7)).selected).toEqual(dashboard.thirtyDays);
 });
 
 test("lists cap at ten; explain plans use the declared indexes", async () => {
@@ -202,6 +231,17 @@ test("lists cap at ten; explain plans use the declared indexes", async () => {
   expect(JSON.stringify(datePlan)).toContain("order_payment_placed");
   expect(JSON.stringify(latestPlan)).toContain("order_recent");
   expect(JSON.stringify(stockPlan)).toContain("inventory_low_stock_dashboard");
+});
+
+test("URL-selected seven-day sales exclude older days while the thirty-day trend retains them", async () => {
+  await connection
+    .db!.collection("orders")
+    .insertMany([order("2026-05-20T12:00:00.000Z", 700), order("2026-05-31T12:00:00.000Z", 300)]);
+  const overview = new MongoOverviewWidgets(connection, now);
+  expect((await overview.sales(7)).selected).toMatchObject({ salesToman: 300, orderCount: 1 });
+  expect((await overview.sales(30)).selected).toMatchObject({ salesToman: 1000, orderCount: 2 });
+  expect((await overview.trend(7)).reduce((sum, day) => sum + day.salesToman, 0)).toBe(300);
+  expect((await overview.trend(30)).reduce((sum, day) => sum + day.salesToman, 0)).toBe(1000);
 });
 
 test("service and HTTP deny unauthenticated or unauthorized readers before querying", async () => {

@@ -8,6 +8,7 @@ import { MongoDashboardAnalytics } from "./infrastructure/repository.ts";
 
 export { DashboardAnalyticsService } from "./application/service.ts";
 export { createDashboardAnalyticsHttp } from "./infrastructure/http.ts";
+export { MongoOverviewWidgets } from "./infrastructure/overview-widgets.ts";
 export { MongoDashboardAnalytics } from "./infrastructure/repository.ts";
 export async function configuredDashboardAnalytics() {
   return new DashboardAnalyticsService(

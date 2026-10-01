@@ -24,6 +24,13 @@ function startOfTehranDay(day: string): Date {
   return new Date(low);
 }
 
+export function tehranWindowStart(now: Date, days: 7 | 30): Date {
+  if (!Number.isFinite(now.getTime())) throw new RangeError("Invalid reporting clock");
+  const [year, month, date] = dayKey(now).split("-").map(Number);
+  const start = new Date(Date.UTC(year!, month! - 1, date! - days + 1));
+  return startOfTehranDay(start.toISOString().slice(0, 10));
+}
+
 export function tehranDashboardPeriod(now: Date) {
   if (!Number.isFinite(now.getTime())) throw new RangeError("Invalid reporting clock");
   const today = dayKey(now);

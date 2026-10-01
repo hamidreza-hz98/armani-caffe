@@ -15,7 +15,14 @@ async function login(page: import("@playwright/test").Page, username: string) {
 test("owner sees management navigation, mobile drawer, profile and logout", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1024 });
   await login(page, "e2e-owner");
-  await expect(page.getByRole("heading", { name: /خوش آمدید/u })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "نمای کلی" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "نیازمند اقدام" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "آمار فروش" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "۳۰ روز" })).toHaveAttribute("aria-current", "page");
+  await page.getByRole("link", { name: "۷ روز" }).click();
+  await expect(page).toHaveURL(/\/dashboard\?range=7$/u);
+  await expect(page.getByRole("heading", { name: "روند فروش ۷ روزه" })).toBeVisible();
+  await expect(page.getByText("هنوز فروشی در این بازه ثبت نشده است.")).toBeVisible();
   await expect(
     page.locator("aside").getByRole("link", { name: "مدیران و دسترسی‌ها" }),
   ).toBeVisible();
@@ -36,6 +43,9 @@ test("owner sees management navigation, mobile drawer, profile and logout", asyn
   }, password);
   expect(created.status, JSON.stringify(created.body)).toBe(200);
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
   await page.getByRole("button", { name: "باز کردن منوی مدیریت" }).click();
   await expect(
     page
@@ -55,6 +65,13 @@ test("cashier cannot see or open owner-only management; order search navigates",
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await login(page, "e2e-cashier");
+  await expect(page.getByRole("heading", { name: "نمای کلی" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "نیازمند اقدام" })).toBeVisible();
+  await expect(page.getByRole("region", { name: "آمار فروش" })).toHaveCount(0);
+  await expect(page.getByRole("navigation", { name: "بازه گزارش فروش" })).toHaveCount(0);
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+    .toBe(true);
   await page.getByRole("button", { name: "باز کردن منوی مدیریت" }).click();
   const nav = page.getByRole("navigation", { name: "ناوبری مدیریت" });
   await expect(nav.getByRole("link", { name: "سفارش‌ها و فاکتورها" })).toBeVisible();

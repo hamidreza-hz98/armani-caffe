@@ -3,6 +3,7 @@ import "server-only";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 
+import { MongoOverviewWidgets } from "@/modules/analytics/server";
 import { adminCookieName, validAdminToken } from "@/modules/auth";
 import { configuredAdminSecurity } from "@/modules/auth/server";
 import { getDatabaseConnection } from "@/server/database/connection";
@@ -23,6 +24,14 @@ export async function requireDashboardActor() {
   const actor = await dashboardActor();
   if (!actor) redirect(`/dashboard/login?next=${encodeURIComponent(destination)}`);
   return actor;
+}
+
+/** Shares one connection and reporting clock across independently streamed widgets. */
+export function dashboardOverviewWidgets() {
+  const asOf = new Date();
+  return getDatabaseConnection().then(
+    (connection) => new MongoOverviewWidgets(connection, () => asOf),
+  );
 }
 
 export async function searchDashboardOrder(query: string) {
