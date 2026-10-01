@@ -225,9 +225,9 @@ async function replenish(quantity: number, idempotencyKey: string, kind = "purch
   )) as { id: string };
   await inventory.service.decide(ownerToken, pending.id, { decision: "approved" }, "stock-approve");
 }
-async function checkout(sessionToken = token, quantity = 2) {
+async function checkout(sessionToken = token, quantity = 2, pickupNotes?: string) {
   const empty = await carts.read(sessionToken);
-  const cart = await carts.mutate(sessionToken, {
+  let cart = await carts.mutate(sessionToken, {
     operation: "add",
     cartId: empty.id,
     revision: empty.revision,
@@ -235,6 +235,13 @@ async function checkout(sessionToken = token, quantity = 2) {
     quantity,
     additionIds: [String(additionId)],
   });
+  if (pickupNotes)
+    cart = await carts.mutate(sessionToken, {
+      operation: "notes",
+      cartId: cart.id,
+      revision: cart.revision,
+      notes: pickupNotes,
+    });
   const command = {
     cartId: cart.id,
     revision: cart.revision,
@@ -244,6 +251,18 @@ async function checkout(sessionToken = token, quantity = 2) {
   const payment = await payments.create(intent.id, "payment-" + intent.id, "payment");
   return { intent, payment, command, cart };
 }
+test("pickup request and order note survive paid checkout and immutable invoice", async () => {
+  const notes = "تحویل حضوری: حدود ۳۰ دقیقه پس از ثبت سفارش\nتوضیحات سفارش: کمی دیر می‌رسم";
+  const { intent, payment } = await checkout(token, 1, notes);
+  await settle(payment);
+  await orders.service.confirm(payment.id, "confirm-pickup-note");
+  expect((await orders.service.detail(token, intent.id, true)).notes).toBe(notes);
+  expect(
+    await db()
+      .collection("invoices")
+      .findOne({ orderId: new mongoose.Types.ObjectId(intent.id) }),
+  ).toMatchObject({ notes });
+});
 async function settle(view: Awaited<ReturnType<typeof checkout>>["payment"]) {
   await ledger.outcome(view.authority!, {
     kind: "succeeded",

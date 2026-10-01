@@ -25,7 +25,8 @@ type Add = {
   unitPriceToman: number;
 };
 type Change = { type: "change"; itemKey: string; quantity: number; note?: string };
-type Action = Add | Change;
+type Notes = { type: "notes"; notes: string };
+type Action = Add | Change | Notes;
 type Pending = {
   action: Action;
   resolve: (cart: CartView) => void;
@@ -35,8 +36,10 @@ type CartContextValue = {
   cart: CartView | null;
   status: "loading" | "ready" | "guest" | "error";
   message: string;
+  busy: boolean;
   dispatch: (action: Action) => Promise<CartView>;
   reload: () => Promise<void>;
+  preview: () => Promise<CartView>;
 };
 const CartContext = createContext<CartContextValue | null>(null);
 
@@ -73,6 +76,23 @@ async function cartRequest(body?: object): Promise<CartView> {
   return result.value;
 }
 
+async function previewRequest(cartId: string, revision: number): Promise<CartView> {
+  const response = await fetch("/api/customer/cart/preview", {
+    method: "POST",
+    credentials: "same-origin",
+    cache: "no-store",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ cartId, revision }),
+  });
+  const result = (await response.json()) as Result;
+  if (!response.ok || !result.ok)
+    throw new CartRequestError(
+      result.ok ? "UNAVAILABLE" : result.error.code,
+      result.ok ? "Cart unavailable" : result.error.message,
+    );
+  return result.value;
+}
+
 function itemKey(item: CartItemSnapshot) {
   return cartItemKey(
     item.productId,
@@ -84,8 +104,11 @@ function itemKey(item: CartItemSnapshot) {
 export function projectCart(cart: CartView | null, actions: readonly Action[]): CartView | null {
   if (!cart) return null;
   let items = [...cart.items];
+  let notes = cart.notes;
   for (const action of actions) {
-    if (action.type === "add") {
+    if (action.type === "notes") {
+      notes = action.notes;
+    } else if (action.type === "add") {
       const key = cartItemKey(action.productId, action.additionIds);
       const found = items.find((item) => itemKey(item) === key);
       if (found) {
@@ -139,6 +162,7 @@ export function projectCart(cart: CartView | null, actions: readonly Action[]): 
   const subtotalToman = asToman(items.reduce((sum, item) => sum + item.lineTotalToman, 0));
   return {
     ...cart,
+    notes,
     items,
     pricing: { subtotalToman, discountToman: 0, deliveryToman: 0, totalToman: subtotalToman },
   };
@@ -157,12 +181,14 @@ export function MenuCartProvider({
   const confirmed = useRef<CartView | null>(null);
   const pending = useRef<Pending[]>([]);
   const running = useRef(false);
+  const previewing = useRef(false);
   const generation = useRef(0);
   const [cart, setCart] = useState<CartView | null>(null);
   const [status, setStatus] = useState<CartContextValue["status"]>(
     initialGuest ? "guest" : "loading",
   );
   const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
   const publish = () =>
     setCart(
       projectCart(
@@ -183,6 +209,25 @@ export function MenuCartProvider({
       setMessage("سبد خرید در دسترس نیست. دوباره تلاش کنید.");
     }
     publish();
+  }
+  async function preview() {
+    if (running.current || pending.current.length || previewing.current)
+      throw new CartRequestError("BUSY", "Cart is changing");
+    const current = confirmed.current;
+    if (!current?.id) throw new CartRequestError("CONFLICT", "Cart unavailable");
+    previewing.current = true;
+    setBusy(true);
+    try {
+      const value = await previewRequest(current.id, current.revision);
+      confirmed.current = value;
+      publish();
+      setStatus("ready");
+      return value;
+    } finally {
+      previewing.current = false;
+      if (pending.current.length) void drain();
+      else setBusy(false);
+    }
   }
   useEffect(() => {
     const onAuthenticated = () => void reload();
@@ -218,7 +263,7 @@ export function MenuCartProvider({
   }, [initialGuest]);
 
   async function drain() {
-    if (running.current) return;
+    if (running.current || previewing.current) return;
     running.current = true;
     while (pending.current.length) {
       const task = pending.current[0];
@@ -244,15 +289,17 @@ export function MenuCartProvider({
                   quantity: action.quantity,
                   note: action.note,
                 }
-              : action.quantity === 0
-                ? { operation: "remove", itemKey: action.itemKey }
-                : {
-                    operation: "update",
-                    itemKey: action.itemKey,
-                    additionIds: item!.additions.map((addition) => addition.additionId),
-                    quantity: action.quantity,
-                    note: action.note ?? item!.note ?? "",
-                  };
+              : action.type === "notes"
+                ? { operation: "notes", notes: action.notes }
+                : action.quantity === 0
+                  ? { operation: "remove", itemKey: action.itemKey }
+                  : {
+                      operation: "update",
+                      itemKey: action.itemKey,
+                      additionIds: item!.additions.map((addition) => addition.additionId),
+                      quantity: action.quantity,
+                      note: action.note ?? item!.note ?? "",
+                    };
           try {
             next = await cartRequest({ ...command, cartId: cart.id, revision: cart.revision });
             break;
@@ -303,19 +350,21 @@ export function MenuCartProvider({
       }
     }
     running.current = false;
+    setBusy(false);
   }
 
   function dispatch(action: Action) {
     return new Promise<CartView>((resolve, reject) => {
       generation.current++;
       pending.current.push({ action, resolve, reject });
+      setBusy(true);
       publish();
-      void drain();
+      if (!previewing.current) void drain();
     });
   }
   const count = cart?.items.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
   return (
-    <CartContext.Provider value={{ cart, status, message, dispatch, reload }}>
+    <CartContext.Provider value={{ cart, status, message, busy, dispatch, reload, preview }}>
       <div className={count && summary ? styles.menuWithCart : undefined}>{children}</div>
       {summary && count > 0 && cart && (
         <aside className={styles.cartSummary} aria-label="خلاصه سبد خرید">

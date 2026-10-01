@@ -195,5 +195,8 @@ test("customized cart line supports note, quantity and removal", async ({ page }
   await line.getByRole("button", { name: "کم کردن اسپرسو دوبل" }).click();
   await expect(line.getByRole("button", { name: "حذف اسپرسو دوبل" })).toBeVisible();
   await line.getByRole("button", { name: "حذف", exact: true }).click();
-  await expect(page.getByText("سبد خرید شما خالی است.", { exact: false })).toBeVisible();
+  const confirmation = page.getByRole("dialog", { name: "حذف اسپرسو دوبل از سبد" });
+  await expect(confirmation).toBeVisible();
+  await confirmation.getByRole("button", { name: "بله، حذف از سبد" }).click();
+  await expect(page.getByRole("heading", { name: "سبد خرید شما خالی است" })).toBeVisible();
 });
