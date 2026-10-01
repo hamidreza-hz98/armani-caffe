@@ -17,6 +17,7 @@ const invoice = makeIssuedInvoice(
         productName: "لاته ویژه با نام خیلی بلند و عدد 123 <شیر>",
         categoryName: "قهوه",
         quantity: 2,
+        note: "بدون یخ & شکر",
         unitPriceToman: 110000,
         lineTotalToman: 220000,
         additions: [{ name: "شیر بادام", priceToman: 10000 }],
@@ -53,6 +54,7 @@ describe("immutable invoice and Persian printing", () => {
     expect(html).toContain(`@page{size:${width}mm auto`);
     expect(html).toContain("لاته ویژه با نام خیلی بلند و عدد 123 &lt;شیر&gt;");
     expect(html).toContain("+ شیر بادام · ۱۰٬۰۰۰ تومان");
+    expect(html).toContain("یادداشت: بدون یخ &amp; شکر");
     expect(html).toContain('<bdi dir="ltr">REF-123/ABC</bdi>');
     expect(html).toContain("۱۴۰۴/۱۰/۱۱ ۰۳:۳۰");
     expect(html).toContain("سپاس از شما");

@@ -21,6 +21,12 @@ export type StorefrontShellData = {
   settingsAvailable: boolean;
 };
 
+export async function storefrontIsGuest(): Promise<boolean> {
+  const config = getServerConfig();
+  const cookie = (await cookies()).get(customerCookieName(config.mode === "production"))?.value;
+  return !validCustomerToken(cookie);
+}
+
 async function bounded<T>(promise: Promise<T>): Promise<T> {
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {

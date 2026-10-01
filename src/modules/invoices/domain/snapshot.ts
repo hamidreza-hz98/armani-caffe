@@ -49,6 +49,7 @@ export type ConfirmedOrderSource = Readonly<{
     categoryName: string;
     additions: readonly { name: string; priceToman: number }[];
     quantity: number;
+    note?: string;
     unitPriceToman: number;
     lineTotalToman: number;
   }[];

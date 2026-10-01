@@ -180,6 +180,7 @@ export class MongoCartRepository implements CartRepository {
           productId,
           productName: "pending",
           quantity,
+          note: operation.note ?? old?.note ?? matching?.note ?? "",
           basePriceToman: 0,
           additions: operation.additionIds.map((additionId) => ({
             additionId,
@@ -218,6 +219,7 @@ export class MongoCartRepository implements CartRepository {
           productName: product!.name,
           basePriceToman: product!.basePriceToman,
           quantity: pending.quantity,
+          note: pending.note,
           additions: pending.additions.map((a) => {
             const current = product!.additions.find((c) => c.id === a.additionId)!;
             return { additionId: current.id, name: current.name, priceToman: current.priceToman };

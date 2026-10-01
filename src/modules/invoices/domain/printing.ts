@@ -27,7 +27,7 @@ export function renderInvoiceHtml(
   const rows = invoice.lines
     .map(
       (line) =>
-        `<section class="line"><div class="line-head"><span>${escape(line.productName)} <small>× ${digits(String(line.quantity))}</small></span><strong>${money(line.lineTotalToman)}</strong></div><small>${escape(line.categoryName)}</small>${line.additions.map((addition) => `<div class="addition">+ ${escape(addition.name)} · ${money(addition.priceToman)}</div>`).join("")}</section>`,
+        `<section class="line"><div class="line-head"><span>${escape(line.productName)} <small>× ${digits(String(line.quantity))}</small></span><strong>${money(line.lineTotalToman)}</strong></div><small>${escape(line.categoryName)}</small>${line.additions.map((addition) => `<div class="addition">+ ${escape(addition.name)} · ${money(addition.priceToman)}</div>`).join("")}${line.note ? `<div class="addition">یادداشت: ${escape(line.note)}</div>` : ""}</section>`,
     )
     .join("");
   const sum = (label: string, value: number, className = "") =>

@@ -2,6 +2,14 @@ import AxeBuilder from "@axe-core/playwright";
 
 import { expect, test } from "../fixtures/playwright.ts";
 
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/customer/cart", (route) =>
+    route.fulfill({
+      json: { ok: false, error: { code: "UNAUTHORIZED", message: "ورود لازم است." } },
+    }),
+  );
+});
+
 test("RTL menu tabs scroll to a category and track the active section", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/internal/menu-preview");

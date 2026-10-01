@@ -17,6 +17,7 @@ export type CartItemSnapshot = Readonly<{
   productName: string;
   additions: readonly CartAdditionSnapshot[];
   quantity: number;
+  note: string;
   unitPriceToman: TomanAmount;
   lineTotalToman: TomanAmount;
 }>;
@@ -45,6 +46,7 @@ export function makeCartItemSnapshot(input: {
   productId: string;
   productName: string;
   quantity: number;
+  note?: string;
   basePriceToman: number;
   additions: readonly { additionId: string; name: string; priceToman: number }[];
 }): CartItemSnapshot {
@@ -70,6 +72,7 @@ export function makeCartItemSnapshot(input: {
     productName: input.productName,
     additions,
     quantity: input.quantity,
+    note: input.note ?? "",
     unitPriceToman,
     lineTotalToman: asToman(unitPriceToman * input.quantity),
   });

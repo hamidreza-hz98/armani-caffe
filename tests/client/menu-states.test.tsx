@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { MenuFailure, MenuSkeleton, MenuView } from "../../src/storefront/menu-view.tsx";
 

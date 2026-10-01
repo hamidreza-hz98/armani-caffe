@@ -71,6 +71,7 @@ const dto = (row: Row): IssuedInvoice => ({
     productName: line.productName,
     categoryName: line.categoryName,
     quantity: line.quantity,
+    note: line.note ?? "",
     unitPriceToman: line.unitPriceToman,
     lineTotalToman: line.lineTotalToman,
     additions: line.additions.map((addition) => ({

@@ -18,6 +18,7 @@ export type OrderItemSnapshot = Readonly<{
   categoryName: string;
   additions: readonly OrderAdditionSnapshot[];
   quantity: number;
+  note: string;
   unitPriceToman: TomanAmount;
   lineTotalToman: TomanAmount;
 }>;
@@ -68,6 +69,7 @@ export function makeOrderItemSnapshot(input: {
   categoryName: string;
   additions: readonly { additionId: string; name: string; priceToman: number }[];
   quantity: number;
+  note?: string;
   basePriceToman: number;
 }): OrderItemSnapshot {
   if (!Number.isSafeInteger(input.quantity) || input.quantity < 1 || input.quantity > 100)
@@ -93,6 +95,7 @@ export function makeOrderItemSnapshot(input: {
     categoryName: input.categoryName,
     additions,
     quantity: input.quantity,
+    note: input.note ?? "",
     unitPriceToman,
     lineTotalToman: asToman(unitPriceToman * input.quantity),
   });

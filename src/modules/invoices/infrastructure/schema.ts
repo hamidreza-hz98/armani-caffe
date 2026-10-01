@@ -20,6 +20,7 @@ const invoiceLineSchema = new Schema(
     categoryName: requiredText(120),
     additions: { type: [additionSnapshotSchema], default: [] },
     quantity: positiveIntegerField(),
+    note: { type: String, maxlength: 300, default: "", immutable: true },
     unitPriceToman: tomanAmountField(),
     lineTotalToman: tomanAmountField(),
   },

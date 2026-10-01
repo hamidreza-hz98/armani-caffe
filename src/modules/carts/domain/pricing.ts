@@ -63,6 +63,7 @@ export function priceCart(
       productName: product.name,
       basePriceToman: product.basePriceToman,
       quantity: old.quantity,
+      note: old.note ?? "",
       additions,
     });
     if (old.unitPriceToman !== item.unitPriceToman)

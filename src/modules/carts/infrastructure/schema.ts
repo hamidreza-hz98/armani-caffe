@@ -25,6 +25,7 @@ const cartItemSnapshotSchema = new Schema(
     productName: requiredText(160),
     additions: { type: [additionSnapshotSchema], default: [] },
     quantity: { ...positiveIntegerField(), max: CART_MAX_QUANTITY },
+    note: { type: String, maxlength: 300, default: "" },
     unitPriceToman: tomanAmountField(),
     lineTotalToman: tomanAmountField(),
   },

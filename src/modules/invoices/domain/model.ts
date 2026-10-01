@@ -10,6 +10,7 @@ export type InvoiceLineSnapshot = Readonly<{
   categoryName: string;
   additions: readonly { name: string; priceToman: TomanAmount }[];
   quantity: number;
+  note: string;
   unitPriceToman: TomanAmount;
   lineTotalToman: TomanAmount;
 }>;
@@ -36,6 +37,7 @@ export function makeInvoiceLines(
     productName: string;
     categoryName: string;
     quantity: number;
+    note?: string;
     unitPriceToman: number;
     lineTotalToman: number;
     additions: readonly { name: string; priceToman: number }[];
@@ -56,6 +58,7 @@ export function makeInvoiceLines(
         categoryName: item.categoryName,
         additions,
         quantity: item.quantity,
+        note: item.note ?? "",
         unitPriceToman: asToman(item.unitPriceToman),
         lineTotalToman: asToman(item.lineTotalToman),
       });

@@ -30,6 +30,29 @@ test("strict cart contracts reject prices, forged ownership, duplicates, and qua
   ])
     expect(() => parseCartMutation({ ...input, ...bad })).toThrow();
 });
+test("per-product notes are bounded, normalized, and survive repricing", () => {
+  expect(parseCartMutation({ ...input, note: "  کم‌شیرین  " })).toMatchObject({ note: "کم‌شیرین" });
+  expect(() => parseCartMutation({ ...input, note: "x".repeat(301) })).toThrow();
+  expect(() => parseCartMutation({ ...input, note: "<script>" })).toThrow();
+  const original = makeCartItemSnapshot({
+    productId,
+    productName: "قهوه",
+    basePriceToman: 100,
+    quantity: 1,
+    additions: [],
+    note: "کم‌شیرین",
+  });
+  const result = priceCart(
+    [original],
+    new Map([
+      [
+        productId,
+        { id: productId, name: "قهوه", basePriceToman: 120, available: true, additions: [] },
+      ],
+    ]),
+  );
+  expect(result.items[0].note).toBe("کم‌شیرین");
+});
 test("pricing refreshes server snapshots, detects changes, and reserves zero discount components", () => {
   const old = makeCartItemSnapshot({
     productId,

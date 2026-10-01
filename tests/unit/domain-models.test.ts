@@ -32,6 +32,7 @@ describe("domain invariants", () => {
       categoryName: "نوشیدنی",
       basePriceToman: 10000,
       quantity: 2,
+      note: "کم‌شیرین",
       additions: [{ additionId: "a1", name: "شیر", priceToman: 2000 }],
     };
     const cart = makeCartItemSnapshot(source);
@@ -42,6 +43,9 @@ describe("domain invariants", () => {
     source.basePriceToman = 99999;
     expect(cart.productName).toBe("قهوه");
     expect(order.additions[0].name).toBe("شیر");
+    expect(cart.note).toBe("کم‌شیرین");
+    expect(order.note).toBe("کم‌شیرین");
+    expect(invoice[0].note).toBe("کم‌شیرین");
     expect(order.lineTotalToman).toBe(24000);
     expect(invoice[0].productName).toBe("قهوه");
     expect(Object.isFrozen(invoice[0].additions)).toBe(true);

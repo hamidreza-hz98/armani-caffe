@@ -110,6 +110,30 @@ const add = (
     additionIds,
   });
 
+test("per-product note persists across pricing and quantity changes", async () => {
+  let cart = await carts.read(token);
+  cart = await carts.mutate(token, {
+    operation: "add",
+    ...versionOf(cart),
+    productId: String(productId),
+    additionIds: [String(additionId)],
+    quantity: 1,
+    note: "کم‌شیرین",
+  });
+  expect(cart.items[0].note).toBe("کم‌شیرین");
+  cart = await add(cart, 1);
+  expect(cart.items[0].note).toBe("کم‌شیرین");
+  cart = await carts.mutate(token, {
+    operation: "update",
+    ...versionOf(cart),
+    itemKey: String(productId) + ":" + additionId,
+    additionIds: [String(additionId)],
+    quantity: 2,
+    note: "بدون یخ",
+  });
+  expect((await carts.read(token)).items[0]).toMatchObject({ quantity: 2, note: "بدون یخ" });
+});
+
 test("one cart across sessions, exact server pricing, update/merge/remove and notes", async () => {
   const empty = await carts.read(token);
   expect((await carts.read(secondToken)).id).toBe(empty.id);

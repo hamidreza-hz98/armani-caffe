@@ -1,17 +1,23 @@
 import { Suspense } from "react";
 
 import { cachedPublicMenu } from "@/server/catalog/menu-cache";
+import { storefrontIsGuest } from "@/storefront/data";
 import { menuCards } from "@/storefront/menu-model";
 import { MenuFailure, MenuSkeleton, MenuView } from "@/storefront/menu-view";
 
 async function MenuContent() {
   let categories;
+  const initialGuest = await storefrontIsGuest();
   try {
     categories = menuCards(await cachedPublicMenu());
   } catch {
     categories = null;
   }
-  return categories ? <MenuView categories={categories} /> : <MenuFailure />;
+  return categories ? (
+    <MenuView categories={categories} initialGuest={initialGuest} />
+  ) : (
+    <MenuFailure />
+  );
 }
 
 export default function Home() {
