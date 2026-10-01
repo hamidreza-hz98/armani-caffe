@@ -10,6 +10,7 @@ if (mode !== "development" && mode !== "production" && mode !== "test") {
 parseServerConfig(process.env, mode);
 
 const nextConfig: NextConfig = {
+  experimental: { authInterrupts: true },
   turbopack: {
     root: process.cwd(),
   },
