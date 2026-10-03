@@ -145,13 +145,21 @@
   border: 1px solid #fffcf7;
 }
 .offlineNotice {
+  position: fixed;
+  z-index: 25;
+  inset-inline-start: 50%;
+  inset-block-end: calc(16px + env(safe-area-inset-bottom));
+  width: min(456px, calc(100vw - 24px));
+  transform: translateX(50%);
   margin: 0;
   padding: 8px 16px;
   background: #fff1d9;
   color: #5d3600;
   font-size: 12px;
   line-height: 1.7;
-  border-block-end: 1px solid #e6c594;
+  border: 1px solid #e6c594;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgb(58 36 24 / 12%);
 }
 .main {
   width: 100%;

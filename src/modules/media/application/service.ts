@@ -196,7 +196,7 @@ export class MediaService {
     requireMediaOwner(actor);
     return this.repository.usages(mediaId(id));
   }
-  async readFile(actor: MediaActor | null, id: unknown, variant: string) {
+  async readFile(actor: MediaActor | null, id: unknown, variant: string, ifNoneMatch?: string) {
     if (!["original", "small", "large"].includes(variant))
       throw new ApplicationError("VALIDATION", "Invalid variant");
     const file = await this.repository.file(mediaId(id));
@@ -208,7 +208,19 @@ export class MediaService {
       throw new ApplicationError("NOT_FOUND", "Media does not exist");
     const object = file.objects.find((object) => object.variant === variant);
     if (!object) throw new ApplicationError("NOT_FOUND", "Variant does not exist");
-    return { bytes: await this.storage.read(file.ownerId, object.key), etag: object.sha256 };
+    if (ifNoneMatch === `"${object.sha256}"`)
+      return {
+        bytes: new Uint8Array(0),
+        etag: object.sha256,
+        visibility: file.visibility,
+        notModified: true,
+      };
+    return {
+      bytes: await this.storage.read(file.ownerId, object.key),
+      etag: object.sha256,
+      visibility: file.visibility,
+      notModified: false,
+    };
   }
   async cleanup(limit = 20) {
     if (!Number.isSafeInteger(limit) || limit < 1 || limit > 100)

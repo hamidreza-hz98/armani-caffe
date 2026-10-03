@@ -454,6 +454,8 @@ test("HTTP/action contracts enforce authentication, CSRF and safe error envelope
   expect((await handle(request(input()), "initiate")).status).toBe(403);
   actor = owner;
   expect((await handle(request(input(), "http://evil.invalid"), "initiate")).status).toBe(403);
+  expect((await handle(request({ padding: "x".repeat(65 * 1024) }), "initiate")).status).toBe(400);
+  expect(serviceCalls).toBe(0);
   const response = await handle(request(input()), "initiate");
   expect(response.status).toBe(200);
   const result = await response.json();
@@ -466,6 +468,49 @@ test("HTTP/action contracts enforce authentication, CSRF and safe error envelope
   const invalid = await handle(request({ ...input(), actor: owner }), "initiate");
   expect(invalid.status).toBe(400);
   expect(invalid.headers.get("x-request-id")).toMatch(/^[a-f0-9-]{36}$/);
+});
+
+test("public media conditional GET skips object bytes while private media remains uncached", async () => {
+  const publicAsset = await ready("cache-public-image", "public");
+  const privateAsset = await ready("cache-private-image", "private");
+  const handle = createMediaHttpHandler({
+    service: async () => service,
+    authenticate: async () => null,
+    origins: () => [],
+  });
+  const url = (id: string) => `http://localhost:3000/api/media/${id}/file?variant=small`;
+  const initial = await handle(new Request(url(publicAsset.id)), "file", publicAsset.id);
+  expect(initial.status).toBe(200);
+  expect(initial.headers.get("Cache-Control")).toBe("public, max-age=60");
+  const etag = initial.headers.get("ETag")!;
+  const read = vi.spyOn(storage, "read");
+  try {
+    const unchanged = await handle(
+      new Request(url(publicAsset.id), { headers: { "If-None-Match": etag } }),
+      "file",
+      publicAsset.id,
+    );
+    expect(unchanged.status).toBe(304);
+    expect(unchanged.headers.get("ETag")).toBe(etag);
+    expect(read).not.toHaveBeenCalled();
+  } finally {
+    read.mockRestore();
+  }
+  const privateHandle = createMediaHttpHandler({
+    service: async () => service,
+    authenticate: async () => owner,
+    origins: () => [],
+  });
+  const privateResponse = await privateHandle(
+    new Request(url(privateAsset.id)),
+    "file",
+    privateAsset.id,
+  );
+  expect(privateResponse.status).toBe(200);
+  expect(privateResponse.headers.get("Cache-Control")).toBe("private, no-store");
+  expect((await handle(new Request(url(privateAsset.id)), "file", privateAsset.id)).status).toBe(
+    404,
+  );
 });
 
 test("explicit media migration quarantines legacy records without touching their objects", async () => {

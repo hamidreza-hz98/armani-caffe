@@ -122,15 +122,19 @@ export function createMediaHttpHandler(options: {
           actor,
           id,
           url.searchParams.get("variant") ?? "original",
+          request.headers.get("if-none-match") ?? undefined,
         );
         const etag = `"${file.etag}"`;
-        return new Response(
-          request.headers.get("if-none-match") === etag ? null : new Uint8Array(file.bytes),
-          {
-            status: request.headers.get("if-none-match") === etag ? 304 : 200,
-            headers: { ...headers, "Content-Type": "image/webp", ETag: etag },
+        return new Response(file.notModified ? null : new Uint8Array(file.bytes), {
+          status: file.notModified ? 304 : 200,
+          headers: {
+            ...headers,
+            "Cache-Control":
+              file.visibility === "public" ? "public, max-age=60" : "private, no-store",
+            "Content-Type": "image/webp",
+            ETag: etag,
           },
-        );
+        });
       },
       requestId,
     );

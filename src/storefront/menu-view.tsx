@@ -11,7 +11,11 @@ import { categoryAnchor, type MenuCardCategory } from "./menu-model";
 
 export function MenuSkeleton() {
   return (
-    <section className={styles.menu} aria-busy="true" aria-label="در حال بارگذاری منو">
+    <section
+      className={`${styles.menu} ${styles.menuSkeleton}`}
+      aria-busy="true"
+      aria-label="در حال بارگذاری منو"
+    >
       <noscript>
         <p className={styles.noScript}>
           برای مشاهدهٔ منو بدون جاوااسکریپت، <a href="/menu/basic">نسخهٔ سادهٔ منو</a> را باز کنید.
@@ -114,7 +118,7 @@ export function MenuView({
                               />
                             ) : (
                               <Image
-                                src="/icon.svg"
+                                src="/armani-icon.svg"
                                 alt="تصویر محصول موجود نیست"
                                 width={40}
                                 height={40}

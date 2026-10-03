@@ -2,6 +2,9 @@
   width: 100%;
   min-width: 0;
 }
+.menuSkeleton {
+  min-height: 100dvh;
+}
 .intro {
   padding: 2px 2px 14px;
 }
@@ -120,7 +123,7 @@
   height: 100%;
   object-fit: cover;
 }
-.productImage img[src="/icon.svg"] {
+.productImage img[src="/armani-icon.svg"] {
   width: 40px;
   height: 40px;
   object-fit: contain;
