@@ -1,0 +1,9 @@
+# Inventory dashboard
+
+`/dashboard/inventory` is the operational inventory view. Its server-rendered first response calls the inventory application service directly; browser refreshes use `GET /api/inventory/overview`. The latter requires `inventory.read`, returns DTOs for at most 200 items, 200 requests, and 500 active product-consumption mappings, and flags a truncated view. Item movement history uses the existing bounded `GET /api/inventory/:id/movements` endpoint.
+
+Confirmed stock is only `inventory_items.onHand`. Pending request cards show a **hypothetical** balance, never an on-hand update. A request records the reason and requester. An owner decision creates one immutable movement with before/after quantities and an audit/outbox event, or rejects without changing stock. Retry of the same decision is idempotent; an opposite decision or stale/insufficient balance conflicts. The browser disables repeated submission, but the database transaction and unique movement/request keys are authoritative.
+
+OWNER can create/edit items, submit all supported request kinds, and approve/reject. CASHIER can read and submit only purchase, adjustment, and waste requests. The API enforces these capabilities independently of the UI. Item base units are gram, milliliter, or piece; purchase/adjustment input can use compatible kilogram or liter. Conversion and negative-stock checks are authoritative on the server. The UI deliberately blocks obviously negative proposals before submission.
+
+Run `npm run test:e2e:inventory` for the isolated replica-set browser flows. `tests/integration/inventory.test.ts` covers transactional approval and ledger invariants at service level. The dashboard follows `UI-UX/screens/admin-inventory.png` for the metric/card/grid hierarchy while using current backend fields rather than mock SKU/runway values.

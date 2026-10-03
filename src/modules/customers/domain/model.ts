@@ -5,6 +5,6 @@ export type Customer = EntityDto &
     phone: string;
     displayName: string | null;
     birthDate: string | null;
-    status: "active" | "blocked";
+    status: "active" | "blocked" | "anonymized";
     revision: number;
   }>;

@@ -9,3 +9,4 @@ export type {
   OverviewSales,
   OverviewStock,
 } from "./contracts/overview.ts";
+export { tehranDashboardPeriod, tehranWindowStart } from "./domain/period.ts";

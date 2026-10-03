@@ -8,6 +8,8 @@ export type SettingsValues = {
     currency: "TOMAN";
     timezone: "Asia/Tehran";
     minimumOrderToman: number;
+    logoMediaId: string | null;
+    faviconMediaId: string | null;
   };
   contact: {
     phone: string;
@@ -77,6 +79,8 @@ export function settingsDefaults<K extends SettingsKind>(kind: K): SettingsValue
       currency: "TOMAN",
       timezone: "Asia/Tehran",
       minimumOrderToman: 0,
+      logoMediaId: null,
+      faviconMediaId: null,
     },
     contact: {
       phone: "",

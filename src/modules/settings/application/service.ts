@@ -1,6 +1,7 @@
 import { requireAdminCapability } from "../../../shared/admin-capabilities.ts";
 import { ApplicationError } from "../../../shared/errors.ts";
 import {
+  parseProviderCredentials,
   parseSettingsWrite,
   settingsKind,
   settingsMutationKey,
@@ -42,10 +43,16 @@ export function requireSettingsOwner(actor: SettingsActor | null): SettingsActor
 export class SettingsService {
   private readonly repository: SettingsRepository;
   private readonly production: boolean;
+  private readonly installedProviders: ReadonlySet<string> | null;
   private readonly cache = new Map<SettingsKind, OwnerSettings>();
-  constructor(repository: SettingsRepository, production = false) {
+  constructor(
+    repository: SettingsRepository,
+    production = false,
+    installedProviders?: readonly string[],
+  ) {
     this.repository = repository;
     this.production = production;
+    this.installedProviders = installedProviders ? new Set(installedProviders) : null;
   }
   invalidate(kind: SettingsKind): void {
     this.cache.delete(kind);
@@ -80,6 +87,8 @@ export class SettingsService {
         currency: b.currency,
         timezone: b.timezone,
         minimumOrderToman: b.minimumOrderToman,
+        logoMediaId: b.logoMediaId,
+        faviconMediaId: b.faviconMediaId,
       },
       contact: {
         phone: c.phone,
@@ -146,6 +155,18 @@ export class SettingsService {
     if (!/^[a-zA-Z0-9_-]{8,80}$/.test(requestId))
       throw new ApplicationError("VALIDATION", "Invalid request correlation");
     const command = parseSettingsWrite(kind, input);
+    if (kind === "payment" && this.installedProviders) {
+      const values = command.values as SettingsValues["payment"];
+      if (values.providers?.some((provider) => !this.installedProviders!.has(provider.id)))
+        throw new ApplicationError("VALIDATION", "Payment provider adapter is not installed");
+      const raw = command.secrets?.providerCredentials;
+      if (typeof raw === "string") {
+        if (
+          Object.keys(parseProviderCredentials(raw)).some((id) => !this.installedProviders!.has(id))
+        )
+          throw new ApplicationError("VALIDATION", "Payment credential adapter is not installed");
+      }
+    }
     if (
       this.production &&
       kind === "payment" &&

@@ -1,5 +1,9 @@
-export function securityHeaders(mode: "development" | "production" | "test") {
+export function securityHeaders(
+  mode: "development" | "production" | "test",
+  webSocketUrl?: string,
+) {
   const development = mode === "development";
+  const socketOrigin = webSocketUrl ? new URL(webSocketUrl).origin : null;
   const directives = [
     "default-src 'self'",
     "base-uri 'self'",
@@ -10,7 +14,7 @@ export function securityHeaders(mode: "development" | "production" | "test") {
     "font-src 'self' data:",
     `script-src 'self' 'unsafe-inline'${development ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
-    `connect-src 'self'${development ? " ws: wss:" : ""}`,
+    `connect-src 'self'${socketOrigin ? ` ${socketOrigin}` : ""}${development ? " ws: wss:" : ""}`,
     "frame-src 'none'",
   ];
   return [

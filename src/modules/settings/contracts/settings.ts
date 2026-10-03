@@ -79,10 +79,24 @@ export function parseSettingsValues<K extends SettingsKind>(
     ...Object.keys(defaults),
     ...(kind === "payment" ? ["providers"] : []),
   ]);
-  if (Object.keys(defaults).some((key) => !(key in v))) invalid();
+  if (
+    Object.keys(defaults).some(
+      (key) => !(key in v) && !["logoMediaId", "faviconMediaId"].includes(key),
+    )
+  )
+    invalid();
   let result: SettingsValues[SettingsKind];
   switch (kind) {
     case "business":
+      if (
+        [v.logoMediaId, v.faviconMediaId].some(
+          (id) =>
+            id !== undefined &&
+            id !== null &&
+            (typeof id !== "string" || !/^[a-f0-9]{24}$/u.test(id)),
+        )
+      )
+        invalid();
       result = {
         title: text(v.title, 100, true),
         legalName: text(v.legalName, 150),
@@ -90,6 +104,8 @@ export function parseSettingsValues<K extends SettingsKind>(
         currency: choice(v.currency, ["TOMAN"]),
         timezone: choice(v.timezone, ["Asia/Tehran"]),
         minimumOrderToman: integer(v.minimumOrderToman, Number.MAX_SAFE_INTEGER),
+        logoMediaId: (v.logoMediaId ?? null) as string | null,
+        faviconMediaId: (v.faviconMediaId ?? null) as string | null,
       };
       break;
     case "contact": {

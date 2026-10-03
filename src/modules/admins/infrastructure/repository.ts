@@ -9,7 +9,7 @@ import type {
   SecurityCommit,
   TransactionContext,
 } from "../../../shared/security-ports.ts";
-import type { AdminRepository } from "../application/service.ts";
+import type { AdminListFilters, AdminRepository } from "../application/service.ts";
 import { type AdminCreate, type AdminUpdate, parseAdminCreate } from "../contracts/admin.ts";
 import type { AdminDetails } from "../domain/model.ts";
 
@@ -254,10 +254,23 @@ export class MongoAdminRepository implements AdminRepository {
     await this.rows().insertOne(row, { session: session(tx) });
     return dto(row);
   }
-  async list(token: string | null, page: number, limit: number) {
+  async list(token: string | null, page: number, limit: number, filters: AdminListFilters) {
     await this.authorize(token, "admins.read");
-    const filter = { deletedAt: null };
-    const [rows, total] = await Promise.all([
+    const escaped = filters.q
+      ? [...filters.q]
+          .map((char) => ("\\^$.*+?()[]{}|".includes(char) ? `\\${char}` : char))
+          .join("")
+      : null;
+    const search = escaped ? new RegExp(escaped, "iu") : null;
+    const filter = {
+      deletedAt: null,
+      ...(filters.role ? { role: filters.role } : {}),
+      ...(filters.status ? { status: filters.status } : {}),
+      ...(search
+        ? { $or: [{ username: search }, { displayName: search }, { phone: search }] }
+        : {}),
+    };
+    const [rows, total, statsRows] = await Promise.all([
       this.rows()
         .find(filter, { projection: { passwordHash: 0, authVersion: 0, authorizationGuard: 0 } })
         .sort({ createdAt: -1, _id: -1 })
@@ -265,8 +278,28 @@ export class MongoAdminRepository implements AdminRepository {
         .limit(limit)
         .toArray(),
       this.rows().countDocuments(filter),
+      this.rows()
+        .aggregate<{ _id: { role: Row["role"]; status: Row["status"] }; count: number }>(
+          [
+            { $match: { deletedAt: null } },
+            { $group: { _id: { role: "$role", status: "$status" }, count: { $sum: 1 } } },
+          ],
+          { maxTimeMS: 2500 },
+        )
+        .toArray(),
     ]);
-    return { items: rows.map(dto), total };
+    const count = (role: Row["role"], status: Row["status"]) =>
+      statsRows.find((row) => row._id.role === role && row._id.status === status)?.count ?? 0;
+    return {
+      items: rows.map(dto),
+      total,
+      stats: {
+        total: statsRows.reduce((sum, row) => sum + row.count, 0),
+        activeOwners: count("OWNER", "active"),
+        activeCashiers: count("CASHIER", "active"),
+        disabled: count("OWNER", "disabled") + count("CASHIER", "disabled"),
+      },
+    };
   }
   async create(
     token: string | null,

@@ -101,9 +101,13 @@ mediaAssetSchema.pre("validate", function () {
 export const mediaReferenceSchema = new Schema(
   {
     mediaId: objectIdField(),
-    entityKind: { type: String, required: true, enum: ["product", "category"] },
+    entityKind: { type: String, required: true, enum: ["product", "category", "settings"] },
     entityId: objectIdField(),
-    field: { type: String, required: true, enum: ["mediaIds", "mediaId", "additionMediaIds"] },
+    field: {
+      type: String,
+      required: true,
+      enum: ["mediaIds", "mediaId", "additionMediaIds", "logoMediaId", "faviconMediaId"],
+    },
   },
   { ...documentSchemaOptions(), collection: "media_references" },
 );

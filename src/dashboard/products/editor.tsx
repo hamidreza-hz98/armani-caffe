@@ -3,10 +3,12 @@
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 import type { ProductDetail } from "@/modules/catalog/products";
+import { useFeedback } from "@/theme/feedback-provider";
 import { formatToman } from "@/theme/format";
+import { useUnsavedChanges } from "@/theme/unsaved-changes";
 
 import { BasicFields } from "./editor-basic";
 import { ProductMediaFields } from "./editor-media";
@@ -21,7 +23,7 @@ const RulesEditor = dynamic(() => import("./editor-rules").then((module) => modu
   ssr: false,
   loading: () => <p>در حال بارگذاری انبار…</p>,
 });
-const MediaPicker = dynamic(() => import("./media-picker").then((module) => module.MediaPicker), {
+const MediaPicker = dynamic(() => import("../media/picker").then((module) => module.MediaPicker), {
   ssr: false,
 });
 
@@ -70,33 +72,12 @@ export function ProductEditor({
   const [picker, setPicker] = useState<{ kind: "product" | "addition"; index?: number } | null>(
     null,
   );
-  const allowReload = useRef(false);
   const dirty = JSON.stringify(form) !== JSON.stringify(saved);
+  const feedback = useFeedback();
+  const allowDiscard = useUnsavedChanges(dirty);
   const editable = actor.role === "OWNER" && status !== "archived";
   const update = <K extends keyof ProductFormFields>(key: K, value: ProductFormFields[K]) =>
     setForm((prior) => ({ ...prior, [key]: value }));
-
-  useEffect(() => {
-    if (!dirty) return;
-    const beforeUnload = (event: BeforeUnloadEvent) => {
-      if (allowReload.current) return;
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    const linkGuard = (event: MouseEvent) => {
-      const link = event.target instanceof Element ? event.target.closest("a[href]") : null;
-      if (link && !window.confirm("تغییرات ذخیره‌نشده را رها می‌کنید؟")) {
-        event.preventDefault();
-        event.stopPropagation();
-      }
-    };
-    window.addEventListener("beforeunload", beforeUnload);
-    document.addEventListener("click", linkGuard, true);
-    return () => {
-      window.removeEventListener("beforeunload", beforeUnload);
-      document.removeEventListener("click", linkGuard, true);
-    };
-  }, [dirty]);
 
   async function request(
     url: string,
@@ -169,7 +150,16 @@ export function ProductEditor({
       setNotice("برای انتشار، توضیح کوتاه، قیمت مثبت و تصویر لازم است.");
       return;
     }
-    if (action === "archive" && !window.confirm("این محصول بایگانی و از منو حذف شود؟")) return;
+    if (
+      action === "archive" &&
+      !(await feedback.confirm({
+        title: "بایگانی محصول؟",
+        description: "محصول از منوی عمومی حذف می‌شود؛ سوابق سفارش‌های پیشین تغییر نمی‌کنند.",
+        confirmLabel: "بایگانی محصول",
+        dangerous: true,
+      }))
+    )
+      return;
     const value = await request(`/api/products/${product.id}/${action}`, "POST", { revision });
     if (value) {
       accept(value);
@@ -223,7 +213,7 @@ export function ProductEditor({
             <button
               type="button"
               onClick={() => {
-                allowReload.current = true;
+                allowDiscard();
                 window.location.reload();
               }}
             >

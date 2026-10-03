@@ -1,0 +1,264 @@
+.page {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 24px;
+  color: #261c16;
+}
+.heading,
+.sectionHead,
+.cardTop,
+.footerActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 18px;
+}
+.heading h1 {
+  margin: 4px 0 10px;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+}
+.heading p {
+  margin: 0;
+  max-width: 700px;
+  color: #6e6258;
+}
+.heading .eyebrow {
+  color: #8a5030;
+  font-size: 0.85rem;
+}
+.page button {
+  font: inherit;
+  border: 1px solid #d5c7b9;
+  background: #fff;
+  border-radius: 9px;
+  padding: 9px 13px;
+  min-height: 44px;
+  color: inherit;
+  cursor: pointer;
+}
+.page button:hover {
+  border-color: #6c4129;
+}
+.page button:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+.page button:focus-visible,
+.page input:focus-visible,
+.page select:focus-visible {
+  outline: 3px solid #a4602d;
+  outline-offset: 2px;
+}
+.page .primary {
+  background: #261c16;
+  color: #fff;
+  border-color: #261c16;
+}
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 26px 0;
+}
+.metric {
+  background: #fff;
+  border: 1px solid #d8c9bb;
+  border-radius: 14px;
+  padding: 17px;
+  display: grid;
+  gap: 15px;
+}
+.metric span {
+  color: #75695f;
+}
+.metric strong {
+  font-size: 1.3rem;
+  overflow-wrap: anywhere;
+  text-align: start;
+}
+.notice,
+.warning,
+.success,
+.error {
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 14px 0;
+}
+.notice {
+  background: #ede8e0;
+  color: #51463e;
+}
+.warning {
+  background: #fff1d8;
+  color: #714412;
+}
+.success {
+  background: #e8f6ec;
+  color: #155b36;
+}
+.error {
+  background: #ffe9e6;
+  color: #922d25;
+}
+.sectionHead {
+  align-items: end;
+  border-top: 1px solid #d6c6b5;
+  margin-top: 26px;
+  padding-top: 24px;
+}
+.sectionHead h2 {
+  margin: 0;
+}
+.page label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+.page select,
+.page input:not([type="checkbox"]) {
+  background: #fff;
+  border: 1px solid #ccbcaa;
+  border-radius: 8px;
+  min-height: 44px;
+  padding: 9px 12px;
+  font: inherit;
+  color: inherit;
+}
+.hint {
+  color: #6e6258;
+  font-size: 0.9rem;
+}
+.cards {
+  display: grid;
+  gap: 14px;
+  margin: 22px 0;
+}
+.card {
+  background: #fff;
+  border: 1px solid #d8c9bb;
+  border-radius: 16px;
+  padding: 20px;
+}
+.card h3 {
+  margin: 0 0 7px;
+}
+.card p {
+  color: #6e6258;
+  margin: 0;
+}
+.cardTop {
+  align-items: center;
+}
+.badge {
+  border-radius: 99px;
+  padding: 5px 11px;
+  background: #eee8df;
+  white-space: nowrap;
+}
+.fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin: 18px 0;
+  color: #65584e;
+}
+.fields span {
+  background: #faf5ee;
+  border-radius: 6px;
+  padding: 5px 8px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.unavailable {
+  background: #fff6f2;
+  border-color: #e7c4bc;
+}
+.unavailable button {
+  margin-top: 16px;
+}
+.footerActions {
+  align-items: center;
+  padding: 22px 0;
+  border-top: 1px solid #d6c6b5;
+}
+.page .check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.check input {
+  width: 20px;
+  height: 20px;
+}
+.backdrop {
+  position: fixed;
+  z-index: 1400;
+  inset: 0;
+  background: #180d08aa;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+.dialog {
+  width: min(100%, 540px);
+  background: #fffaf4;
+  border-radius: 16px;
+  padding: 24px;
+  max-height: 90dvh;
+  overflow: auto;
+  display: grid;
+  gap: 14px;
+}
+.dialog h2 {
+  margin: 0;
+}
+.dialog .actions {
+  justify-content: flex-end;
+}
+.callback {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #f0e8df;
+  border-radius: 8px;
+  padding: 8px;
+}
+.callback code {
+  overflow: auto;
+  font-size: 0.8rem;
+  flex: 1;
+  text-align: left;
+}
+@media (max-width: 850px) {
+  .metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 600px) {
+  .page {
+    padding: 14px;
+  }
+  .heading,
+  .sectionHead,
+  .footerActions {
+    display: grid;
+  }
+  .metrics {
+    gap: 8px;
+  }
+  .metric {
+    padding: 12px;
+  }
+  .card {
+    padding: 16px;
+  }
+  .cardTop {
+    align-items: flex-start;
+  }
+  .fields {
+    display: grid;
+  }
+}

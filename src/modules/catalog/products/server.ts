@@ -18,7 +18,10 @@ export function createProductService(
 }
 
 // Server public boundary. Compose use cases and adapters here.
-export { productCategoryDependencies } from "./infrastructure/category-references.ts";
+export {
+  productCategoryCounts,
+  productCategoryDependencies,
+} from "./infrastructure/category-references.ts";
 export {
   productMediaIds,
   productMediaUsages,

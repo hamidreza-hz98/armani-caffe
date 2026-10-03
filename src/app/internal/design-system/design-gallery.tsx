@@ -15,7 +15,17 @@ import {
 import { useState } from "react";
 
 import { LtrText } from "@/theme/bidi-text";
+import { useFeedback } from "@/theme/feedback-provider";
 import { formatJalaliDate, formatPersianNumber, formatToman } from "@/theme/format";
+import {
+  AdvancedFiltersDrawer,
+  ContentSkeleton,
+  DetailDrawer,
+  EmptyState,
+  JalaliDateRange,
+  RtlPagination,
+  StatusMessage,
+} from "@/theme/shared-states";
 import { colors } from "@/theme/tokens";
 
 const swatches = [
@@ -30,6 +40,10 @@ const swatches = [
 
 export function DesignGallery() {
   const [quantity, setQuantity] = useState(1);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [range, setRange] = useState({ from: "۱۴۰۵/۰۱/۰۱", to: "۱۴۰۵/۰۱/۳۰" });
+  const feedback = useFeedback();
 
   return (
     <Container component="main" maxWidth="lg" sx={{ py: { xs: 3, sm: 5, md: 8 } }}>
@@ -124,7 +138,107 @@ export function DesignGallery() {
             />
           </CardContent>
         </Card>
+
+        <Card>
+          <CardContent>
+            <Typography component="h2" variant="h5" gutterBottom>
+              وضعیت‌ها، تأییدها و کشوها
+            </Typography>
+            <Stack spacing={2}>
+              <StatusMessage kind="success" title="تغییرات ذخیره شد">
+                نسخهٔ عمومی نیز به‌روز شد.
+              </StatusMessage>
+              <StatusMessage kind="stale" title="داده‌ها ممکن است قدیمی باشند">
+                ارتباط زنده قطع است؛ آخرین دادهٔ دریافت‌شده نمایش داده می‌شود.
+              </StatusMessage>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                <Button
+                  variant="contained"
+                  onClick={() =>
+                    feedback.notify({ severity: "success", message: "عملیات با موفقیت انجام شد." })
+                  }
+                >
+                  نمایش اسنک‌بار
+                </Button>
+                <Button
+                  color="error"
+                  variant="outlined"
+                  onClick={() =>
+                    void feedback.confirm({
+                      title: "حذف برای همیشه؟",
+                      description: "این اقدام قابل بازگشت نیست و در گزارش ممیزی ثبت می‌شود.",
+                      confirmLabel: "حذف برای همیشه",
+                      dangerous: true,
+                      requiredText: "حذف",
+                    })
+                  }
+                >
+                  تأیید مخرب
+                </Button>
+                <Button variant="outlined" onClick={() => setFiltersOpen(true)}>
+                  فیلترهای پیشرفته
+                </Button>
+                <Button variant="outlined" onClick={() => setDetailsOpen(true)}>
+                  جزئیات سفارش
+                </Button>
+              </Stack>
+              <JalaliDateRange {...range} onChange={setRange} />
+              <RtlPagination page={2} count={8} onChange={() => undefined} />
+            </Stack>
+          </CardContent>
+        </Card>
+
+        <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
+          <Card>
+            <CardContent>
+              <EmptyState
+                variant="first-use"
+                title="هنوز موردی ثبت نشده است"
+                description="نخستین مورد را ایجاد کنید تا این بخش آمادهٔ استفاده شود."
+                action={<Button variant="contained">ایجاد نخستین مورد</Button>}
+              />
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent>
+              <EmptyState
+                variant="filter-empty"
+                title="نتیجه‌ای یافت نشد"
+                description="فیلترها را پاک کنید یا عبارت دیگری را جست‌وجو کنید."
+                action={<Button>پاک‌کردن فیلترها</Button>}
+              />
+            </CardContent>
+          </Card>
+        </Box>
+
+        <Card>
+          <CardContent>
+            <Typography component="h2" variant="h5" gutterBottom>
+              اسکلت بارگذاری
+            </Typography>
+            <ContentSkeleton rows={3} />
+          </CardContent>
+        </Card>
       </Stack>
+      <AdvancedFiltersDrawer open={filtersOpen} onClose={() => setFiltersOpen(false)}>
+        <Stack spacing={2}>
+          <JalaliDateRange {...range} onChange={setRange} />
+          <Button variant="contained" onClick={() => setFiltersOpen(false)}>
+            اعمال فیلترها
+          </Button>
+        </Stack>
+      </AdvancedFiltersDrawer>
+      <DetailDrawer
+        open={detailsOpen}
+        onClose={() => setDetailsOpen(false)}
+        title="جزئیات سفارش AC-0008932"
+      >
+        <Stack spacing={1}>
+          <StatusMessage kind="info" title="در حال آماده‌سازی" />
+          <Typography>مشتری: نمونهٔ نمایشی</Typography>
+          <Typography>مبلغ: {formatToman(185000)}</Typography>
+        </Stack>
+      </DetailDrawer>
     </Container>
   );
 }

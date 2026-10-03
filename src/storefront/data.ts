@@ -14,6 +14,7 @@ import { contactLinks } from "./contact-links";
 
 export type StorefrontShellData = {
   businessName: string;
+  businessLogoUrl?: string;
   account: { state: "guest" | "customer" | "unavailable"; name: string | null };
   cartCount: number | null;
   contacts: ReturnType<typeof contactLinks>;
@@ -77,6 +78,9 @@ export async function loadStorefrontShell(): Promise<StorefrontShellData> {
   const contact = settingsResult.status === "fulfilled" ? settingsResult.value.contact : null;
   return {
     businessName: business.title,
+    businessLogoUrl: business.logoMediaId
+      ? `/api/media/${business.logoMediaId}/file?variant=small`
+      : "/armani-icon.svg",
     account:
       accountResult.status === "fulfilled"
         ? accountResult.value

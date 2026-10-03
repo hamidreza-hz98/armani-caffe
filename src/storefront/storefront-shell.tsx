@@ -23,7 +23,14 @@ export function StorefrontHeader({ data }: { data: StorefrontShellData }) {
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <Link href="/" className={styles.brand} aria-label="صفحه اصلی کافه آرمانی">
-            <Image src="/icon.svg" alt="" width={42} height={42} priority />
+            <Image
+              src={data.businessLogoUrl ?? "/armani-icon.svg"}
+              alt=""
+              width={42}
+              height={42}
+              priority
+              unoptimized
+            />
             <span>
               <strong>{data.businessName}</strong>
               <small>کافه و سفارش آنلاین</small>
@@ -67,7 +74,7 @@ export function StorefrontHeaderFallback() {
     <header className={styles.header} aria-label="در حال آماده‌سازی ابزارهای فروشگاه">
       <div className={styles.headerInner}>
         <span className={styles.brand}>
-          <Image src="/icon.svg" alt="" width={42} height={42} priority />
+          <Image src="/armani-icon.svg" alt="" width={42} height={42} priority />
           <span>
             <strong>کافه آرمانی</strong>
             <small>کافه و سفارش آنلاین</small>

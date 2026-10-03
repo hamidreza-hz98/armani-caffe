@@ -37,6 +37,7 @@ export {
   mediaReceiptSchema,
   mediaReferenceSchema,
 } from "./infrastructure/schema.ts";
+export { syncSettingsMediaReferences } from "./infrastructure/settings-reference.ts";
 
 // Only verified live admin sessions supply actor IDs and roles.
 export const handleMediaHttp = createMediaHttpHandler({

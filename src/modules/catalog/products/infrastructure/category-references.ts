@@ -16,3 +16,28 @@ export async function productCategoryDependencies(
       { session: tx },
     );
 }
+
+/** Bounded dashboard projection; the product module keeps ownership of its collection. */
+export async function productCategoryCounts(
+  connection: Connection,
+  categoryIds: readonly string[],
+): Promise<Record<string, number>> {
+  if (!categoryIds.length) return {};
+  const rows = await connection
+    .db!.collection("products")
+    .aggregate<{ _id: Types.ObjectId; count: number }>(
+      [
+        {
+          $match: {
+            deletedAt: null,
+            categoryId: { $in: categoryIds.map((id) => new Types.ObjectId(id)) },
+          },
+        },
+        { $group: { _id: "$categoryId", count: { $sum: 1 } } },
+        { $limit: 500 },
+      ],
+      { maxTimeMS: 2500 },
+    )
+    .toArray();
+  return Object.fromEntries(rows.map((row) => [String(row._id), row.count]));
+}

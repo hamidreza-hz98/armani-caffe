@@ -26,6 +26,7 @@ export type RealtimeOptions = {
   schedule: PrintSchedule;
   jobs: MongoPrintJobs;
   authenticateAdmin: (cookie: string | undefined) => Promise<boolean>;
+  authenticateOrders?: (cookie: string | undefined) => Promise<boolean>;
   payload: (job: PrintJobView) => Promise<object>;
   now?: () => Date;
 };
@@ -33,7 +34,9 @@ export async function startPrintRealtime(options: RealtimeOptions) {
   const now = options.now ?? (() => new Date());
   const bridges = new Map<string, Bridge>(),
     admins = new Set<WebSocket>(),
-    adminCookies = new Map<WebSocket, string | undefined>();
+    adminCookies = new Map<WebSocket, string | undefined>(),
+    orderAdmins = new Set<WebSocket>(),
+    orderCookies = new Map<WebSocket, string | undefined>();
   const presenceTtl = options.heartbeatMs * 3;
   const server = createServer(async (request, response) => {
     response.setHeader("Cache-Control", "no-store");
@@ -71,6 +74,9 @@ export async function startPrintRealtime(options: RealtimeOptions) {
   function announce(job: PrintJobView) {
     for (const socket of admins) send(socket, { type: "print.status", job });
   }
+  function announcePresence(printerId: string, online: boolean) {
+    for (const socket of admins) send(socket, { type: "bridge.presence", printerId, online });
+  }
   server.on("upgrade", (request, socket, head) => {
     void (async () => {
       const url = new URL(request.url ?? "", "http://localhost");
@@ -79,9 +85,9 @@ export async function startPrintRealtime(options: RealtimeOptions) {
       if (
         url.pathname !== options.path ||
         url.searchParams.size !== 1 ||
-        !["admin", "bridge"].includes(role ?? "") ||
+        !["admin", "bridge", "orders"].includes(role ?? "") ||
         (origin && !options.origins.includes(origin)) ||
-        (role === "admin" && !origin)
+        ((role === "admin" || role === "orders") && !origin)
       ) {
         socket.destroy();
         return;
@@ -90,11 +96,28 @@ export async function startPrintRealtime(options: RealtimeOptions) {
         socket.destroy();
         return;
       }
+      if (role === "orders" && !(await options.authenticateOrders?.(request.headers.cookie))) {
+        socket.destroy();
+        return;
+      }
       wss.handleUpgrade(request, socket, head, (ws) => {
+        if (role === "orders") {
+          orderAdmins.add(ws);
+          orderCookies.set(ws, request.headers.cookie);
+          send(ws, { type: "orders.ready", room: "tenant:default:orders" });
+          ws.on("message", () => ws.close(1008, "Read-only room"));
+          ws.on("close", () => {
+            orderAdmins.delete(ws);
+            orderCookies.delete(ws);
+          });
+          return;
+        }
         if (role === "admin") {
           admins.add(ws);
           adminCookies.set(ws, request.headers.cookie);
           send(ws, { type: "admin.ready", room: "tenant:default:print" });
+          for (const printerId of bridges.keys())
+            send(ws, { type: "bridge.presence", printerId, online: true });
           ws.on("message", () => ws.close(1008, "Read-only room"));
           ws.on("close", () => {
             admins.delete(ws);
@@ -127,6 +150,7 @@ export async function startPrintRealtime(options: RealtimeOptions) {
                 lastSeen: now().getTime(),
                 pong: true,
               });
+              announcePresence(message.printerId, true);
               clearTimeout(registrationTimer);
               send(ws, {
                 type: "registered",
@@ -178,6 +202,7 @@ export async function startPrintRealtime(options: RealtimeOptions) {
           if (registered) {
             const current = bridges.get(registered.printerId);
             if (current?.socket === ws) bridges.delete(registered.printerId);
+            if (current?.socket === ws) announcePresence(registered.printerId, false);
             void options.schedule
               .releasePresence(registered.printerId, registered.nonce)
               .catch(() => undefined);
@@ -195,10 +220,19 @@ export async function startPrintRealtime(options: RealtimeOptions) {
         })
         .catch(() => socket.terminate());
     }
+    for (const [socket, cookie] of orderCookies) {
+      void options
+        .authenticateOrders?.(cookie)
+        .then((allowed) => {
+          if (!allowed) socket.terminate();
+        })
+        .catch(() => socket.terminate());
+    }
     for (const [printerId, bridge] of bridges) {
       if (!bridge.pong || now().getTime() - bridge.lastSeen > presenceTtl) {
         bridge.socket.terminate();
         bridges.delete(printerId);
+        announcePresence(printerId, false);
         continue;
       }
       bridge.pong = false;
@@ -212,6 +246,9 @@ export async function startPrintRealtime(options: RealtimeOptions) {
   return {
     port: (server.address() as AddressInfo).port,
     available: (printerId: string) => bridges.get(printerId)?.socket.readyState === WebSocket.OPEN,
+    broadcastOrder(event: { eventId: string; orderId: string; change: string; at: string }) {
+      for (const socket of orderAdmins) send(socket, { type: "order.changed", ...event });
+    },
     async deliver(job: PrintJobView): Promise<boolean> {
       const bridge = bridges.get(job.printerId);
       if (!bridge) return false;
@@ -224,6 +261,7 @@ export async function startPrintRealtime(options: RealtimeOptions) {
       clearInterval(heartbeat);
       for (const bridge of bridges.values()) bridge.socket.terminate();
       for (const admin of admins) admin.terminate();
+      for (const admin of orderAdmins) admin.terminate();
       await new Promise<void>((resolve) => wss.close(() => resolve()));
       await new Promise<void>((resolve) => server.close(() => resolve()));
     },

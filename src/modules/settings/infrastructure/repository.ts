@@ -90,16 +90,27 @@ export class MongoSettingsRepository implements SettingsRepository {
   private readonly vault: SettingsVault;
   private readonly commit: SettingsCommit;
   private readonly now: () => Date;
+  private readonly syncBusinessMedia?: (
+    session: ClientSession,
+    previous: SettingsValues["business"],
+    next: SettingsValues["business"],
+  ) => Promise<void>;
   constructor(
     connection: Connection,
     vault: SettingsVault,
     commit: SettingsCommit,
     now: () => Date = () => new Date(),
+    syncBusinessMedia?: (
+      session: ClientSession,
+      previous: SettingsValues["business"],
+      next: SettingsValues["business"],
+    ) => Promise<void>,
   ) {
     this.connection = connection;
     this.vault = vault;
     this.commit = commit;
     this.now = now;
+    this.syncBusinessMedia = syncBusinessMedia;
   }
   private rows() {
     if (!this.connection.db) throw new ApplicationError("UNAVAILABLE", "Database unavailable");
@@ -177,6 +188,12 @@ export class MongoSettingsRepository implements SettingsRepository {
             throw new ApplicationError(
               "CONFLICT",
               "Settings changed; reload and retry with the current revision",
+            );
+          if (kind === "business" && this.syncBusinessMedia)
+            await this.syncBusinessMedia(
+              session,
+              prior ? parseSettingsValues("business", prior.values) : settingsDefaults("business"),
+              command.values as SettingsValues["business"],
             );
           let encryptedPayload = prior?.encryptedPayload ?? null,
             encryptionKeyId = prior?.encryptionKeyId ?? null,

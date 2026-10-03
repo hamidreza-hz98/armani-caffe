@@ -1,0 +1,108 @@
+.page {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px);
+}
+.page h1 {
+  margin-bottom: 4px;
+}
+.links,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.form {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+  padding-bottom: 96px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  font-weight: 600;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #9c9188;
+  border-radius: 10px;
+  background: #fff;
+  color: #241b16;
+  font: inherit;
+}
+.field textarea {
+  min-height: 94px;
+  resize: vertical;
+}
+.field input:focus-visible,
+.field textarea:focus-visible,
+.field select:focus-visible,
+.page button:focus-visible,
+.page a:focus-visible {
+  outline: 3px solid #74512e;
+  outline-offset: 2px;
+}
+.field small {
+  font-weight: 400;
+}
+.check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.check input {
+  width: 22px;
+  height: 22px;
+}
+.media,
+.preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid #d8cdc1;
+  border-radius: 12px;
+}
+.preview {
+  display: block;
+}
+.preview strong {
+  color: #23476b;
+}
+.page button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #74512e;
+  border-radius: 10px;
+  background: #fff;
+  color: #241b16;
+  font: inherit;
+  cursor: pointer;
+}
+.page button[type="submit"] {
+  background: #382719;
+  color: white;
+}
+.page button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.error {
+  color: #9d1b1b;
+}
+.success {
+  color: #145b37;
+}
+@media (max-width: 600px) {
+  .actions {
+    position: sticky;
+    bottom: 0;
+    padding: 12px;
+    background: #f7f3ed;
+  }
+}

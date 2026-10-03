@@ -23,7 +23,7 @@ export type CustomerProfileUpdate = {
 export type CustomerCredentialIdentity = {
   id: string;
   phone: string;
-  status: "active" | "blocked";
+  status: "active" | "blocked" | "anonymized";
   authVersion: number;
   passwordHash: string;
 };

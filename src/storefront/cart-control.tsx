@@ -184,7 +184,6 @@ export function CartControl({
       setAdded(true);
     } catch {
       setError("افزودن به سبد انجام نشد. قیمت و موجودی را دوباره بررسی کنید.");
-      setQuote(null);
     } finally {
       setSaving(false);
     }

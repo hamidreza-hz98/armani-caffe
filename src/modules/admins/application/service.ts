@@ -11,12 +11,25 @@ import {
 } from "../contracts/admin.ts";
 import type { AdminDetails } from "../domain/model.ts";
 
+export type AdminListFilters = Readonly<{
+  q?: string;
+  role?: "OWNER" | "CASHIER";
+  status?: "active" | "disabled";
+}>;
+export type AdminListStats = Readonly<{
+  total: number;
+  activeOwners: number;
+  activeCashiers: number;
+  disabled: number;
+}>;
+
 export interface AdminRepository {
   list(
     token: string | null,
     page: number,
     limit: number,
-  ): Promise<{ items: AdminDetails[]; total: number }>;
+    filters: AdminListFilters,
+  ): Promise<{ items: AdminDetails[]; total: number; stats: AdminListStats }>;
   create(
     token: string | null,
     input: Omit<AdminCreate, "password">,
@@ -41,7 +54,7 @@ export class AdminService {
     this.passwords = passwords;
     this.authorize = authorize;
   }
-  async list(token: string | null, page = 1, limit = 20) {
+  async list(token: string | null, page = 1, limit = 20, filters: AdminListFilters = {}) {
     await this.authorize(token, "admins.read");
     if (
       !Number.isSafeInteger(page) ||
@@ -52,7 +65,19 @@ export class AdminService {
       limit > 100
     )
       throw new ApplicationError("VALIDATION", "Invalid admin pagination");
-    return this.repository.list(token, page, limit);
+    if (
+      filters.q !== undefined &&
+      (typeof filters.q !== "string" || !filters.q.trim() || filters.q.length > 80)
+    )
+      throw new ApplicationError("VALIDATION", "Invalid admin search");
+    if (filters.role !== undefined && !["OWNER", "CASHIER"].includes(filters.role))
+      throw new ApplicationError("VALIDATION", "Invalid admin role filter");
+    if (filters.status !== undefined && !["active", "disabled"].includes(filters.status))
+      throw new ApplicationError("VALIDATION", "Invalid admin status filter");
+    return this.repository.list(token, page, limit, {
+      ...filters,
+      ...(filters.q ? { q: filters.q.trim() } : {}),
+    });
   }
   async create(token: string | null, input: unknown, requestId: string) {
     await this.authorize(token, "admins.manage");

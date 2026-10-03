@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import type { ProductSummary } from "@/modules/catalog/products";
+import { useFeedback } from "@/theme/feedback-provider";
 import { formatJalaliDate, formatToman } from "@/theme/format";
 
 import styles from "./products.module.css";
@@ -30,6 +31,7 @@ export function ProductList({
   const [selected, setSelected] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
+  const feedback = useFeedback();
   const categoryNames = new Map(categories.map((category) => [category.id, category.name]));
   const toggle = (id: string) =>
     setSelected((ids) => (ids.includes(id) ? ids.filter((value) => value !== id) : [...ids, id]));
@@ -48,9 +50,12 @@ export function ProductList({
     }
     if (
       action === "archive" &&
-      !window.confirm(
-        `بایگانی ${targets.length.toLocaleString("fa-IR")} محصول؟ این کار انتشار آن‌ها را متوقف می‌کند.`,
-      )
+      !(await feedback.confirm({
+        title: "بایگانی گروهی محصولات؟",
+        description: `${targets.length.toLocaleString("fa-IR")} محصول از منوی عمومی خارج می‌شود؛ سوابق سفارش‌ها محفوظ می‌ماند.`,
+        confirmLabel: "بایگانی محصولات",
+        dangerous: true,
+      }))
     )
       return;
     setBusy(true);
@@ -70,9 +75,12 @@ export function ProductList({
           /* A failed item must not prevent the remaining selected items. */
         }
       }
-      setMessage(
-        `${completed.toLocaleString("fa-IR")} از ${targets.length.toLocaleString("fa-IR")} محصول به‌روزرسانی شد.${completed < targets.length ? " موارد ناموفق را دوباره بررسی کنید." : ""}`,
-      );
+      const resultMessage = `${completed.toLocaleString("fa-IR")} از ${targets.length.toLocaleString("fa-IR")} محصول به‌روزرسانی شد.${completed < targets.length ? " موارد ناموفق را دوباره بررسی کنید." : ""}`;
+      setMessage(resultMessage);
+      feedback.notify({
+        message: resultMessage,
+        severity: completed === targets.length ? "success" : completed ? "warning" : "error",
+      });
       setSelected([]);
       router.refresh();
     } finally {

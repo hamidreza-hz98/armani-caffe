@@ -7,7 +7,7 @@ const mode = process.env.NODE_ENV;
 if (mode !== "development" && mode !== "production" && mode !== "test") {
   throw new Error("NODE_ENV must be development, production, or test");
 }
-parseServerConfig(process.env, mode);
+const runtimeConfig = parseServerConfig(process.env, mode);
 
 const nextConfig: NextConfig = {
   experimental: { authInterrupts: true },
@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
-      { source: "/:path*", headers: securityHeaders(mode) },
+      { source: "/:path*", headers: securityHeaders(mode, runtimeConfig.public.webSocketUrl) },
       {
         source: "/api/payments/callback/:path*",
         headers: [{ key: "Referrer-Policy", value: "no-referrer" }],

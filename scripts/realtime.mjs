@@ -73,6 +73,18 @@ const realtime = await startPrintRealtime({
       return false;
     }
   },
+  authenticateOrders: async (cookie) => {
+    const token = readAdminCookie(
+      new Request("http://localhost", { headers: { cookie: cookie ?? "" } }),
+      config.mode === "production",
+    );
+    try {
+      await admin.store.authorize(token, "orders.read");
+      return true;
+    } catch {
+      return false;
+    }
+  },
   payload: async (job) => {
     const invoice = await invoices.onOrderConfirmed(job.orderId);
     if (invoice.id !== job.invoiceId) throw new Error("Print job invoice mismatch");
@@ -91,7 +103,32 @@ registerRealtimeCloser(() => realtime.close());
 const dispatcher = new PrintDispatcher(jobs, schedule, realtime.deliver, realtime.available);
 const outbox = new OutboxWorker(
   connection,
-  printOutboxHandlers(connection, schedule, config.printerBridge.id),
+  {
+    ...printOutboxHandlers(connection, schedule, config.printerBridge.id),
+    ...Object.fromEntries(
+      [
+        "order.confirmed",
+        "order.preparing",
+        "order.ready",
+        "order.completed",
+        "order.cancelled",
+        "order.refunded",
+      ].map((type) => [
+        type,
+        async (event) => {
+          const orderId = event.payload?.orderId;
+          if (typeof orderId !== "string" || !/^[a-f\d]{24}$/iu.test(orderId))
+            throw new Error("Invalid order outbox payload");
+          realtime.broadcastOrder({
+            eventId: String(event.id),
+            orderId,
+            change: type,
+            at: new Date().toISOString(),
+          });
+        },
+      ]),
+    ),
+  },
   { workerId: `print-${randomUUID()}` },
 );
 const controller = new AbortController();

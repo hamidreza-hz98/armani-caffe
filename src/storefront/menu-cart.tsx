@@ -2,7 +2,15 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import type { CartView } from "@/modules/carts";
 import { cartItemKey, type CartItemSnapshot, makeCartItemSnapshot } from "@/modules/carts";
@@ -189,15 +197,18 @@ export function MenuCartProvider({
   );
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
-  const publish = () =>
-    setCart(
-      projectCart(
-        confirmed.current,
-        pending.current.map((task) => task.action),
+  const publish = useCallback(
+    () =>
+      setCart(
+        projectCart(
+          confirmed.current,
+          pending.current.map((task) => task.action),
+        ),
       ),
-    );
+    [],
+  );
 
-  async function reload() {
+  const reload = useCallback(async () => {
     try {
       confirmed.current = await cartRequest();
       setStatus("ready");
@@ -209,7 +220,7 @@ export function MenuCartProvider({
       setMessage("سبد خرید در دسترس نیست. دوباره تلاش کنید.");
     }
     publish();
-  }
+  }, [publish]);
   async function preview() {
     if (running.current || pending.current.length || previewing.current)
       throw new CartRequestError("BUSY", "Cart is changing");
@@ -244,6 +255,12 @@ export function MenuCartProvider({
       window.removeEventListener(CUSTOMER_LOGGED_OUT, onLoggedOut);
     };
   });
+  useEffect(() => {
+    if (initialGuest) return;
+    const onOnline = () => void reload();
+    window.addEventListener("online", onOnline);
+    return () => window.removeEventListener("online", onOnline);
+  }, [initialGuest, reload]);
   useEffect(() => {
     if (initialGuest) return;
     const started = generation.current;

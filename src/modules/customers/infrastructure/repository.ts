@@ -13,7 +13,7 @@ type Row = {
   passwordHash: string;
   displayName: string | null;
   birthDate: Date | null;
-  status: "active" | "blocked";
+  status: "active" | "blocked" | "anonymized";
   authVersion: number;
   lastOrderAt: Date | null;
   createdAt: Date;
@@ -34,7 +34,7 @@ const dto = (row: Row): Customer => ({
 export type CustomerIdentity = {
   id: string;
   phone: string;
-  status: "active" | "blocked";
+  status: "active" | "blocked" | "anonymized";
   authVersion: number;
   passwordHash: string;
 };

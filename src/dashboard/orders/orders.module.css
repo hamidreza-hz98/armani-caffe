@@ -1,0 +1,254 @@
+.page {
+  max-width: 1500px;
+  margin: auto;
+  padding: clamp(16px, 3vw, 36px);
+  color: #302920;
+}
+.header,
+.resultHeader,
+.batch {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.7rem, 3vw, 2.3rem);
+}
+.header p {
+  margin: 4px 0;
+  color: #6d6155;
+}
+.eyebrow {
+  font-size: 0.8rem;
+}
+.page button,
+.page input,
+.page select {
+  font: inherit;
+}
+.page button {
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #cbb8a4;
+  border-radius: 10px;
+  background: #fff;
+  color: #513722;
+  cursor: pointer;
+}
+.page button:focus-visible,
+.page input:focus-visible,
+.page select:focus-visible {
+  outline: 3px solid #a56729;
+  outline-offset: 2px;
+}
+.page button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.primary,
+.batch button:first-of-type {
+  background: #68442d !important;
+  color: white !important;
+}
+.connection {
+  margin: 18px 0;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: #f1e8db;
+}
+.error {
+  padding: 10px 14px;
+  background: #fff0ec;
+  color: #8d261e;
+  border-radius: 10px;
+}
+.counters {
+  margin: 20px 0;
+}
+.counters h2,
+.results h2 {
+  font-size: 1.15rem;
+}
+.counters > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+.counters button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: right;
+  gap: 8px;
+  background: #fff;
+  border-color: #e6dacf;
+}
+.counters strong {
+  font-size: 1.3rem;
+}
+.toolbar,
+.results {
+  background: white;
+  border: 1px solid #e6dacf;
+  border-radius: 14px;
+  padding: 18px;
+  margin: 18px 0;
+}
+.quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.filters {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, minmax(120px, 1fr)) auto;
+  align-items: end;
+  gap: 10px;
+}
+.filters label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.86rem;
+  color: #655b50;
+}
+.filters input,
+.filters select {
+  height: 44px;
+  min-width: 0;
+  padding: 8px;
+  border: 1px solid #cbb8a4;
+  border-radius: 9px;
+  background: white;
+  color: #302920;
+}
+.resultHeader {
+  margin-bottom: 14px;
+}
+.resultHeader h2 {
+  margin: 0;
+}
+.resultHeader small {
+  font-weight: normal;
+  color: #6d6155;
+}
+.batch {
+  padding: 10px;
+  background: #f1e8db;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  justify-content: flex-start;
+}
+.tableWrap {
+  overflow: auto;
+}
+.tableWrap table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 920px;
+  text-align: right;
+}
+.tableWrap th,
+.tableWrap td {
+  padding: 12px 9px;
+  border-bottom: 1px solid #ede5da;
+  vertical-align: top;
+}
+.tableWrap th {
+  background: #f8f4ee;
+  font-weight: 600;
+}
+.tableWrap small {
+  display: block;
+  color: #766b61;
+}
+.tableWrap input,
+.cards input {
+  width: 20px;
+  height: 20px;
+}
+.pill {
+  display: inline-block;
+  padding: 4px 9px;
+  border-radius: 99px;
+  background: #f1e8db;
+  white-space: nowrap;
+}
+.cards {
+  display: none;
+}
+.card {
+  padding: 14px;
+  border: 1px solid #e6dacf;
+  border-radius: 12px;
+  margin: 10px 0;
+}
+.card > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card p {
+  margin: 10px 0;
+  color: #5d5349;
+}
+.empty {
+  text-align: center;
+  padding: 40px;
+  color: #6d6155;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 0;
+}
+@media (max-width: 900px) {
+  .filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .filters label:first-child {
+    grid-column: span 2;
+  }
+  .counters > div {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .tableWrap {
+    display: none;
+  }
+  .cards {
+    display: block;
+  }
+}
+@media (max-width: 560px) {
+  .page {
+    padding: 14px;
+  }
+  .header {
+    align-items: flex-start;
+  }
+  .header button {
+    flex-shrink: 0;
+  }
+  .counters > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .toolbar,
+  .results {
+    padding: 13px;
+  }
+  .quick {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+  }
+  .quick button {
+    white-space: nowrap;
+  }
+  .resultHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -51,7 +51,9 @@ export function createAdminsHttpHandler(options: {
           token = options.token(request);
         if (operation === "list") {
           if (
-            [...url.searchParams.keys()].some((key) => !["page", "limit"].includes(key)) ||
+            [...url.searchParams.keys()].some(
+              (key) => !["page", "limit", "q", "role", "status"].includes(key),
+            ) ||
             [...url.searchParams.keys()].some((key) => url.searchParams.getAll(key).length > 1)
           )
             throw new ApplicationError("VALIDATION", "Invalid admin list query");
@@ -59,6 +61,15 @@ export function createAdminsHttpHandler(options: {
             token,
             Number(url.searchParams.get("page") ?? 1),
             Number(url.searchParams.get("limit") ?? 20),
+            {
+              ...(url.searchParams.has("q") ? { q: url.searchParams.get("q")! } : {}),
+              ...(url.searchParams.has("role")
+                ? { role: url.searchParams.get("role") as "OWNER" | "CASHIER" }
+                : {}),
+              ...(url.searchParams.has("status")
+                ? { status: url.searchParams.get("status") as "active" | "disabled" }
+                : {}),
+            },
           );
         }
         if (operation === "create") return service.create(token, input, requestId);

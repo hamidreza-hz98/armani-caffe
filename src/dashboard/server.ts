@@ -19,6 +19,12 @@ export async function dashboardActor() {
   return (await configuredAdminSecurity()).auth.resolve(matches[0].value);
 }
 
+export async function dashboardAdminToken(): Promise<string | null> {
+  const name = adminCookieName(getServerConfig().mode === "production");
+  const matches = (await cookies()).getAll(name);
+  return matches.length === 1 && validAdminToken(matches[0].value) ? matches[0].value : null;
+}
+
 export async function requireDashboardActor() {
   const destination = safeDashboardDestination((await headers()).get("x-armani-dashboard-path"));
   const actor = await dashboardActor();

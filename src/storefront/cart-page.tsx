@@ -297,7 +297,12 @@ function CartContent({
                       unoptimized
                     />
                   ) : (
-                    <Image src="/icon.svg" alt="تصویر محصول موجود نیست" width={40} height={40} />
+                    <Image
+                      src="/armani-icon.svg"
+                      alt="تصویر محصول موجود نیست"
+                      width={40}
+                      height={40}
+                    />
                   )}
                 </div>
                 <div className={styles.lineInfo}>

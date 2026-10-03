@@ -21,8 +21,7 @@ import { ApplicationError } from "../../shared/errors.ts";
 import { getDatabaseConnection } from "../database/connection.ts";
 import { getServerConfig } from "../secrets/config.ts";
 import { composeOrderService } from "./orders.ts";
-// Add documented gateway factories here once. Settings select among registered adapters.
-const gatewayFactories = new Map<string, ProviderFactory>();
+import { gatewayFactories } from "./payment-adapters.ts";
 
 export function composePaymentFramework(
   connection: Connection,

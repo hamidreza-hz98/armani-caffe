@@ -88,6 +88,8 @@ orderSchema.index(
 orderSchema.index({ idempotencyKey: 1 }, { unique: true, name: "order_idempotency_unique" });
 orderSchema.index({ status: 1, placedAt: -1 }, { name: "order_status_placed" });
 orderSchema.index({ paymentStatus: 1, placedAt: -1 }, { name: "order_payment_placed" });
+orderSchema.index({ "customer.phone": 1, placedAt: -1 }, { name: "order_customer_phone_placed" });
+orderSchema.index({ totalToman: -1, _id: -1 }, { name: "order_amount_sort" });
 orderSchema.index({ customerId: 1, placedAt: -1 }, { name: "order_customer_placed" });
 orderSchema.index({ placedAt: -1, _id: -1 }, { name: "order_recent" });
 orderSchema.index({ customerId: 1, placedAt: -1, _id: -1 }, { name: "order_customer_recent" });
