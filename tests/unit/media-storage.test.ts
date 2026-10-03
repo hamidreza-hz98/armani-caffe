@@ -5,6 +5,7 @@ import sharp from "sharp";
 import { describe, expect, test } from "vitest";
 
 import {
+  assertImageVersion,
   assertOwnedKey,
   MAX_MEDIA_BYTES,
   mediaKey,
@@ -75,6 +76,45 @@ describe("private media validation", () => {
     ).rejects.toThrow();
     await expect(storage.finalizeUpload(owner, "forged.ticket")).rejects.toThrow();
     await expect(storage.read(owner, "../secret")).rejects.toThrow();
+  });
+  test("normalized image descriptors require an exact safe variant set", () => {
+    const descriptor = (variant: "original" | "small" | "large", size: number) => {
+      const sha256 = ({ original: "a", small: "b", large: "c" } as const)[variant].repeat(64);
+      return {
+        key: mediaKey(owner, id, sha256, variant),
+        variant,
+        sha256,
+        mimeType: "image/webp",
+        byteSize: 100,
+        width: size,
+        height: size,
+      };
+    };
+    const valid = {
+      id,
+      objects: [descriptor("original", 4096), descriptor("small", 320), descriptor("large", 1280)],
+    };
+    expect(() => assertImageVersion(owner, valid)).not.toThrow();
+    expect(() => assertImageVersion(other, valid)).toThrow();
+    expect(() =>
+      assertImageVersion(owner, { ...valid, objects: valid.objects.slice(0, 2) }),
+    ).toThrow();
+    expect(() =>
+      assertImageVersion(owner, {
+        ...valid,
+        objects: [valid.objects[0], valid.objects[1], { ...valid.objects[2], width: 1281 }],
+      }),
+    ).toThrow();
+    expect(() =>
+      assertImageVersion(owner, {
+        ...valid,
+        objects: [
+          valid.objects[0],
+          valid.objects[1],
+          { ...valid.objects[2], mimeType: "image/png" },
+        ],
+      }),
+    ).toThrow();
   });
   test("decoded type is checked and variants strip EXIF", async () => {
     const oversized = await sharp({

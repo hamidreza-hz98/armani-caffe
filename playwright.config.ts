@@ -19,12 +19,21 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   outputDir: "test-results",
   use: {
-    ...devices["Desktop Chrome"],
     baseURL,
-    ...(channel ? { channel } : {}),
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"], ...(channel ? { channel } : {}) },
+    },
+    {
+      name: "webkit-storefront",
+      testMatch: "**/storefront-journeys.spec.ts",
+      use: { ...devices["Desktop Safari"] },
+    },
+  ],
   webServer: {
     command: `npm run start -- --port ${port}`,
     url: baseURL,

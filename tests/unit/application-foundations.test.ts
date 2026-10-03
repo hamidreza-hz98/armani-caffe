@@ -61,6 +61,9 @@ describe("shared application foundations", () => {
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("frame-ancestors 'none'");
     expect(csp).not.toContain("unsafe-eval");
+    expect(securityHeaders("production", "wss://socket.example/ws")[0].value).toContain(
+      "connect-src 'self' wss://socket.example",
+    );
     expect(securityHeaders("development")[0].value).toContain("unsafe-eval");
   });
 });

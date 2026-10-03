@@ -1,6 +1,11 @@
 import { expect, test } from "vitest";
 
-import { selectProvider } from "@/modules/payments";
+import {
+  paymentIdentifier,
+  paymentKey,
+  selectProvider,
+  validProviderValue,
+} from "@/modules/payments";
 import {
   FakePaymentProvider,
   IranianGatewayPlaceholder,
@@ -19,6 +24,17 @@ test("default and priority select multiple adapters without choosing disabled or
   expect(selectProvider(choices, "a", false).id).toBe("a");
   expect(selectProvider(choices, null, true).id).toBe("b");
   expect(() => selectProvider(choices, "fake", true)).toThrow();
+});
+test("payment identifiers, idempotency keys, and provider values fail closed", () => {
+  expect(paymentIdentifier("000000000000000000000001")).toBe("000000000000000000000001");
+  expect(paymentKey("checkout_2026-0001")).toBe("checkout_2026-0001");
+  expect(validProviderValue("gateway:authority_123")).toBe(true);
+  for (const value of ["", "1", "../../payment", "00000000000000000000000g", { $gt: "" }])
+    expect(() => paymentIdentifier(value)).toThrow();
+  for (const value of ["short", "space is unsafe", "../checkout", "x".repeat(129)])
+    expect(() => paymentKey(value)).toThrow();
+  for (const value of ["", "provider/path", "provider?secret=x", "x".repeat(161), null])
+    expect(validProviderValue(value)).toBe(false);
 });
 test("fake authority is deterministic and browser callback hints cannot settle it", async () => {
   const ledger = new MemoryFakeLedger(),

@@ -4,6 +4,7 @@ import type { OwnerSettings } from "@/modules/settings";
 import {
   parseSettingsValues,
   parseSettingsWrite,
+  renderBrowserTestPrint,
   settingsDefaults,
   settingsKinds,
   settingsMapUrl,
@@ -20,6 +21,34 @@ const key = "1".repeat(64),
 const credential = "sensitive-settings-value-123";
 
 describe("typed settings contracts", () => {
+  it("accepts optional legacy business media and rejects forged image IDs", () => {
+    const defaults = settingsDefaults("business");
+    const legacy = { ...defaults } as Partial<typeof defaults>;
+    delete legacy.logoMediaId;
+    delete legacy.faviconMediaId;
+    expect(parseSettingsValues("business", legacy)).toMatchObject({
+      logoMediaId: null,
+      faviconMediaId: null,
+    });
+    expect(
+      parseSettingsValues("business", { ...defaults, logoMediaId: "a".repeat(24) }).logoMediaId,
+    ).toBe("a".repeat(24));
+    expect(() =>
+      parseSettingsValues("business", { ...defaults, faviconMediaId: "../private" }),
+    ).toThrow();
+  });
+  it("renders a clearly marked browser-only diagnostic sheet with escaped content", () => {
+    const html = renderBrowserTestPrint(
+      { ...settingsDefaults("business"), title: "آرمانی & <تست>" },
+      { ...settingsDefaults("printing"), paperWidthMm: 58, footer: "پایان <script>" },
+      new Date("2026-01-01T00:00:00Z"),
+    );
+    expect(html).toContain("چاپ آزمایشی — بدون سفارش یا پرداخت");
+    expect(html).toContain("width:58mm");
+    expect(html).toContain("آرمانی &amp; &lt;تست&gt;");
+    expect(html).not.toContain("<script>");
+    expect(html).toContain("به پل چاپ ارسال نمی‌شود");
+  });
   it("has deterministic, valid independent defaults for all five singletons", () => {
     for (const kind of settingsKinds)
       expect(parseSettingsValues(kind, settingsDefaults(kind))).toEqual(settingsDefaults(kind));

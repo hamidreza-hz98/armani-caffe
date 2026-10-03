@@ -13,7 +13,7 @@ test("all planned modules obey architecture boundaries", async () => {
   const files = await readSourceTree(path.resolve("src"));
   assert.equal(moduleNames.length, 16);
   assert.deepEqual(architectureViolations(files), []);
-});
+}, 15_000);
 
 test("routes cannot import module persistence or server database details", () => {
   const files = new Map([

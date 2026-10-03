@@ -1,7 +1,7 @@
 import { expect, test } from "../fixtures/playwright.ts";
 
 test.skip(!process.env.E2E_ADMIN_DB, "Run with npm run test:e2e:dashboard");
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: "default" });
 
 const password = "dashboard-e2e-password-12345";
 async function login(page: import("@playwright/test").Page, username: string) {
@@ -26,22 +26,6 @@ test("owner sees management navigation, mobile drawer, profile and logout", asyn
   await expect(
     page.locator("aside").getByRole("link", { name: "مدیران و دسترسی‌ها" }),
   ).toBeVisible();
-  const created = await page.evaluate(async (password) => {
-    const response = await fetch("/api/admins", {
-      method: "POST",
-      credentials: "same-origin",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        username: "e2e-cashier",
-        displayName: "صندوقدار آزمایشی",
-        phone: "09123456788",
-        role: "CASHIER",
-        password,
-      }),
-    });
-    return { status: response.status, body: await response.json() };
-  }, password);
-  expect(created.status, JSON.stringify(created.body)).toBe(200);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
@@ -62,8 +46,30 @@ test("owner sees management navigation, mobile drawer, profile and logout", asyn
 
 test("cashier cannot see or open owner-only management; order search navigates", async ({
   page,
+  expectedConsoleErrors,
 }) => {
+  expectedConsoleErrors.push("WebSocket connection to");
   await page.setViewportSize({ width: 390, height: 844 });
+  await login(page, "e2e-owner");
+  const created = await page.evaluate(
+    async (initialPassword) =>
+      (
+        await fetch("/api/admins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: "e2e-cashier",
+            displayName: "صندوقدار آزمایشی",
+            phone: "09123456788",
+            role: "CASHIER",
+            password: initialPassword,
+          }),
+        })
+      ).status,
+    password,
+  );
+  expect(created).toBe(200);
+  await page.context().clearCookies();
   await login(page, "e2e-cashier");
   await expect(page.getByRole("heading", { name: "نمای کلی" })).toBeVisible();
   await expect(page.getByRole("region", { name: "نیازمند اقدام" })).toBeVisible();
@@ -80,7 +86,7 @@ test("cashier cannot see or open owner-only management; order search navigates",
   await page.locator("#dashboard-order-search").fill("AC-0008932");
   await page.locator("#dashboard-order-search").press("Enter");
   await expect(page).toHaveURL(/\/dashboard\/orders\?q=AC-0008932$/u);
-  await expect(page.getByText("سفارشی با این شماره پیدا نشد.", { exact: false })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "سفارشی با این فیلترها پیدا نشد" })).toBeVisible();
   await page.goto("/dashboard/admins");
   await expect(page.getByRole("heading", { name: /۴۰۳/u })).toBeVisible();
 });

@@ -1,7 +1,7 @@
 import { expect, test } from "../fixtures/playwright.ts";
 
 test.skip(!process.env.E2E_PRODUCT_FIXTURES, "Run with npm run test:e2e:products");
-test.describe.configure({ mode: "serial" });
+test.describe.configure({ mode: "default" });
 const password = "dashboard-e2e-password-12345";
 async function login(page: import("@playwright/test").Page, username: string) {
   await page.goto("/dashboard/login");
@@ -66,13 +66,19 @@ test("owner creates, publishes, edits, resolves conflict and archives a product"
   await page.getByRole("button", { name: "بارگذاری نسخه جدید" }).click();
   await expect(page.getByRole("textbox", { name: "نام محصول" })).toHaveValue("لاته ویرایش بیرونی");
   await page.getByRole("textbox", { name: "نام محصول" }).fill("لاته نهایی");
-  page.once("dialog", (dialog) => dialog.dismiss());
   await page.getByRole("link", { name: "بازگشت به فهرست" }).click();
+  await page
+    .getByRole("dialog", { name: "تغییرات ذخیره‌نشده" })
+    .getByRole("button", { name: "انصراف" })
+    .click();
   await expect(page).toHaveURL(/\/dashboard\/products\/[a-f0-9]{24}$/u);
   await page.getByRole("button", { name: "ذخیره تغییرات" }).click();
   await expect(page.getByText("تغییرات ذخیره شد.")).toBeVisible();
-  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "بایگانی" }).click();
+  await page
+    .getByRole("dialog", { name: "بایگانی محصول؟" })
+    .getByRole("button", { name: "بایگانی محصول" })
+    .click();
   await expect(page.getByText("محصول بایگانی شد.")).toBeVisible();
   await page.goto("/dashboard/products?status=archived&q=لاته");
   await expect(page.getByRole("table")).toContainText("لاته نهایی");
@@ -89,27 +95,14 @@ test("owner creates, publishes, edits, resolves conflict and archives a product"
   ).toBeVisible();
   await page.goto("/dashboard/products?status=draft&q=پیش‌نویس");
   await page.getByRole("checkbox", { name: "انتخاب پیش‌نویس بدون تصویر" }).first().check();
-  page.once("dialog", (dialog) => dialog.accept());
   await page.getByRole("button", { name: "بایگانی" }).click();
-  await expect(page.getByRole("status")).toContainText("۱ از ۱ محصول به‌روزرسانی شد");
-  const cashier = await page.evaluate(
-    async (password) =>
-      (
-        await fetch("/api/admins", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            username: "e2e-product-cashier",
-            displayName: "صندوق‌دار محصول",
-            phone: "09123456788",
-            role: "CASHIER",
-            password,
-          }),
-        })
-      ).status,
-    password,
-  );
-  expect(cashier).toBe(200);
+  await page
+    .getByRole("dialog", { name: "بایگانی گروهی محصولات؟" })
+    .getByRole("button", { name: "بایگانی محصولات" })
+    .click();
+  await expect(
+    page.getByRole("alert").filter({ hasText: "۱ از ۱ محصول به‌روزرسانی شد" }),
+  ).toBeVisible();
 });
 
 test("cashier sees read-only responsive cards and cannot mutate", async ({
@@ -121,10 +114,47 @@ test("cashier sees read-only responsive cards and cannot mutate", async ({
     route.fulfill({ status: 200, contentType: "image/svg+xml", body: fakeImage }),
   );
   await page.setViewportSize({ width: 390, height: 844 });
+  await login(page, "e2e-owner");
+  const category = await page.evaluate(async () => {
+    const response = await fetch("/api/categories", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "دسته صندوق", status: "published", mediaId: null }),
+    });
+    return response.json();
+  });
+  const draft = await page.evaluate(async (categoryId) => {
+    const response = await fetch("/api/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: "محصول صندوق", categoryId, basePriceToman: 50000 }),
+    });
+    return { status: response.status, body: await response.json() };
+  }, category.value.id);
+  expect(draft.status).toBe(200);
+  const cashier = await page.evaluate(
+    async (initialPassword) =>
+      (
+        await fetch("/api/admins", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: "e2e-product-cashier",
+            displayName: "صندوق‌دار محصول",
+            phone: "09123456788",
+            role: "CASHIER",
+            password: initialPassword,
+          }),
+        })
+      ).status,
+    password,
+  );
+  expect(cashier).toBe(200);
+  await page.context().clearCookies();
   await login(page, "e2e-product-cashier");
-  await page.goto("/dashboard/products?status=archived&q=لاته");
+  await page.goto("/dashboard/products?status=draft&q=محصول صندوق");
   await expect(page.getByRole("table")).toBeHidden();
-  await expect(page.getByRole("article")).toContainText("لاته نهایی");
+  await expect(page.getByRole("article")).toContainText("محصول صندوق");
   await expect(page.getByRole("link", { name: "+ محصول جدید" })).toHaveCount(0);
   await expect
     .poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
@@ -134,7 +164,7 @@ test("cashier sees read-only responsive cards and cannot mutate", async ({
   await expect(page.getByRole("button", { name: "ذخیره تغییرات" })).toHaveCount(0);
   await page.goto("/dashboard/products/new");
   await expect(page.getByRole("heading", { name: /۴۰۳/u })).toBeVisible();
-  await page.goto("/dashboard/products?status=archived&q=لاته");
+  await page.goto("/dashboard/products?status=draft&q=محصول صندوق");
   await page.getByRole("article").getByRole("link", { name: "مشاهده" }).click();
   const denied = await page.evaluate(async () => {
     const id = location.pathname.split("/").at(-1);

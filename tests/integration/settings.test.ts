@@ -59,6 +59,8 @@ beforeEach(async () => {
   for (const name of [
     "settings",
     "settings_receipts",
+    "media_assets",
+    "media_references",
     "audit_events",
     "outbox_events",
     "_schema_migrations",
@@ -101,6 +103,71 @@ test("defaults do not write rows; updates commit typed singleton, audit and outb
   });
   expect((await service.publicSettings()).business.title).toBe("کافهٔ تست");
   expect(await connection.db!.collection("settings").countDocuments()).toBe(1);
+});
+test("business images are public/ready, referenced transactionally, and released on replacement", async () => {
+  const logoId = new mongoose.Types.ObjectId();
+  const faviconId = new mongoose.Types.ObjectId();
+  const assets = connection.db!.collection("media_assets");
+  await assets.insertMany([
+    {
+      _id: logoId,
+      objectKey: "settings-test-logo",
+      uploaderId: new mongoose.Types.ObjectId(owner.id),
+      initiationKey: "settings-logo",
+      status: "ready",
+      visibility: "public",
+      deletedAt: null,
+      referenceGuard: 0,
+    },
+    {
+      _id: faviconId,
+      objectKey: "settings-test-favicon",
+      uploaderId: new mongoose.Types.ObjectId(owner.id),
+      initiationKey: "settings-favicon",
+      status: "ready",
+      visibility: "private",
+      deletedAt: null,
+      referenceGuard: 0,
+    },
+  ]);
+  await expect(
+    service.update(
+      owner,
+      "business",
+      "business-private",
+      {
+        revision: 0,
+        values: { ...settingsDefaults("business"), logoMediaId: faviconId.toHexString() },
+      },
+      "request-123",
+    ),
+  ).rejects.toMatchObject({ code: "CONFLICT" });
+  expect(await connection.db!.collection("settings").countDocuments()).toBe(0);
+  expect(await connection.db!.collection("media_references").countDocuments()).toBe(0);
+  await service.update(
+    owner,
+    "business",
+    "business-public",
+    {
+      revision: 0,
+      values: { ...settingsDefaults("business"), logoMediaId: logoId.toHexString() },
+    },
+    "request-123",
+  );
+  expect(
+    await connection.db!.collection("media_references").findOne({ mediaId: logoId }),
+  ).toMatchObject({ entityKind: "settings", field: "logoMediaId" });
+  await service.update(
+    owner,
+    "business",
+    "business-release",
+    {
+      revision: 1,
+      values: settingsDefaults("business"),
+    },
+    "request-124",
+  );
+  expect(await connection.db!.collection("media_references").countDocuments()).toBe(0);
 });
 test("concurrent CAS updates yield one winner and no extra events", async () => {
   await service.update(owner, "business", "business-first", command(), "request-123");

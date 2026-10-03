@@ -2,6 +2,8 @@
 
 The mobile storefront menu, cache invalidation, basic no-JavaScript version, and performance budgets are documented in [Storefront menu](docs/storefront-menu.md).
 
+Production-mode performance budgets, measurements, cache verification, and known audit gaps are documented in [Performance](docs/performance.md). Run `npm run test:performance` to reproduce the browser and 10-concurrent-request gate.
+
 Atomic order confirmation, immutable checkout snapshots, cancellation/refund controls and stock recovery are documented in [Orders](docs/orders.md). Apply migration 11 and indexes explicitly before rollout.
 
 Product lifecycle, additions, public menu, stock mappings, and rollout are documented in [Products](docs/products.md).
@@ -123,3 +125,18 @@ npm run realtime:work # اجرای جداگانهٔ WebSocket و صف چاپ
 قرارداد ذخیره‌سازی خصوصی، محدودیت تصاویر، URL امضاشده، نسخه‌های بهینه و پاک‌سازی آپلودهای ناتمام در [راهنمای رسانه](docs/media-storage.md) آمده است. آزمون یکپارچگی و `validate` اکنون به MinIO واقعی نیاز دارند؛ bucket آزمون مستقل ساخته و پاک می‌شود. وضعیت پشتیبانی نسخهٔ community و ریسک استقرار در [ADR 0003](docs/adr/0003-private-media-storage.md) ثبت شده است.
 
 سرویس‌های کاربردی رسانه، قراردادهای HTTP/action، سطح دسترسی، ارجاعات محصول، جایگزینی و پاک‌سازی پایدار در [ماژول رسانه](docs/media-module.md) مستند شده‌اند. mutationهای مدیریتی فقط با نشست معتبر و نقش مجاز پذیرفته می‌شوند. برای پایگاه دادهٔ موجود، migration شمارهٔ ۲ را آگاهانه اجرا کنید؛ `npm run media:cleanup -- --apply` فرمان عملیاتی پاک‌سازی است.
+
+رابط کتابخانه و بارگذاری رسانه، محدودیت فایل‌ها، بازیابی تأیید ناتمام و شرایط دسترسی مرورگر به MinIO در [راهنمای داشبورد رسانه](docs/dashboard-media.md) آمده است. آزمون مرورگر آن با `npm run test:e2e:media` اجرا می‌شود.
+
+مدیریت دسته‌بندی‌ها، جابه‌جایی با ماوس/لمس/صفحه‌کلید، تعارض ویرایش و اثر بر منوی عمومی در [راهنمای داشبورد دسته‌بندی‌ها](docs/dashboard-categories.md) آمده است. آزمون مرورگر آن با `npm run test:e2e:categories` اجرا می‌شود.
+
+مدیریت مالک‌محور حساب‌های مدیران، نقش‌ها و محافظت از آخرین مالک فعال در [راهنمای داشبورد مدیران](docs/dashboard-admins.md) مستند شده است. آزمون مرورگر مستقل آن با `npm run test:e2e:admins` اجرا می‌شود.
+
+مدیریت مشتریان، جستجوی نمایه‌دار، تاریخ تولد جلالی و ناشناس‌سازی با حفظ سوابق مالی در [راهنمای داشبورد مشتریان](docs/dashboard-customers.md) آمده است. آزمون مرورگر مستقل آن با `npm run test:e2e:customers` اجرا می‌شود.
+
+فهرست عملیاتی سفارش‌ها، فیلترها، تغییر وضعیت گروهی، همگام‌سازی بلادرنگ و حالت آفلاین در [راهنمای داشبورد سفارش‌ها](docs/dashboard-orders.md) آمده است. آزمون مرورگر مستقل آن با `npm run test:e2e:orders` اجرا می‌شود.
+
+جزئیات سفارش، فاکتور ثابت، پیگیری چاپگر، ثبت چاپ مجدد و اقدامات محافظت‌شده در [راهنمای جزئیات سفارش](docs/dashboard-order-detail.md) آمده است. آزمون مرورگر آن با `npm run test:e2e:order-detail` اجرا می‌شود.
+مدیریت موجودی، گردش انبار و صف تأیید در [راهنمای داشبورد موجودی](docs/dashboard-inventory.md) آمده است. آزمون مرورگر مستقل آن با `npm run test:e2e:inventory` اجرا می‌شود.
+
+تنظیمات درگاه پرداخت، محدودیت آداپتورهای نصب‌شده و حفاظت اعتبارنامه‌ها در [راهنمای داشبورد پرداخت](docs/dashboard-payment-settings.md) آمده است. آزمون مرورگر آن با `npm run test:e2e:payment-settings` اجرا می‌شود.

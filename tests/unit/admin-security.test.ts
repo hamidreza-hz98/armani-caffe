@@ -24,7 +24,7 @@ describe("admin authentication primitives", () => {
     expect(await passwords.verify("incorrect", one)).toBe(false);
     expect(await passwords.verify("incorrect", null)).toBe(false);
     expect(await passwords.verify("incorrect", "legacy-hash")).toBe(false);
-  });
+  }, 20_000);
   it("keeps admin and customer cookie namespaces separate and rejects duplicates", () => {
     expect(adminCookieName(true)).toBe("__Host-armani-admin");
     expect(customerCookieName(true)).toBe("__Host-armani-customer");

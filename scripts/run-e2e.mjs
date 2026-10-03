@@ -10,11 +10,14 @@ import { testEnv } from "../tests/fixtures/config.mjs";
 import { isolatedResources } from "../tests/fixtures/isolation.ts";
 
 const resources = isolatedResources("e2e");
-const withProductFixtures = process.argv.includes("--with-product-fixtures");
+const withMediaFixtures = process.argv.includes("--with-media-fixtures");
+const withProductFixtures = process.argv.includes("--with-product-fixtures") || withMediaFixtures;
 const withAdminDb = process.argv.includes("--with-admin-db") || withProductFixtures;
 const testArgs = process.argv
   .slice(2)
-  .filter((arg) => !["--with-admin-db", "--with-product-fixtures"].includes(arg));
+  .filter(
+    (arg) => !["--with-admin-db", "--with-product-fixtures", "--with-media-fixtures"].includes(arg),
+  );
 let replica;
 if (withAdminDb) {
   const installed = "C:\\Program Files\\MongoDB\\Server\\8.0\\bin\\mongod.exe";
@@ -61,6 +64,7 @@ if (withAdminDb) {
   env.PAYMENT_CALLBACK_BASE_URL = url;
   env.E2E_ADMIN_DB = "1";
   if (withProductFixtures) env.E2E_PRODUCT_FIXTURES = "1";
+  if (withMediaFixtures) env.E2E_MEDIA_FIXTURES = "1";
 }
 
 async function run(args, input) {
@@ -128,12 +132,47 @@ try {
           updatedAt: new Date(),
           __v: 0,
         });
+        if (withMediaFixtures) {
+          const replacementId = new mongoose.Types.ObjectId();
+          await connection.db.collection("media_assets").insertOne({
+            _id: replacementId,
+            objectKey: `e2e-image-${replacementId}`,
+            bucket: resources.minioBucket,
+            mimeType: "image/webp",
+            byteSize: 120,
+            sha256: "c".repeat(64),
+            filename: "replacement.webp",
+            objectVersion: String(replacementId),
+            title: "تصویر جایگزین آزمایشی",
+            altText: "تصویر دوم فنجان قهوه",
+            caption: "",
+            seo: { title: "", description: "", keywords: [] },
+            visibility: "public",
+            width: 100,
+            height: 100,
+            variants: [],
+            uploaderId: owner._id,
+            ownerId: owner._id,
+            initiationKey: String(replacementId),
+            fingerprint: "d".repeat(64),
+            ticketCiphertext: "test-only",
+            stagingKey: "test-only",
+            expiresAt: new Date("2030-01-01"),
+            referenceGuard: 0,
+            status: "ready",
+            deletedAt: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            __v: 0,
+          });
+        }
       } finally {
         await connection.close();
       }
     }
   }
-  await run([path.join("node_modules", "next", "dist", "bin", "next"), "build"]);
+  if (process.env.E2E_SKIP_BUILD !== "1")
+    await run([path.join("node_modules", "next", "dist", "bin", "next"), "build"]);
   await run([path.join("node_modules", "@playwright", "test", "cli.js"), "test", ...testArgs]);
 } finally {
   await replica?.stop();

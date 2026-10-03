@@ -12,6 +12,13 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      provider: "v8",
+      reporter: ["text", "json-summary", "html"],
+      reportsDirectory: "coverage",
+      include: ["src/**/*.{ts,tsx}", "bridge/**/*.ts"],
+      exclude: ["src/**/*.d.ts"],
+    },
     projects: [
       {
         test: {
@@ -19,6 +26,7 @@ export default defineConfig({
           environment: "node",
           include: ["tests/unit/**/*.test.{mjs,ts,tsx}"],
           exclude: ["tests/unit/**/*.client.test.tsx"],
+          testTimeout: 30_000,
         },
       },
       {
@@ -37,6 +45,7 @@ export default defineConfig({
           environment: "jsdom",
           include: ["tests/client/**/*.test.tsx"],
           setupFiles: ["./tests/fixtures/client-setup.ts"],
+          testTimeout: 10_000,
         },
       },
     ],

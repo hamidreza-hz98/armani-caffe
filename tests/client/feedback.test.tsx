@@ -23,6 +23,18 @@ function Fixture() {
       >
         تأیید
       </button>
+      <button
+        onClick={() =>
+          void feedback.requestText({
+            title: "ثبت دلیل",
+            description: "دلیل در ممیزی ثبت می‌شود.",
+            label: "دلیل",
+            submitLabel: "ثبت دلیل",
+          })
+        }
+      >
+        دریافت متن
+      </button>
     </>
   );
 }
@@ -40,4 +52,13 @@ test("snackbar and confirmation dialog are interactive in Persian", async () => 
   expect(screen.getByRole("dialog", { name: "حذف شود؟" }).closest("[dir='rtl']")).not.toBeNull();
   await user.click(screen.getByRole("button", { name: "انصراف" }));
   await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+  await user.click(screen.getByRole("button", { name: "دریافت متن" }));
+  const input = screen.getByRole("textbox", { name: "دلیل" });
+  expect(input).toHaveFocus();
+  expect(screen.getByRole("button", { name: "ثبت دلیل" })).toBeDisabled();
+  await user.type(input, "اصلاح ثبت‌شده");
+  expect(screen.getByRole("button", { name: "ثبت دلیل" })).toBeEnabled();
+  await user.keyboard("{Escape}");
+  await waitForElementToBeRemoved(() => screen.queryByRole("dialog"));
+  expect(screen.getByRole("button", { name: "دریافت متن" })).toHaveFocus();
 });

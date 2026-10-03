@@ -31,6 +31,10 @@ describe("customer auth contracts", () => {
     expect(canonicalBirthDate("2000-03-20")).toBe("2000-03-20");
     expect(() => canonicalBirthDate("2000-02-30")).toThrow();
     expect(() => jalaliToGregorian("1402-12-30")).toThrow();
+    expect(gregorianToJalali("2024-03-19")).toBe("1402-12-29");
+    expect(gregorianToJalali("2024-03-20")).toBe("1403-01-01");
+    expect(() => jalaliToGregorian("1199-12-29")).toThrow();
+    expect(() => jalaliToGregorian("1600-01-01")).toThrow();
     expect(adminCookieName(true)).not.toBe(customerCookieName(true));
   });
   it("schema rejects non-midnight stored birth dates", async () => {
