@@ -1,5 +1,9 @@
 import { execFileSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import { mkdtemp, readdir, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { setTimeout as delay } from "node:timers/promises";
 
 import { MongoMemoryReplSet } from "mongodb-memory-server";
 import mongoose from "mongoose";
@@ -25,7 +29,11 @@ import { composePaymentFramework } from "@/server/commerce/payments";
 import { printOutboxHandlers } from "@/server/commerce/print-outbox";
 import { applyDatabaseIndexes, applyMigrations } from "@/server/database/operations";
 import type { PrintSchedule } from "@/server/queue";
+import { PrintDispatcher } from "@/server/queue";
+import { startPrintRealtime } from "@/server/realtime";
 
+import { FilePrinter } from "../../bridge/adapters.ts";
+import { PrintBridge } from "../../bridge/client.ts";
 import { testEnv } from "../fixtures/config.mjs";
 import { isolatedResources } from "../fixtures/isolation";
 let replica: MongoMemoryReplSet, connection: mongoose.Connection;
@@ -517,6 +525,79 @@ test("paid order outbox makes one active automatic print job and audited reprint
     { source: "reprint", paperWidthMm: 80 },
   ]);
   expect(await db().collection("invoices").countDocuments({})).toBe(1);
+  const output = await mkdtemp(join(tmpdir(), "armani-paid-print-"));
+  const liveJobs = new MongoPrintJobs(connection);
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: [],
+    authorizeBridge: async (printerId, bridgeToken) =>
+      printerId === "test-bridge" && bridgeToken === "test_printer_bridge_token_32_characters",
+    schedule,
+    jobs: liveJobs,
+    authenticateAdmin: async () => false,
+    payload: async (job) => ({
+      jobId: job.id,
+      invoiceId: job.invoiceId,
+      printerId: job.printerId,
+      attempt: job.attempts,
+      deliveryId: job.deliveryId,
+      paperWidthMm: job.paperWidthMm,
+      html: '<!doctype html><html lang="fa" dir="rtl"><style>data:font/woff2;base64,AAAA</style></html>',
+    }),
+  });
+  const controller = new AbortController();
+  const bridge = new PrintBridge(
+    {
+      url: `ws://127.0.0.1:${server.port}/ws?role=bridge`,
+      printerId: "test-bridge",
+      token: "test_printer_bridge_token_32_characters",
+      journalDirectory: join(output, "journal"),
+    },
+    new FilePrinter(join(output, "receipts")),
+    async () => Uint8Array.from([27, 64, 10]),
+    () => undefined,
+  );
+  const running = bridge.run(controller.signal);
+  try {
+    for (let attempt = 0; attempt < 100 && !server.available("test-bridge"); attempt++)
+      await delay(50);
+    expect(server.available("test-bridge")).toBe(true);
+    await new PrintDispatcher(liveJobs, schedule, server.deliver, server.available).runOnce();
+    const linked = await liveJobs.byOrder(intent.id);
+    for (
+      let attempt = 0;
+      attempt < 100 && (await liveJobs.byOrder(intent.id)).some((job) => job.status !== "printed");
+      attempt++
+    )
+      await delay(50);
+    expect(await liveJobs.byOrder(intent.id)).toMatchObject([
+      { source: "automatic", status: "printed" },
+      { source: "reprint", status: "printed" },
+    ]);
+    for (const job of linked) {
+      for (let attempt = 0; attempt < 100; attempt++) {
+        if ((await bridge.journal.read(job.id))?.state === "acknowledged") break;
+        await delay(20);
+      }
+      expect((await bridge.journal.read(job.id))?.state).toBe("acknowledged");
+    }
+    expect((await readdir(join(output, "receipts"))).sort()).toEqual(
+      linked.map((job) => `${job.id}.escpos`).sort(),
+    );
+    for (const job of linked)
+      expect(await readFile(join(output, "receipts", `${job.id}.escpos`))).toEqual(
+        Buffer.from([27, 64, 10]),
+      );
+    expect(await db().collection("orders").countDocuments({})).toBe(1);
+    expect(await db().collection("invoices").countDocuments({})).toBe(1);
+  } finally {
+    controller.abort();
+    await running;
+    await server.close();
+    await rm(output, { recursive: true, force: true });
+  }
 });
 test("frozen customer/catalog/addition/stock snapshots survive later edits and prices cannot be supplied", async () => {
   const { intent, payment } = await checkout();

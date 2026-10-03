@@ -236,6 +236,40 @@ test("lost ACK and process/Redis restart reconcile one leased job for bounded re
   ).rejects.toMatchObject({ code: "CONFLICT" });
 });
 
+test("Redis scheduling interruption leaves the Mongo job recoverable after queue reconciliation", async () => {
+  const healthy = schedule;
+  const interrupted = new MemorySchedule();
+  interrupted.schedule = async () => {
+    throw new Error("REDIS_UNAVAILABLE");
+  };
+  await expect(
+    printOutboxHandlers(connection, interrupted, "fallback", now)["invoice.issued"](
+      event("invoice.issued"),
+    ),
+  ).rejects.toThrow("REDIS_UNAVAILABLE");
+  const [queued] = await jobs.byOrder(orderId.toString());
+  expect(queued.status).toBe("queued");
+  expect(healthy.dueJobs.size).toBe(0);
+  // Replaying the same outbox event cannot create a second automatic job.
+  await printOutboxHandlers(connection, healthy, "fallback", now)["invoice.issued"](
+    event("invoice.issued"),
+  );
+  const dispatcher = new PrintDispatcher(
+    jobs,
+    healthy,
+    async () => true,
+    () => true,
+    now,
+    1000,
+  );
+  await dispatcher.reconcile();
+  expect(healthy.dueJobs.has(queued.id)).toBe(true);
+  await dispatcher.runOnce();
+  expect(await jobs.byOrder(orderId.toString())).toMatchObject([
+    { id: queued.id, status: "printing", attempts: 1 },
+  ]);
+});
+
 test("printer errors retry and the fifth failed ACK dead-letters the job", async () => {
   await printOutboxHandlers(connection, schedule, "fallback", now)["invoice.issued"](
     event("invoice.issued"),
@@ -270,6 +304,16 @@ test("printer errors retry and the fifth failed ACK dead-letters the job", async
     }
   }
   expect(schedule.dueJobs.size).toBe(0);
+  const [dead] = await jobs.byOrder(orderId.toString());
+  expect(dead).toMatchObject({ source: "automatic", status: "dead", lastFailureCode: "PAPER_OUT" });
+  await printOutboxHandlers(connection, schedule, "fallback", now)["invoice.reprint_requested"](
+    event("invoice.reprint_requested"),
+  );
+  expect(await jobs.byOrder(orderId.toString())).toMatchObject([
+    { id: dead.id, status: "dead" },
+    { source: "reprint", status: "queued", reprintId: reprintId.toString() },
+  ]);
+  expect(await connection.db!.collection("invoices").countDocuments({})).toBe(1);
 });
 
 test("only one bridge instance registers a printer; reconnect after close and ACK is authoritative", async () => {
@@ -364,6 +408,218 @@ test("only one bridge instance registers a printer; reconnect after close and AC
   }
 });
 
+test("slow printer, socket loss, lost ACK and bridge restart produce one adapter output", async () => {
+  const path = await mkdtemp(join(tmpdir(), "armani-lost-print-ack-"));
+  const liveJobs = new MongoPrintJobs(connection);
+  await printOutboxHandlers(connection, schedule, "fallback")["invoice.issued"](
+    event("invoice.issued"),
+  );
+  let prints = 0;
+  let release!: () => void;
+  let began!: () => void;
+  const gate = new Promise<void>((resolve) => (release = resolve));
+  const started = new Promise<void>((resolve) => (began = resolve));
+  const file = new FilePrinter(join(path, "receipts"));
+  const adapter = {
+    async print(bytes: Uint8Array, delivery: import("../../bridge/protocol.ts").PrintDelivery) {
+      prints++;
+      began();
+      await gate;
+      await file.print(bytes, delivery);
+    },
+  };
+  const serve = () =>
+    startPrintRealtime({
+      port: 0,
+      path: "/ws",
+      heartbeatMs: 1000,
+      origins: [],
+      authorizeBridge: async (printerId, token) =>
+        printerId === "test-bridge" && token === "test_printer_bridge_token_32_characters",
+      schedule,
+      jobs: liveJobs,
+      authenticateAdmin: async () => false,
+      payload: async (job) => ({
+        jobId: job.id,
+        invoiceId: job.invoiceId,
+        printerId: job.printerId,
+        attempt: job.attempts,
+        deliveryId: job.deliveryId,
+        paperWidthMm: job.paperWidthMm,
+        html: '<!doctype html><html lang="fa" dir="rtl"><style>data:font/woff2;base64,AAAA</style></html>',
+      }),
+    });
+  const makeBridge = (port: number) =>
+    new PrintBridge(
+      {
+        url: `ws://127.0.0.1:${port}/ws?role=bridge`,
+        printerId: "test-bridge",
+        token: "test_printer_bridge_token_32_characters",
+        journalDirectory: join(path, "journal"),
+      },
+      adapter,
+      async () => Uint8Array.from([27, 64, 10]),
+      () => undefined,
+    );
+  let server = await serve();
+  let serverClosed = false;
+  const first = makeBridge(server.port);
+  const firstAbort = new AbortController();
+  const firstRun = first.run(firstAbort.signal);
+  try {
+    for (let i = 0; i < 100 && !server.available("test-bridge"); i++) await delay(50);
+    expect(server.available("test-bridge")).toBe(true);
+    await new PrintDispatcher(
+      liveJobs,
+      schedule,
+      server.deliver,
+      server.available,
+      undefined,
+      1000,
+    ).runOnce();
+    await started;
+    const [job] = await liveJobs.byOrder(orderId.toString());
+    expect(job.status).toBe("printing");
+    expect(await first.journal.read(job.id)).toMatchObject({ state: "received" });
+    await server.close();
+    serverClosed = true;
+    release();
+    for (let i = 0; i < 100 && (await first.journal.read(job.id))?.state !== "printed"; i++)
+      await delay(20);
+    expect(await first.journal.read(job.id)).toMatchObject({ state: "printed" });
+    expect((await liveJobs.get(job.id))?.status).toBe("printing");
+    firstAbort.abort();
+    await firstRun;
+    await delay(1100);
+    server = await serve();
+    serverClosed = false;
+    const restarted = makeBridge(server.port);
+    const nextAbort = new AbortController();
+    const nextRun = restarted.run(nextAbort.signal);
+    try {
+      for (let i = 0; i < 100 && !server.available("test-bridge"); i++) await delay(50);
+      expect(server.available("test-bridge")).toBe(true);
+      const dispatcher = new PrintDispatcher(
+        liveJobs,
+        schedule,
+        server.deliver,
+        server.available,
+        undefined,
+        1000,
+      );
+      await dispatcher.reconcile();
+      for (let i = 0; i < 100 && (await liveJobs.get(job.id))?.status !== "printed"; i++) {
+        await dispatcher.runOnce();
+        await delay(50);
+      }
+      expect(await liveJobs.get(job.id)).toMatchObject({ status: "printed", attempts: 2 });
+      expect((await restarted.journal.read(job.id))?.state).toMatch(/printed|acknowledged/u);
+      expect(prints).toBe(1);
+      expect(await readFile(join(path, "receipts", `${job.id}.escpos`))).toEqual(
+        Buffer.from([27, 64, 10]),
+      );
+    } finally {
+      nextAbort.abort();
+      await nextRun;
+    }
+  } finally {
+    release();
+    firstAbort.abort();
+    await firstRun.catch(() => undefined);
+    if (!serverClosed) await server.close();
+    await rm(path, { recursive: true, force: true });
+  }
+});
+
+test("malformed server job is rejected before printing and a corrected retry succeeds", async () => {
+  const path = await mkdtemp(join(tmpdir(), "armani-malformed-print-"));
+  const liveJobs = new MongoPrintJobs(connection);
+  await printOutboxHandlers(connection, schedule, "fallback")["invoice.issued"](
+    event("invoice.issued"),
+  );
+  let malformed = true;
+  let prints = 0;
+  const logs: string[] = [];
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: [],
+    authorizeBridge: async (printerId, token) =>
+      printerId === "test-bridge" && token === "test_printer_bridge_token_32_characters",
+    schedule,
+    jobs: liveJobs,
+    authenticateAdmin: async () => false,
+    payload: async (job) => ({
+      jobId: job.id,
+      invoiceId: job.invoiceId,
+      printerId: job.printerId,
+      attempt: job.attempts,
+      deliveryId: job.deliveryId,
+      paperWidthMm: job.paperWidthMm,
+      html: malformed
+        ? "<script>invalid</script>"
+        : '<!doctype html><html lang="fa" dir="rtl"><style>data:font/woff2;base64,AAAA</style></html>',
+    }),
+  });
+  const controller = new AbortController();
+  const bridge = new PrintBridge(
+    {
+      url: `ws://127.0.0.1:${server.port}/ws?role=bridge`,
+      printerId: "test-bridge",
+      token: "test_printer_bridge_token_32_characters",
+      journalDirectory: join(path, "journal"),
+    },
+    {
+      async print() {
+        prints++;
+      },
+    },
+    async () => Uint8Array.from([27, 64, 10]),
+    (name) => logs.push(name),
+  );
+  const running = bridge.run(controller.signal);
+  try {
+    for (let i = 0; i < 100 && !server.available("test-bridge"); i++) await delay(50);
+    expect(server.available("test-bridge")).toBe(true);
+    const dispatcher = new PrintDispatcher(
+      liveJobs,
+      schedule,
+      server.deliver,
+      server.available,
+      undefined,
+      1000,
+    );
+    await dispatcher.runOnce();
+    const [job] = await liveJobs.byOrder(orderId.toString());
+    for (let i = 0; i < 100 && !logs.includes("protocol_error"); i++) await delay(20);
+    expect(logs).toContain("protocol_error");
+    expect(prints).toBe(0);
+    expect(await bridge.journal.read(job.id)).toBeNull();
+    expect((await liveJobs.get(job.id))?.status).toBe("printing");
+    await delay(1100);
+    await dispatcher.reconcile();
+    expect(await liveJobs.get(job.id)).toMatchObject({
+      status: "queued",
+      lastFailureCode: "ACK_TIMEOUT",
+    });
+    malformed = false;
+    for (let i = 0; i < 100 && !server.available("test-bridge"); i++) await delay(50);
+    expect(server.available("test-bridge")).toBe(true);
+    for (let i = 0; i < 100 && (await liveJobs.get(job.id))?.status !== "printed"; i++) {
+      await dispatcher.runOnce();
+      await delay(50);
+    }
+    expect(await liveJobs.get(job.id)).toMatchObject({ status: "printed", attempts: 2 });
+    expect(prints).toBe(1);
+  } finally {
+    controller.abort();
+    await running;
+    await server.close();
+    await rm(path, { recursive: true, force: true });
+  }
+});
+
 test("admin WebSocket uses an authenticated fixed room and rejects client room commands", async () => {
   const server = await startPrintRealtime({
     port: 0,
@@ -377,6 +633,7 @@ test("admin WebSocket uses an authenticated fixed room and rejects client room c
     payload: async () => ({}),
     now,
   });
+
   try {
     const ws = new WebSocket(`ws://127.0.0.1:${server.port}/ws?role=admin`, {
       headers: { Origin: "https://caffe.example", Cookie: "admin_cookie=valid" },
@@ -394,6 +651,112 @@ test("admin WebSocket uses an authenticated fixed room and rejects client room c
     });
     await new Promise<void>((resolve) => rejected.once("error", () => resolve()));
   } finally {
+    await server.close();
+  }
+});
+
+test("orders room is separately authorized, read-only, and broadcasts identity-only hints", async () => {
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: ["https://caffe.example"],
+    authorizeBridge: async () => false,
+    schedule,
+    jobs,
+    authenticateAdmin: async () => false,
+    authenticateOrders: async (cookie) => cookie === "admin_cookie=orders",
+    payload: async () => ({}),
+    now,
+  });
+  try {
+    const socket = new WebSocket(`ws://127.0.0.1:${server.port}/ws?role=orders`, {
+      headers: { Origin: "https://caffe.example", Cookie: "admin_cookie=orders" },
+    });
+    const message = () =>
+      new Promise<Record<string, unknown>>((resolve, reject) => {
+        socket.once("message", (data) => resolve(JSON.parse(data.toString())));
+        socket.once("error", reject);
+      });
+    expect(await message()).toMatchObject({ type: "orders.ready", room: "tenant:default:orders" });
+    const notice = message();
+    server.broadcastOrder({
+      eventId: "a".repeat(24),
+      orderId: "b".repeat(24),
+      change: "order.confirmed",
+      at: now().toISOString(),
+    });
+    expect(await notice).toEqual({
+      v: 1,
+      type: "order.changed",
+      eventId: "a".repeat(24),
+      orderId: "b".repeat(24),
+      change: "order.confirmed",
+      at: now().toISOString(),
+    });
+    const closed = new Promise<number>((resolve) => socket.once("close", (code) => resolve(code)));
+    socket.send(JSON.stringify({ type: "join", room: "tenant:other:orders" }));
+    expect(await closed).toBe(1008);
+    const rejected = new WebSocket(`ws://127.0.0.1:${server.port}/ws?role=orders`, {
+      headers: { Origin: "https://caffe.example", Cookie: "admin_cookie=invalid" },
+    });
+    await new Promise<void>((resolve) => rejected.once("error", () => resolve()));
+  } finally {
+    await server.close();
+  }
+});
+
+test("print room reports bridge presence and clears it after disconnect", async () => {
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: ["https://caffe.example"],
+    authorizeBridge: async (printerId, token) =>
+      printerId === "test-bridge" && token === "test_bridge_secret_32_characters_long",
+    schedule,
+    jobs,
+    authenticateAdmin: async (cookie) => cookie === "admin_cookie=valid",
+    payload: async () => ({}),
+    now,
+  });
+  const admin = new WebSocket(`ws://127.0.0.1:${server.port}/ws?role=admin`, {
+    headers: { Origin: "https://caffe.example", Cookie: "admin_cookie=valid" },
+  });
+  const read = (socket: WebSocket) =>
+    new Promise<Record<string, unknown>>((resolve) =>
+      socket.once("message", (bytes) => resolve(JSON.parse(bytes.toString()))),
+    );
+  let bridge: WebSocket | null = null;
+  try {
+    expect(await read(admin)).toMatchObject({ type: "admin.ready" });
+    const online = read(admin);
+    bridge = new WebSocket(`ws://127.0.0.1:${server.port}/ws?role=bridge`);
+    await new Promise<void>((resolve) => bridge!.once("open", resolve));
+    bridge.send(
+      JSON.stringify({
+        v: 1,
+        type: "register",
+        printerId: "test-bridge",
+        token: "test_bridge_secret_32_characters_long",
+        instanceId: "instance-one",
+      }),
+    );
+    expect(await online).toMatchObject({
+      type: "bridge.presence",
+      printerId: "test-bridge",
+      online: true,
+    });
+    const offline = read(admin);
+    bridge.close();
+    expect(await offline).toMatchObject({
+      type: "bridge.presence",
+      printerId: "test-bridge",
+      online: false,
+    });
+  } finally {
+    bridge?.terminate();
+    admin.terminate();
     await server.close();
   }
 });
