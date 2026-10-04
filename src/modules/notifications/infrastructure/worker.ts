@@ -1,9 +1,8 @@
 import "server-only";
 
-import { setTimeout as delay } from "node:timers/promises";
-
 import type { Connection } from "mongoose";
 
+import { runRecoveringLoop } from "../../../server/lifecycle/recovering-loop.ts";
 import { logEvent, withRequestContext } from "../../../server/observability/index.ts";
 import { retryDelayMs } from "../domain/delivery-policy.ts";
 import { type ClaimedOutbox, claimOutbox, failOutbox, finishOutbox } from "./repository.ts";
@@ -84,14 +83,15 @@ export class OutboxWorker {
             : "NO_HANDLER";
         const backoff = retryDelayMs(claim.attempts, this.options.random);
         const updated = await failOutbox(this.connection, claim, now(), code, backoff);
+        const dead = claim.attempts >= claim.maxAttempts;
         logEvent(
-          updated ? "warn" : "error",
-          updated ? "outbox.delivery_failed" : "outbox.lease_lost",
+          !updated || dead ? "error" : "warn",
+          !updated ? "outbox.lease_lost" : dead ? "outbox.dead_letter" : "outbox.delivery_failed",
           {
             eventId: claim.id,
             eventType: claim.eventType,
             attempt: claim.attempts,
-            dead: claim.attempts >= claim.maxAttempts,
+            dead,
             code,
             error,
           },
@@ -104,16 +104,21 @@ export class OutboxWorker {
   }
 
   async run(signal: AbortSignal): Promise<void> {
-    const pollMs = this.options.pollMs ?? 1000;
-    while (!signal.aborted) {
-      const found = await this.runOnce();
-      if (!found) {
-        try {
-          await delay(pollMs, undefined, { signal });
-        } catch {
-          break;
-        }
-      }
-    }
+    await runRecoveringLoop(signal, () => this.runOnce(), {
+      idleMs: this.options.pollMs ?? 1000,
+      random: this.options.random,
+      onFailure: (error, attempt, retryMs) =>
+        logEvent("error", "outbox.worker_unavailable", {
+          workerId: this.options.workerId,
+          attempt,
+          retryMs,
+          error,
+        }),
+      onRecovery: (failures) =>
+        logEvent("info", "outbox.worker_recovered", {
+          workerId: this.options.workerId,
+          failures,
+        }),
+    });
   }
 }

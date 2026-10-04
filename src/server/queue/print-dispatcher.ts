@@ -1,8 +1,8 @@
 import "server-only";
 
-import { setTimeout as delay } from "node:timers/promises";
-
 import { MongoPrintJobs, type PrintJobView } from "../../modules/printing/server.ts";
+import { runRecoveringLoop } from "../lifecycle/recovering-loop.ts";
+import { logEvent } from "../observability/index.ts";
 import type { PrintSchedule } from "./print-redis.ts";
 
 export class PrintDispatcher {
@@ -31,6 +31,12 @@ export class PrintDispatcher {
   async reconcile(): Promise<void> {
     for (const expired of await this.jobs.expired()) {
       const retried = await this.jobs.expire(expired);
+      if (retried?.status === "dead")
+        logEvent("error", "print.dead_letter", {
+          jobId: retried.id,
+          attempts: retried.attempts,
+          code: "ACK_TIMEOUT",
+        });
       if (retried?.status === "queued" && retried.nextAttemptAt)
         await this.schedule.schedule(retried.id, new Date(retried.nextAttemptAt));
     }
@@ -55,8 +61,18 @@ export class PrintDispatcher {
       delivered = true;
       try {
         if (!(await this.deliver(claim))) throw new Error("Bridge unavailable");
-      } catch {
+      } catch (error) {
         const retried = await this.jobs.fail(claim, "DELIVERY_FAILED");
+        logEvent(
+          retried?.status === "dead" ? "error" : "warn",
+          retried?.status === "dead" ? "print.dead_letter" : "print.delivery_failed",
+          {
+            jobId: claim.id,
+            attempts: claim.attempts,
+            code: "DELIVERY_FAILED",
+            error,
+          },
+        );
         if (retried?.status === "queued" && retried.nextAttemptAt)
           await this.schedule.schedule(retried.id, new Date(retried.nextAttemptAt));
       }
@@ -65,13 +81,12 @@ export class PrintDispatcher {
     return delivered;
   }
   async run(signal: AbortSignal): Promise<void> {
-    while (!signal.aborted) {
-      await this.runOnce();
-      try {
-        await delay(500, undefined, { signal });
-      } catch {
-        break;
-      }
-    }
+    await runRecoveringLoop(signal, () => this.runOnce(), {
+      idleMs: 500,
+      activeMs: 500,
+      onFailure: (error, attempt, retryMs) =>
+        logEvent("error", "print.dispatcher_unavailable", { attempt, retryMs, error }),
+      onRecovery: (failures) => logEvent("info", "print.dispatcher_recovered", { failures }),
+    });
   }
 }

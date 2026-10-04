@@ -6,7 +6,12 @@ import { closeQueueResources } from "../queue/index.ts";
 import { closeRealtimeResources } from "../realtime/index.ts";
 
 type Close = () => Promise<void>;
-type State = { closers: Map<string, Close>; shutdown: Promise<boolean> | null; installed: boolean };
+type Resource = { close: Close; timeoutMs: number };
+type State = {
+  closers: Map<string, Resource>;
+  shutdown: Promise<boolean> | null;
+  installed: boolean;
+};
 const store = globalThis as typeof globalThis & { __armaniLifecycle?: State };
 const state = (store.__armaniLifecycle ??= {
   closers: new Map(),
@@ -14,20 +19,22 @@ const state = (store.__armaniLifecycle ??= {
   installed: false,
 });
 
-export function registerResource(name: string, close: Close): () => void {
+export function registerResource(name: string, close: Close, timeoutMs = 5000): () => void {
   if (state.shutdown) throw new Error("Cannot register resources during shutdown");
   if (state.closers.has(name)) throw new Error(`Resource already registered: ${name}`);
-  state.closers.set(name, close);
+  if (!Number.isSafeInteger(timeoutMs) || timeoutMs < 100 || timeoutMs > 30_000)
+    throw new RangeError("Invalid resource shutdown timeout");
+  state.closers.set(name, { close, timeoutMs });
   return () => state.closers.delete(name);
 }
 
-async function closeWithin(name: string, close: Close): Promise<boolean> {
+async function closeWithin(name: string, resource: Resource): Promise<boolean> {
   let timer: ReturnType<typeof setTimeout>;
   try {
     await Promise.race([
-      close(),
+      resource.close(),
       new Promise<never>((_, reject) => {
-        timer = setTimeout(() => reject(new Error("Shutdown timed out")), 5000);
+        timer = setTimeout(() => reject(new Error("Shutdown timed out")), resource.timeoutMs);
       }),
     ]);
     logEvent("info", "resource.closed", { resource: name });
@@ -44,7 +51,8 @@ export function shutdownResources(): Promise<boolean> {
   if (state.shutdown) return state.shutdown;
   state.shutdown = (async () => {
     const resources = [...state.closers.entries()].reverse();
-    const results = await Promise.all(resources.map(([name, close]) => closeWithin(name, close)));
+    const results: boolean[] = [];
+    for (const [name, resource] of resources) results.push(await closeWithin(name, resource));
     state.closers.clear();
     return results.every(Boolean);
   })();

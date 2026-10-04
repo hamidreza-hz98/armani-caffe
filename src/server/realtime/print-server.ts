@@ -47,18 +47,21 @@ export async function startPrintRealtime(options: RealtimeOptions) {
       return;
     }
     if (request.url === "/ready") {
+      let timer: ReturnType<typeof setTimeout> | undefined;
       try {
         await Promise.race([
           options.schedule.ping(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error("queue timeout")), 2000),
-          ),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error("queue timeout")), 2000);
+          }),
         ]);
         response.writeHead(200);
         response.end(JSON.stringify({ status: "ready" }));
       } catch {
         response.writeHead(503);
         response.end(JSON.stringify({ status: "not_ready" }));
+      } finally {
+        if (timer) clearTimeout(timer);
       }
       return;
     }

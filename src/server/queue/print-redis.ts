@@ -20,24 +20,36 @@ const refreshScript =
 const releaseScript =
   "if redis.call('GET',KEYS[1]) == ARGV[1] then return redis.call('DEL',KEYS[1]) else return 0 end";
 
-export async function createPrintRedis(url: string, prefix: string): Promise<PrintSchedule> {
+export async function createPrintRedis(
+  url: string,
+  prefix: string,
+  startupTimeoutMs = 5000,
+): Promise<PrintSchedule> {
   if (!/^[a-zA-Z0-9:_-]{3,100}$/u.test(prefix)) throw new Error("Invalid queue prefix");
+  if (
+    !Number.isSafeInteger(startupTimeoutMs) ||
+    startupTimeoutMs < 100 ||
+    startupTimeoutMs > 10_000
+  )
+    throw new RangeError("Invalid Redis startup timeout");
   const client = createClient({
     url,
+    disableOfflineQueue: true,
     socket: {
       connectTimeout: 2500,
       reconnectStrategy: (retries) =>
-        retries >= 3
-          ? new Error("Redis connection unavailable")
-          : Math.min(2000, 100 * 2 ** Math.min(retries, 5)),
+        Math.min(5000, 100 * 2 ** Math.min(retries, 6)) + Math.floor(Math.random() * 250),
     },
   });
   client.on("error", (error) => logEvent("warn", "print.redis_error", { error }));
+  const startupTimeout = setTimeout(() => client.destroy(), startupTimeoutMs);
   try {
     await client.connect();
   } catch (error) {
     client.destroy();
     throw error;
+  } finally {
+    clearTimeout(startupTimeout);
   }
   const dueKey = `${prefix}:print:due`;
   const presenceKey = (id: string) => `${prefix}:printer:presence:${id}`;
@@ -71,7 +83,8 @@ export async function createPrintRedis(url: string, prefix: string): Promise<Pri
       if ((await client.ping()) !== "PONG") throw new Error("Redis queue unavailable");
     },
     async close() {
-      await client.close();
+      if (client.isReady) await client.close();
+      else client.destroy();
     },
   };
 }

@@ -25,6 +25,7 @@ const { createSettingsRepository, SettingsVault } =
   await import("../src/modules/settings/server.ts");
 const { installShutdownHandlers, registerResource } =
   await import("../src/server/lifecycle/index.ts");
+installShutdownHandlers();
 
 const connection = await getDatabaseConnection();
 if (!(await connection.db.collection("_schema_migrations").findOne({ _id: 13 })))
@@ -132,12 +133,16 @@ const outbox = new OutboxWorker(
   { workerId: `print-${randomUUID()}` },
 );
 const controller = new AbortController();
-installShutdownHandlers();
-registerResource("print-loops", async () => {
-  controller.abort();
-});
-await dispatcher.reconcile();
 console.log(
   `Realtime print service listening on 127.0.0.1:${config.webSocket.port}${config.webSocket.path}`,
 );
-await Promise.all([dispatcher.run(controller.signal), outbox.run(controller.signal)]);
+const loops = Promise.all([dispatcher.run(controller.signal), outbox.run(controller.signal)]);
+registerResource(
+  "print-loops",
+  async () => {
+    controller.abort();
+    await loops;
+  },
+  30_000,
+);
+await loops;

@@ -22,6 +22,9 @@ getServerConfig();
 const { getDatabaseConnection, closeDatabaseConnection } =
   await import("../src/server/database/connection.ts");
 const { OutboxWorker, replayOutbox } = await import("../src/modules/notifications/server.ts");
+const { installShutdownHandlers, registerResource } =
+  await import("../src/server/lifecycle/index.ts");
+if (command === "work") installShutdownHandlers();
 const connection = await getDatabaseConnection();
 
 if (command === "replay") {
@@ -36,16 +39,19 @@ if (command === "replay") {
     await closeDatabaseConnection();
   }
 } else {
-  const { installShutdownHandlers, registerResource } =
-    await import("../src/server/lifecycle/index.ts");
-  installShutdownHandlers();
   const controller = new AbortController();
-  registerResource("outbox-worker", async () => {
-    controller.abort();
-  });
   const worker = new OutboxWorker(connection, {}, { workerId: `outbox-${randomUUID()}` });
+  const running = worker.run(controller.signal);
+  registerResource(
+    "outbox-worker",
+    async () => {
+      controller.abort();
+      await running;
+    },
+    30_000,
+  );
   console.log(
     "Outbox worker started without delivery handlers. It will not claim events until handlers are registered.",
   );
-  await worker.run(controller.signal);
+  await running;
 }

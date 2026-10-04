@@ -189,6 +189,57 @@ test("socket delivery is not success; matching ACK succeeds once and stale ACK i
   expect((await jobs.byOrder(orderId.toString()))[0].attempts).toBe(1);
 });
 
+test("dispatcher survives a temporary Redis schedule error and resumes polling", async () => {
+  const flaky = new MemorySchedule();
+  const controller = new AbortController();
+  let calls = 0;
+  flaky.due = async () => {
+    calls += 1;
+    if (calls === 1) throw new Error("Redis temporarily unavailable");
+    controller.abort();
+    return [];
+  };
+  const dispatcher = new PrintDispatcher(
+    jobs,
+    flaky,
+    async () => true,
+    () => true,
+    now,
+  );
+  await dispatcher.run(controller.signal);
+  expect(calls).toBe(2);
+});
+
+test("realtime liveness stays up while queue readiness drops and recovers", async () => {
+  const unstable = new MemorySchedule();
+  let queueUp = true;
+  unstable.ping = async () => {
+    if (!queueUp) throw new Error("Redis down");
+  };
+  const server = await startPrintRealtime({
+    port: 0,
+    path: "/ws",
+    heartbeatMs: 1000,
+    origins: [],
+    authorizeBridge: async () => false,
+    schedule: unstable,
+    jobs,
+    authenticateAdmin: async () => false,
+    payload: async () => ({}),
+  });
+  try {
+    const origin = `http://127.0.0.1:${server.port}`;
+    expect((await fetch(`${origin}/ready`)).status).toBe(200);
+    queueUp = false;
+    expect((await fetch(`${origin}/live`)).status).toBe(200);
+    expect((await fetch(`${origin}/ready`)).status).toBe(503);
+    queueUp = true;
+    expect((await fetch(`${origin}/ready`)).status).toBe(200);
+  } finally {
+    await server.close();
+  }
+});
+
 test("lost ACK and process/Redis restart reconcile one leased job for bounded redelivery", async () => {
   await printOutboxHandlers(connection, schedule, "fallback", now)["invoice.issued"](
     event("invoice.issued"),

@@ -106,7 +106,10 @@ export async function probePrintQueue(): Promise<void> {
   const config = getServerConfig();
   const prefix =
     config.mode === "test" ? (process.env.TEST_REDIS_PREFIX ?? "armani-test") : "armani";
-  const queue = await bounded(createPrintRedis(config.redisUrl, prefix), "Print queue connection");
+  const queue = await bounded(
+    createPrintRedis(config.redisUrl, prefix, 2000),
+    "Print queue connection",
+  );
   try {
     await bounded(queue.ping(), "Print queue ping");
   } finally {
