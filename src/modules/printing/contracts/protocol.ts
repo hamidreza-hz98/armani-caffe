@@ -35,6 +35,10 @@ export function parseBridgeMessage(raw: string): BridgeMessage {
       throw new ApplicationError("VALIDATION", "Unknown realtime field");
   };
   const text = (item: unknown, pattern: RegExp) => typeof item === "string" && pattern.test(item);
+  const timestamp = (item: unknown) =>
+    text(item, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/u) &&
+    Number.isFinite(Date.parse(item as string)) &&
+    new Date(item as string).toISOString() === item;
   const id = /^[a-f\d]{24}$/u,
     printer = /^[a-zA-Z0-9_-]{1,64}$/u;
   if (row.type === "register") {
@@ -49,11 +53,7 @@ export function parseBridgeMessage(raw: string): BridgeMessage {
   }
   if (row.type === "heartbeat") {
     keys(["v", "type", "at"]);
-    if (
-      !text(row.at, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/u) ||
-      !Number.isFinite(Date.parse(row.at as string))
-    )
-      throw new ApplicationError("VALIDATION", "Invalid heartbeat");
+    if (!timestamp(row.at)) throw new ApplicationError("VALIDATION", "Invalid heartbeat");
     return row as BridgeMessage;
   }
   if (row.type === "ack") {
@@ -65,8 +65,9 @@ export function parseBridgeMessage(raw: string): BridgeMessage {
       (row.attempt as number) < 1 ||
       !text(row.deliveryId, /^[a-f\d-]{36}$/u) ||
       !["printed", "error"].includes(row.result as string) ||
-      !text(row.at, /^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{3}Z$/u) ||
-      (row.errorCode !== undefined && !text(row.errorCode, /^[A-Z0-9_]{2,40}$/u))
+      !timestamp(row.at) ||
+      (row.errorCode !== undefined &&
+        (row.result !== "error" || !text(row.errorCode, /^[A-Z0-9_]{2,40}$/u)))
     )
       throw new ApplicationError("VALIDATION", "Invalid print ACK");
     return row as BridgeMessage;

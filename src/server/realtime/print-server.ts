@@ -130,69 +130,88 @@ export async function startPrintRealtime(options: RealtimeOptions) {
         }
         let registered: { printerId: string; nonce: string } | null = null;
         const registrationTimer = setTimeout(() => ws.close(1008, "Registration timeout"), 5000);
+        // Process frames in arrival order. Async authorization must not allow a second
+        // registration or ACK to overtake the first frame on the same connection.
+        let messageQueue = Promise.resolve();
+        let pendingMessages = 0;
         ws.on("message", (bytes) => {
-          void (async () => {
-            const message = parseBridgeMessage(bytes.toString());
-            if (!registered) {
-              if (
-                message.type !== "register" ||
-                !(await options.authorizeBridge(message.printerId, message.token))
-              )
-                throw new Error("Bridge registration rejected");
-              const nonce = randomUUID();
-              if (
-                bridges.has(message.printerId) ||
-                !(await options.schedule.acquirePresence(message.printerId, nonce, presenceTtl))
-              )
-                throw new Error("Printer already connected");
-              registered = { printerId: message.printerId, nonce };
-              bridges.set(message.printerId, {
-                socket: ws,
-                nonce,
-                instanceId: message.instanceId,
-                lastSeen: now().getTime(),
-                pong: true,
-              });
-              announcePresence(message.printerId, true);
-              clearTimeout(registrationTimer);
-              send(ws, {
-                type: "registered",
-                printerId: message.printerId,
-                heartbeatMs: options.heartbeatMs,
-              });
-              return;
-            }
-            if (message.type === "heartbeat") {
-              if (Math.abs(now().getTime() - Date.parse(message.at)) > presenceTtl)
-                throw new Error("Stale heartbeat");
-              if (
-                !(await options.schedule.refreshPresence(
-                  registered.printerId,
-                  registered.nonce,
-                  presenceTtl,
-                ))
-              )
-                throw new Error("Presence lease lost");
-              const current = bridges.get(registered.printerId);
-              if (current?.socket === ws) current.lastSeen = now().getTime();
-              send(ws, { type: "heartbeat.ack", at: now().toISOString() });
-              return;
-            }
-            if (message.type === "ack" && message.printerId === registered.printerId) {
-              const job = await options.jobs.acknowledge(message);
-              if (job.status === "queued" && job.nextAttemptAt)
-                await options.schedule.schedule(job.id, new Date(job.nextAttemptAt));
-              send(ws, {
-                type: "ack.accepted",
-                jobId: job.id,
-                status: job.status,
-                attempt: job.attempts,
-              });
-              announce(job);
-              return;
-            }
-            throw new Error("Message not allowed for bridge");
-          })().catch(() => ws.close(1008, "Protocol error"));
+          if (++pendingMessages > 32) {
+            ws.close(1008, "Too many pending messages");
+            return;
+          }
+          messageQueue = messageQueue
+            .then(async () => {
+              if (ws.readyState !== WebSocket.OPEN) return;
+              const message = parseBridgeMessage(bytes.toString());
+              if (!registered) {
+                if (
+                  message.type !== "register" ||
+                  !(await options.authorizeBridge(message.printerId, message.token))
+                )
+                  throw new Error("Bridge registration rejected");
+                if (ws.readyState !== WebSocket.OPEN) return;
+                const nonce = randomUUID();
+                if (
+                  bridges.has(message.printerId) ||
+                  !(await options.schedule.acquirePresence(message.printerId, nonce, presenceTtl))
+                )
+                  throw new Error("Printer already connected");
+                if (ws.readyState !== WebSocket.OPEN) {
+                  await options.schedule.releasePresence(message.printerId, nonce);
+                  return;
+                }
+                registered = { printerId: message.printerId, nonce };
+                bridges.set(message.printerId, {
+                  socket: ws,
+                  nonce,
+                  instanceId: message.instanceId,
+                  lastSeen: now().getTime(),
+                  pong: true,
+                });
+                announcePresence(message.printerId, true);
+                clearTimeout(registrationTimer);
+                send(ws, {
+                  type: "registered",
+                  printerId: message.printerId,
+                  heartbeatMs: options.heartbeatMs,
+                });
+                return;
+              }
+              if (message.type === "heartbeat") {
+                if (Math.abs(now().getTime() - Date.parse(message.at)) > presenceTtl)
+                  throw new Error("Stale heartbeat");
+                if (
+                  !(await options.schedule.refreshPresence(
+                    registered.printerId,
+                    registered.nonce,
+                    presenceTtl,
+                  ))
+                )
+                  throw new Error("Presence lease lost");
+                const current = bridges.get(registered.printerId);
+                if (current?.socket === ws) current.lastSeen = now().getTime();
+                send(ws, { type: "heartbeat.ack", at: now().toISOString() });
+                return;
+              }
+              if (message.type === "ack" && message.printerId === registered.printerId) {
+                const job = await options.jobs.acknowledge(message);
+                if (job.status === "queued" && job.nextAttemptAt)
+                  await options.schedule.schedule(job.id, new Date(job.nextAttemptAt));
+                send(ws, {
+                  type: "ack.accepted",
+                  jobId: job.id,
+                  status: job.status,
+                  attempt: job.attempts,
+                });
+                announce(job);
+                return;
+              }
+              throw new Error("Message not allowed for bridge");
+            })
+            .catch(() => ws.close(1008, "Protocol error"))
+            .finally(() => {
+              pendingMessages--;
+            });
         });
         ws.on("pong", () => {
           if (registered) {

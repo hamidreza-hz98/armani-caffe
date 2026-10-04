@@ -60,7 +60,19 @@ describe("shared application foundations", () => {
     const csp = production.find((header) => header.key === "Content-Security-Policy")!.value;
     expect(csp).toContain("object-src 'none'");
     expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("worker-src 'self'");
     expect(csp).not.toContain("unsafe-eval");
+    expect(production).toContainEqual({
+      key: "Strict-Transport-Security",
+      value: "max-age=31536000",
+    });
+    expect(production).toContainEqual({
+      key: "Cross-Origin-Resource-Policy",
+      value: "same-origin",
+    });
+    expect(
+      securityHeaders("development").some((header) => header.key === "Strict-Transport-Security"),
+    ).toBe(false);
     expect(securityHeaders("production", "wss://socket.example/ws")[0].value).toContain(
       "connect-src 'self' wss://socket.example",
     );

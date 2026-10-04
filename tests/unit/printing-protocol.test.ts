@@ -45,6 +45,7 @@ test("print protocol rejects unknown versions, fields, identities and oversized 
       instanceId: "instance-001",
     },
     { v: 1, type: "heartbeat", at: "2026-01-01T00:00:00.000Z", tenant: "other" },
+    { v: 1, type: "heartbeat", at: "2026-02-30T00:00:00.000Z" },
     {
       v: 1,
       type: "ack",
@@ -53,6 +54,17 @@ test("print protocol rejects unknown versions, fields, identities and oversized 
       attempt: 0,
       deliveryId: "00000000-0000-0000-0000-000000000000",
       result: "printed",
+      at: "2026-01-01T00:00:00.000Z",
+    },
+    {
+      v: 1,
+      type: "ack",
+      jobId: "0".repeat(24),
+      printerId: "printer_1",
+      attempt: 1,
+      deliveryId: "00000000-0000-0000-0000-000000000000",
+      result: "printed",
+      errorCode: "PAPER_OUT",
       at: "2026-01-01T00:00:00.000Z",
     },
   ])
