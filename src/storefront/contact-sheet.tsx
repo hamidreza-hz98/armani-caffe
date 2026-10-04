@@ -42,7 +42,7 @@ export function ContactSheet({
         <div className={styles.sheetHandle} aria-hidden="true" />
         <div className={styles.sheetHeading}>
           <div>
-            <h2 id="contact-title">ارتباط با کافه آرمانی</h2>
+            <h2 id="contact-title">ارتباط با آرمانی کافه</h2>
             <p>راه‌های ارتباط و مسیریابی</p>
           </div>
           <IconButton

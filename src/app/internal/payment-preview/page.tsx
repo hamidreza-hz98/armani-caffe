@@ -1,7 +1,12 @@
+import type { Metadata } from "next";
+
 import type { CheckoutView, OrderView } from "@/modules/orders";
 import { asToman } from "@/shared/domain";
 import type { PaymentResult } from "@/storefront/payment-result";
 import { PaymentResultView } from "@/storefront/payment-view";
+import { privatePageMetadata } from "@/storefront/seo";
+
+export const metadata: Metadata = { ...privatePageMetadata, title: "پیش‌نمایش نتیجه پرداخت" };
 
 const checkoutId = "a".repeat(24);
 const orderId = "c".repeat(24);

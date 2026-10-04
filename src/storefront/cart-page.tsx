@@ -336,7 +336,7 @@ function CartContent({
       </div>
       <section className={styles.card} aria-labelledby="customer-summary-title">
         <h2 id="customer-summary-title">اطلاعات مشتری</h2>
-        <p>{customer?.displayName || "مشتری کافه آرمانی"}</p>
+        <p>{customer?.displayName || "مشتری آرمانی کافه"}</p>
         <bdi dir="ltr">{customer?.phone ?? "شماره حساب شما هنگام پرداخت بررسی می‌شود"}</bdi>
       </section>
       <section className={styles.card} aria-labelledby="pickup-title">

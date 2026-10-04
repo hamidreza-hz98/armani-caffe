@@ -21,14 +21,14 @@ test("contact sheet opens, presents safe link, and closes accessibly", async () 
     />,
   );
   fireEvent.click(screen.getByRole("button", { name: "ارتباط با ما" }));
-  expect(screen.getByRole("dialog", { name: "ارتباط با کافه آرمانی" })).toBeVisible();
+  expect(screen.getByRole("dialog", { name: "ارتباط با آرمانی کافه" })).toBeVisible();
   expect(screen.getByRole("link", { name: /تماس با کافه/ })).toHaveAttribute(
     "href",
     "tel:+989121234567",
   );
   fireEvent.click(screen.getByRole("button", { name: "بستن پنجره ارتباط" }));
   await waitFor(() =>
-    expect(screen.queryByRole("dialog", { name: "ارتباط با کافه آرمانی" })).not.toBeInTheDocument(),
+    expect(screen.queryByRole("dialog", { name: "ارتباط با آرمانی کافه" })).not.toBeInTheDocument(),
   );
 });
 

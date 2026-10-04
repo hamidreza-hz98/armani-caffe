@@ -19,9 +19,9 @@ for (const [width, height] of [
       width,
     );
     await page.getByRole("button", { name: "ارتباط با ما" }).click();
-    await expect(page.getByRole("dialog", { name: "ارتباط با کافه آرمانی" })).toBeVisible();
+    await expect(page.getByRole("dialog", { name: "ارتباط با آرمانی کافه" })).toBeVisible();
     await page.getByRole("button", { name: "بستن پنجره ارتباط" }).click();
-    await expect(page.getByRole("dialog", { name: "ارتباط با کافه آرمانی" })).toBeHidden();
+    await expect(page.getByRole("dialog", { name: "ارتباط با آرمانی کافه" })).toBeHidden();
     const results = await new AxeBuilder({ page }).analyze();
     expect(results.violations).toEqual([]);
   });

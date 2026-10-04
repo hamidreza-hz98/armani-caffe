@@ -18,7 +18,7 @@ export default async function BasicMenu() {
   return (
     <StorefrontShell
       data={{
-        businessName: "کافه آرمانی",
+        businessName: "آرمانی کافه",
         account: { state: "guest", name: null },
         cartCount: 0,
         contacts: [],

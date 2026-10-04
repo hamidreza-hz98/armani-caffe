@@ -3,6 +3,8 @@ import { type ReactNode, Suspense } from "react";
 
 import { createSettingsService } from "@/modules/settings/server";
 import { loadStorefrontShell } from "@/storefront/data";
+import { storefrontMetadata } from "@/storefront/seo";
+import { canonicalStorefrontUrl } from "@/storefront/seo-server";
 import {
   StorefrontFrame,
   StorefrontHeader,
@@ -13,19 +15,26 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
-    const { business, seo } = await (await createSettingsService()).publicSettings();
-    return {
-      title: { default: seo.title, template: seo.titleTemplate },
-      description: seo.description || business.description || undefined,
-      robots: { index: seo.indexable, follow: seo.indexable },
-      icons: {
-        icon: business.faviconMediaId
-          ? `/api/media/${business.faviconMediaId}/file?variant=small`
-          : "/armani-icon.svg",
-      },
-    };
+    const settings = await (await createSettingsService()).publicSettings();
+    return storefrontMetadata(settings, canonicalStorefrontUrl().href);
   } catch {
-    return { title: "آرمانی کافه", icons: { icon: "/armani-icon.svg" } };
+    const home = canonicalStorefrontUrl();
+    return {
+      metadataBase: home,
+      title: "آرمانی کافه",
+      description: "منوی آنلاین آرمانی کافه",
+      alternates: { canonical: home.href },
+      robots: { index: false, follow: false, nocache: true },
+      openGraph: {
+        type: "website",
+        locale: "fa_IR",
+        title: "آرمانی کافه",
+        description: "منوی آنلاین آرمانی کافه",
+        url: home.href,
+        images: [{ url: new URL("/social-preview", home).href, width: 1200, height: 630 }],
+      },
+      icons: { icon: "/armani-icon.svg" },
+    };
   }
 }
 

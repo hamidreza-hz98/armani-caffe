@@ -158,7 +158,7 @@ export function CustomerAuthSheet() {
         </span>
         <div>
           <h2 id="customer-auth-title">
-            {mode === "login" ? "ورود به حساب" : "عضویت در کافه آرمانی"}
+            {mode === "login" ? "ورود به حساب" : "عضویت در آرمانی کافه"}
           </h2>
           <p>
             {mode === "login"
