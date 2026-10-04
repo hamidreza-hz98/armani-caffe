@@ -1,6 +1,7 @@
 import { ApplicationError } from "./errors.ts";
 
 const usernamePattern = /^[a-z][a-z0-9._-]{2,39}$/u;
+const mobileUsernamePattern = /^09[0-9]{9}$/u;
 const emailPattern =
   /^[a-z0-9](?:[a-z0-9._%+-]{0,62}[a-z0-9])?@[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z][a-z0-9-]{1,23})+$/u;
 
@@ -8,7 +9,7 @@ export function validAdminUsername(value: string): boolean {
   return (
     value.length <= 80 &&
     !value.includes("..") &&
-    (usernamePattern.test(value) || emailPattern.test(value))
+    (usernamePattern.test(value) || emailPattern.test(value) || mobileUsernamePattern.test(value))
   );
 }
 

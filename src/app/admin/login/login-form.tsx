@@ -40,7 +40,7 @@ export function AdminLoginForm() {
         <Typography variant="h1">ورود مدیر</Typography>
         <TextField
           name="username"
-          label="نام کاربری یا ایمیل"
+          label="نام کاربری، ایمیل یا موبایل"
           autoComplete="username"
           required
           slotProps={{ htmlInput: { maxLength: 80, dir: "ltr" } }}

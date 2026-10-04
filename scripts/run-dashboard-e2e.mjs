@@ -15,6 +15,11 @@ const suites = [
   ["--with-admin-db", "dashboard-business-settings.spec.ts"],
   ["--with-admin-db", "shared-states-accessibility.spec.ts"],
 ];
+const fromArg = process.argv.find((arg) => arg.startsWith("--from="));
+const startAt = fromArg ? Number(fromArg.slice("--from=".length)) : 1;
+if (!Number.isInteger(startAt) || startAt < 1 || startAt > suites.length) {
+  throw new Error(`--from must be between 1 and ${suites.length}`);
+}
 
 async function run(args, skipBuild) {
   await new Promise((resolve, reject) => {
@@ -30,6 +35,7 @@ async function run(args, skipBuild) {
 }
 
 for (const [index, suite] of suites.entries()) {
+  if (index + 1 < startAt) continue;
   console.log(`\nDashboard E2E ${index + 1}/${suites.length}: ${suite.at(-1)}`);
-  await run(suite, index > 0);
+  await run(suite, index + 1 > startAt || process.env.E2E_SKIP_BUILD === "1");
 }

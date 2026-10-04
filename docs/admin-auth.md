@@ -2,7 +2,7 @@
 
 Task 14 adds server-verified `OWNER` and `CASHIER` identities. The capability map in `src/shared/admin-capabilities.ts` is the single role-policy source. Admin pages and API handlers check sessions, and privileged application services repeat authorization at the service boundary. Sensitive admin mutations also recheck authority inside the MongoDB transaction. Client-supplied IDs, roles, or forwarded-IP headers never establish identity.
 
-Admin usernames may be either a short Latin handle or a normalized lowercase email address (up to 80 characters). The same value is entered on the login page; email-format usernames are not a separate email-login alias. Uniqueness remains enforced by the `admin_username_unique` index.
+Admin usernames may be a short Latin handle, a normalized lowercase email address (up to 80 characters), or an 11-digit Iranian mobile beginning with `09`. The same value is entered on the login page; email and mobile usernames are not separate login aliases. The admin `phone` field is independently normalized to `+98...`. Uniqueness remains enforced by the `admin_username_unique` index.
 
 ## First owner and database rollout
 

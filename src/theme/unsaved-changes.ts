@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useLayoutEffect, useRef } from "react";
 
 import { useFeedback } from "./feedback-provider";
 
@@ -8,7 +8,9 @@ import { useFeedback } from "./feedback-provider";
 export function useUnsavedChanges(dirty: boolean, message = "تغییرات ذخیره‌نشده از دست می‌روند.") {
   const feedback = useFeedback();
   const bypass = useRef(false);
-  useEffect(() => {
+  // Install the guard before the next paint: a quick click after editing must
+  // not outrun a passive effect and navigate away with unsaved data.
+  useLayoutEffect(() => {
     if (!dirty) return;
     const beforeUnload = (event: BeforeUnloadEvent) => {
       if (bypass.current) return;

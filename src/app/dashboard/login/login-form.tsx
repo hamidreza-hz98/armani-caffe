@@ -50,7 +50,7 @@ export function DashboardLoginForm({ destination }: { destination: string }) {
           <h1>ورود به پنل مدیریت</h1>
           <p className={styles.intro}>برای مدیریت سفارش‌ها، محصولات و عملیات کافه وارد شوید.</p>
           <form onSubmit={submit} className={styles.form}>
-            <label htmlFor="admin-username">نام کاربری یا ایمیل</label>
+            <label htmlFor="admin-username">نام کاربری، ایمیل یا موبایل</label>
             <input
               id="admin-username"
               name="username"

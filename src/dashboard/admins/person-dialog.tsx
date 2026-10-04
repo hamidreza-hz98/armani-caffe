@@ -51,7 +51,7 @@ export function AdminDialog({
     const role = self || lastOwner ? admin?.role : values.get("role");
     const status = self || lastOwner ? admin?.status : values.get("status");
     if (!validAdminUsername(username)) {
-      setError("نام کاربری لاتین یا ایمیل معتبر وارد کنید.");
+      setError("نام کاربری لاتین، ایمیل یا شماره همراه معتبر وارد کنید.");
       return;
     }
     if (!displayName || displayName.length > 120 || /[<>\u0000-\u001f\u007f]/u.test(displayName)) {
@@ -115,7 +115,7 @@ export function AdminDialog({
           />
         </label>
         <label>
-          نام کاربری لاتین یا ایمیل
+          نام کاربری لاتین، ایمیل یا شماره همراه
           <input
             name="username"
             dir="ltr"
