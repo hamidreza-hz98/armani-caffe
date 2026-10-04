@@ -71,6 +71,12 @@ describe("admin authentication primitives", () => {
     expect(parseAdminLogin({ username: "OWNER.Name", password: "wrong" }).username).toBe(
       "owner.name",
     );
+    expect(
+      parseAdminLogin({ username: "Owner.Example+Cafe@Example.COM", password: "wrong" }).username,
+    ).toBe("owner.example+cafe@example.com");
+    expect(() =>
+      parseAdminLogin({ username: "owner..name@example.com", password: "wrong" }),
+    ).toThrow();
     expect(() => parseAdminLogin({ username: "owner", password: "x", role: "OWNER" })).toThrow();
     expect(() =>
       parseAdminCreate({

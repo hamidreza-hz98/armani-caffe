@@ -4,7 +4,7 @@ export function testEnv(overrides = {}) {
     ADMIN_URL: "http://localhost:3000",
     NEXT_PUBLIC_APP_URL: "http://localhost:3000",
     NEXT_PUBLIC_WS_URL: "ws://localhost:3001/ws",
-    MONGODB_URI: "mongodb://127.0.0.1:27017/armani_test?directConnection=true&replicaSet=rs0",
+    MONGODB_URI: "mongodb://127.0.0.1:27018/armani_test?directConnection=true&replicaSet=rs0",
     REDIS_URL: "redis://127.0.0.1:6379",
     MINIO_ENDPOINT: "http://127.0.0.1:9000",
     MINIO_REGION: "us-east-1",

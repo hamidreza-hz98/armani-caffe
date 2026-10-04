@@ -50,7 +50,7 @@ export function DashboardLoginForm({ destination }: { destination: string }) {
           <h1>ورود به پنل مدیریت</h1>
           <p className={styles.intro}>برای مدیریت سفارش‌ها، محصولات و عملیات کافه وارد شوید.</p>
           <form onSubmit={submit} className={styles.form}>
-            <label htmlFor="admin-username">نام کاربری</label>
+            <label htmlFor="admin-username">نام کاربری یا ایمیل</label>
             <input
               id="admin-username"
               name="username"
@@ -58,7 +58,7 @@ export function DashboardLoginForm({ destination }: { destination: string }) {
               autoComplete="username"
               dir="ltr"
               required
-              maxLength={40}
+              maxLength={80}
               disabled={pending}
             />
             <label htmlFor="admin-password">رمز عبور</label>

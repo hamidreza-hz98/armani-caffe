@@ -18,12 +18,14 @@ The smoke command commits a MongoDB transaction, checks Redis AOF settings and a
 
 | Service       | Compose DNS name | Host address            |
 | ------------- | ---------------- | ----------------------- |
-| MongoDB       | `mongodb:27017`  | `127.0.0.1:27017`       |
+| MongoDB       | `mongodb:27017`  | `127.0.0.1:27018`       |
 | Redis         | `redis:6379`     | `127.0.0.1:6379`        |
 | MinIO API     | `minio:9000`     | `http://127.0.0.1:9000` |
 | MinIO Console | `minio:9001`     | `http://127.0.0.1:9001` |
 
-For a host-run MongoDB client, use `mongodb://127.0.0.1:27017/armani_caffe?directConnection=true&replicaSet=rs0`. The replica set advertises `mongodb:27017` for containers, so `directConnection=true` is needed for host clients. The local Redis URL is `redis://127.0.0.1:6379`. The media bucket is `armani-media`.
+For a host-run MongoDB client using Compose, use `mongodb://127.0.0.1:27018/armani_caffe?directConnection=true&replicaSet=rs0`. The replica set advertises `mongodb:27017` for containers, so `directConnection=true` is needed for host clients. The local Redis URL is `redis://127.0.0.1:6379`. The media bucket is `armani-media`.
+
+On Windows without Docker, `pwsh -File scripts/start-local-mongo.ps1` starts a project-only single-node replica set at `127.0.0.1:27018` with data in ignored `data/mongodb`. It is named **`rsowner`**, so MongoDB Compass and `.env.local` must use `mongodb://127.0.0.1:27018/armani_caffe?directConnection=true&replicaSet=rsowner`. This local process and Compose cannot use port 27018 simultaneously. Port 27017 on this workstation belongs to another standalone MongoDB instance and must not be used for Armani Caffe.
 
 The defaults `armani_dev` / `armani_dev_password_change_me` for MinIO are intentionally unsafe for production. MongoDB and Redis have **no authentication** in this loopback-only stack. Do not reuse this Compose file or its credentials for deployment. To override local defaults, set `MINIO_ROOT_USER`, `MINIO_ROOT_PASSWORD`, `MINIO_MEDIA_BUCKET`, `MINIO_CORS_ORIGINS`, `MONGO_PORT`, `REDIS_PORT`, `MINIO_API_PORT`, or `MINIO_CONSOLE_PORT` in your shell before running the commands. Keep real values in ignored local environment files, never in Git. If you change the bucket name, rerun `infra:init:minio`.
 

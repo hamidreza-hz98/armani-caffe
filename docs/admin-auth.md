@@ -2,6 +2,8 @@
 
 Task 14 adds server-verified `OWNER` and `CASHIER` identities. The capability map in `src/shared/admin-capabilities.ts` is the single role-policy source. Admin pages and API handlers check sessions, and privileged application services repeat authorization at the service boundary. Sensitive admin mutations also recheck authority inside the MongoDB transaction. Client-supplied IDs, roles, or forwarded-IP headers never establish identity.
 
+Admin usernames may be either a short Latin handle or a normalized lowercase email address (up to 80 characters). The same value is entered on the login page; email-format usernames are not a separate email-login alias. Uniqueness remains enforced by the `admin_username_unique` index.
+
 ## First owner and database rollout
 
 Back up an existing database before applying migration 4 or indexes. It checks legacy password-hash format, fills required identity/version fields, revokes legacy admin sessions, and creates the owner coordination guard. If any legacy row has an unsupported hash or a nonempty admin collection has no active owner, it aborts for operator review. Neither migrations nor index sync run during normal requests.

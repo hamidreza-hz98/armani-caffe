@@ -4,11 +4,16 @@ import { Schema } from "mongoose";
 
 import { documentSchemaOptions, iranianMobileField } from "../../../server/database/conventions.ts";
 import { requiredText } from "../../../server/database/schema-fields.ts";
+import { validAdminUsername } from "../../../shared/admin-input.ts";
 import { adminRoles } from "../domain/model.ts";
 
 export const adminSchema = new Schema(
   {
-    username: { ...requiredText(40), lowercase: true, match: /^[a-z][a-z0-9._-]{2,39}$/ },
+    username: {
+      ...requiredText(80),
+      lowercase: true,
+      validate: { validator: validAdminUsername, message: "Invalid admin username" },
+    },
     phone: iranianMobileField(),
     displayName: requiredText(120),
     passwordHash: { ...requiredText(255), select: false },

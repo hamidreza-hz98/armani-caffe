@@ -29,7 +29,7 @@ test("seed refuses non-local database hosts before connecting", () => {
   const result = dbCommand(["seed", "--apply"], {
     ...process.env,
     NODE_ENV: "development",
-    MONGODB_URI: "mongodb://db.example.invalid:27017/armani_caffe",
+    MONGODB_URI: "mongodb://db.example.invalid:27018/armani_caffe",
   });
   assert.equal(result.status, 1);
   assert.match(result.stderr, /requires a loopback MongoDB host/);

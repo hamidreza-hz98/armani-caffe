@@ -54,7 +54,7 @@ test("test defaults and explicit overrides are deterministic", () => {
     testEnv({
       TEST_FIXED_TIME: "2026-01-02T03:04:05.000Z",
       TEST_RANDOM_SEED: "123",
-      MONGODB_URI: "mongodb://127.0.0.1:27017/isolated_test",
+      MONGODB_URI: "mongodb://127.0.0.1:27018/isolated_test",
     }),
     "test",
   );

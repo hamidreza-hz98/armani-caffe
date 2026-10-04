@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import type { AdminDetails } from "@/modules/admins";
+import { validAdminUsername } from "@/shared/admin-input";
 
 import { adminRequest, AdminRequestError } from "./api";
 import styles from "./manager.module.css";
@@ -49,8 +50,8 @@ export function AdminDialog({
     const phone = String(values.get("phone") ?? "").trim();
     const role = self || lastOwner ? admin?.role : values.get("role");
     const status = self || lastOwner ? admin?.status : values.get("status");
-    if (!/^[a-z][a-z0-9._-]{2,39}$/.test(username)) {
-      setError("نام کاربری باید با حرف لاتین آغاز شود و ۳ تا ۴۰ نویسه باشد.");
+    if (!validAdminUsername(username)) {
+      setError("نام کاربری لاتین یا ایمیل معتبر وارد کنید.");
       return;
     }
     if (!displayName || displayName.length > 120 || /[<>\u0000-\u001f\u007f]/u.test(displayName)) {
@@ -114,13 +115,13 @@ export function AdminDialog({
           />
         </label>
         <label>
-          نام کاربری لاتین
+          نام کاربری لاتین یا ایمیل
           <input
             name="username"
             dir="ltr"
             required
             minLength={3}
-            maxLength={40}
+            maxLength={80}
             defaultValue={admin?.username ?? ""}
             readOnly={self}
             autoComplete="off"

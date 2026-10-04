@@ -186,7 +186,9 @@ export function AdminManager({
                     {admin.displayName}
                     {admin.id === actorId && <small> (شما)</small>}
                   </h2>
-                  <p dir="ltr">@{admin.username}</p>
+                  <p dir="ltr">
+                    {admin.username.includes("@") ? admin.username : `@${admin.username}`}
+                  </p>
                 </div>
               </div>
               <div className={styles.detail}>
