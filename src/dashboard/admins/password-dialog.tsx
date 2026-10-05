@@ -53,6 +53,9 @@ export function AdminPasswordDialog({
     <dialog
       ref={dialog}
       className={styles.dialog}
+      onClick={(event) => {
+        if (event.target === event.currentTarget && !busy) onClose();
+      }}
       onCancel={(event) => {
         if (busy) event.preventDefault();
         else onClose();

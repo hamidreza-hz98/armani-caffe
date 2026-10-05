@@ -76,6 +76,9 @@ export function CartLineControl({
           ref={confirmDialog}
           className={cartStyles.removeDialog}
           aria-label={`حذف ${item.productName} از سبد`}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) confirmDialog.current?.close();
+          }}
           onClose={() => removeTrigger.current?.focus()}
         >
           <h3>حذف آیتم از سبد خرید؟</h3>

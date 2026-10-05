@@ -214,6 +214,9 @@ export function CartControl({
       <dialog
         ref={dialog}
         className={styles.optionsDialog}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) setOpen(false);
+        }}
         onClose={() => setOpen(false)}
         aria-labelledby={`options-title-${productId}`}
       >

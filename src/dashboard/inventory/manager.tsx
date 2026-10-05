@@ -245,7 +245,12 @@ export function InventoryManager({
             </div>
           )}
           {selected && (
-            <div className={styles.modalBackdrop}>
+            <div
+              className={styles.modalBackdrop}
+              onClick={(event) => {
+                if (event.target === event.currentTarget) setSelected(null);
+              }}
+            >
               <section
                 ref={detailRef}
                 tabIndex={-1}
@@ -441,7 +446,12 @@ export function InventoryManager({
         />
       )}
       {decision && (
-        <div className={styles.modalBackdrop}>
+        <div
+          className={styles.modalBackdrop}
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !busy) setDecision(null);
+          }}
+        >
           <section
             ref={decisionRef}
             tabIndex={-1}

@@ -77,7 +77,12 @@ export function ChangeDialog({
     }
   }
   return (
-    <div className={styles.modalBackdrop}>
+    <div
+      className={styles.modalBackdrop}
+      onClick={(event) => {
+        if (event.target === event.currentTarget && !busy) onClose();
+      }}
+    >
       <section
         ref={dialogRef}
         tabIndex={-1}

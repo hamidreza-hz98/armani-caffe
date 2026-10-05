@@ -283,6 +283,9 @@ export function AdminManager({
             if (busy) event.preventDefault();
             else setConfirming(null);
           }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !busy) setConfirming(null);
+          }}
           aria-labelledby="confirm-title"
         >
           <h2 id="confirm-title">

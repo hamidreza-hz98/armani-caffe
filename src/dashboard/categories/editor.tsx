@@ -101,6 +101,9 @@ export function CategoryEditor({
         ref={dialog}
         className={styles.editorDialog}
         aria-labelledby="category-editor-title"
+        onClick={(event) => {
+          if (event.target === event.currentTarget) void close();
+        }}
         onCancel={(event) => {
           event.preventDefault();
           void close();

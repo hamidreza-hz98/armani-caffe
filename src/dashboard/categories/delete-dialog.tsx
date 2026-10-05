@@ -39,6 +39,9 @@ export function CategoryDeleteDialog({
       aria-labelledby="category-delete-title"
       aria-describedby="category-delete-description"
       className={styles.deleteDialog}
+      onClick={(event) => {
+        if (event.target === event.currentTarget && !busy) onClose();
+      }}
       onCancel={(event) => {
         event.preventDefault();
         if (!busy) onClose();

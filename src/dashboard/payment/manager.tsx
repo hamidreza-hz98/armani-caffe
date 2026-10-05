@@ -413,7 +413,15 @@ export function PaymentSettingsManager({ initial }: { initial: PaymentSettingsVi
         </button>
       </div>
       {editing && (
-        <div className={styles.backdrop}>
+        <div
+          className={styles.backdrop}
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setNewSecret("");
+              setEditing(null);
+            }
+          }}
+        >
           <section
             className={styles.dialog}
             role="dialog"

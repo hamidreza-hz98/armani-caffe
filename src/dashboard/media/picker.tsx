@@ -71,6 +71,9 @@ export function MediaPicker({
       ref={dialog}
       aria-labelledby="media-picker-title"
       className={styles.picker}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
       onCancel={(event) => {
         event.preventDefault();
         onClose();

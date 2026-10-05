@@ -142,6 +142,9 @@ export function CustomerAuthSheet() {
       dir="rtl"
       className={styles.dialog}
       aria-labelledby="customer-auth-title"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) close();
+      }}
       onClose={() => {
         setOpen(false);
         setFields(emptyFields);

@@ -95,6 +95,9 @@ export function AdminDialog({
     <dialog
       ref={dialog}
       className={styles.dialog}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) close();
+      }}
       onCancel={(event) => {
         if (busy) event.preventDefault();
         else onClose();

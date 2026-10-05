@@ -252,6 +252,9 @@ export function CustomerManager({
           ref={(node) => {
             if (node && !node.open) node.showModal();
           }}
+          onClick={(event) => {
+            if (event.target === event.currentTarget && !busy) setDeleting(null);
+          }}
           onCancel={(event) => {
             if (busy) event.preventDefault();
             else setDeleting(null);
@@ -340,6 +343,9 @@ function CustomerEditor({
     <dialog
       ref={dialog}
       className={styles.dialog}
+      onClick={(event) => {
+        if (event.target === event.currentTarget && !busy) onClose();
+      }}
       onCancel={(event) => {
         if (busy) event.preventDefault();
         else onClose();
@@ -446,6 +452,9 @@ function CustomerDetails({ customer, onClose }: { customer: CustomerRow; onClose
     <dialog
       ref={dialog}
       className={`${styles.dialog} ${styles.drawer}`}
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
       onCancel={onClose}
       aria-labelledby="detail-title"
     >

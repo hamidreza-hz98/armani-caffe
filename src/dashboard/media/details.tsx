@@ -135,6 +135,9 @@ export function MediaDetails({
         ref={dialog}
         aria-labelledby="media-detail-title"
         className={styles.drawer}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) onClose();
+        }}
         onCancel={(event) => {
           event.preventDefault();
           onClose();
