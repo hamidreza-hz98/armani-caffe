@@ -39,6 +39,13 @@ export const cartSchema = new Schema(
     items: { type: [cartItemSnapshotSchema], default: [] },
     totalToman: tomanAmountField(),
     notes: { type: String, maxlength: 1000, default: "" },
+    tableNumber: {
+      type: Number,
+      min: 1,
+      max: 999,
+      default: null,
+      validate: (value: number | null) => value === null || Number.isSafeInteger(value),
+    },
     status: {
       type: String,
       required: true,

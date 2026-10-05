@@ -5,6 +5,7 @@ import {
   type UtcTimestamp,
 } from "../../../shared/domain.ts";
 import { ApplicationError } from "../../../shared/errors.ts";
+import { validTableNumber } from "../../../shared/table-number.ts";
 import { type InvoiceLineSnapshot, makeInvoiceLines } from "./model.ts";
 
 export type InvoiceIdentity = Readonly<{
@@ -34,6 +35,7 @@ export type IssuedInvoice = Readonly<{
   totalToman: TomanAmount;
   transaction: Readonly<{ provider: string; reference: string }>;
   notes: string;
+  tableNumber?: number | null;
   issuedAt: UtcTimestamp;
   jalaliDateTime: string;
   paperWidthMm: 58 | 80;
@@ -61,6 +63,7 @@ export type ConfirmedOrderSource = Readonly<{
   };
   transaction: { provider: string; reference: string };
   notes: string;
+  tableNumber?: number | null;
   placedAt: string;
 }>;
 const tehranJalali = new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", {
@@ -114,6 +117,8 @@ export function makeIssuedInvoice(
     throw new ApplicationError("VALIDATION", "Invoice totals differ from confirmed order");
   if (![58, 80].includes(settings.paperWidthMm) || !settings.identity.title.trim())
     throw new ApplicationError("VALIDATION", "Invalid invoice identity");
+  if (source.tableNumber != null && !validTableNumber(source.tableNumber))
+    throw new ApplicationError("VALIDATION", "Invalid invoice table number");
   const printing = settings.printing ?? { automatic: false, printerId: "" };
   if (printing.automatic && !/^[a-zA-Z0-9_-]{1,64}$/u.test(printing.printerId))
     throw new ApplicationError("VALIDATION", "Invalid automatic printer");
@@ -137,6 +142,7 @@ export function makeIssuedInvoice(
       reference: source.transaction.reference,
     }),
     notes: source.notes,
+    tableNumber: source.tableNumber ?? null,
     issuedAt,
     jalaliDateTime: jalaliReceiptDate(issuedAt),
     paperWidthMm: settings.paperWidthMm,

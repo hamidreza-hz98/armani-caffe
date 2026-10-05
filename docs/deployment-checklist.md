@@ -26,6 +26,7 @@ No production deployment is performed by this document. The local Compose file a
 - [ ] Validate provider timeout/ambiguous-result operations: never show success or create an order from callback parameters alone. Reconcile pending payments authoritatively and verify one order, invoice, inventory deduction and print job under duplicate callbacks.
 - [ ] Install the bridge on the café device with a restricted service account, persistent local journal, unique bridge identity/token, outbound WSS, supervised restart, printer driver/USB or LAN restriction, diagnostics and an operator reprint procedure. Protect journal and simulated receipt files as customer data.
 - [ ] Complete the [actual-printer acceptance checklist](printing-resilience.md#manual-acceptance-checklist-for-the-actual-café-printer) for 58/80 mm Persian shaping, long lines, cutting, offline/reconnect, lost ACK, crash ambiguity, and manual reprint. Document the device's strongest observable success signal; spool acceptance is not paper emergence.
+- [ ] Print and scan a QR code for each actual café table, verify the canonical HTTPS URL and integer table label against the floor plan, and confirm the same number appears in the cart, paid order detail, immutable invoice and simulated/physical receipt. A QR table parameter is not proof of physical presence; see [QR table orders](qr-table-orders.md).
 
 ## Go/no-go
 

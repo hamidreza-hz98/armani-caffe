@@ -25,6 +25,7 @@ type Row = {
   items: StoredItem[];
   totalToman: number;
   notes: string;
+  tableNumber?: number | null;
   status: "active" | "abandoned" | "checked_out";
   expiresAt: Date;
   createdAt: Date;
@@ -123,6 +124,7 @@ export class MongoCartRepository implements CartRepository {
         revision: 0,
         items: [],
         notes: "",
+        tableNumber: null,
         expiresAt: timestamp.toISOString(),
         pricing: { subtotalToman: 0, discountToman: 0, deliveryToman: 0, totalToman: 0 },
         issues: [{ code: "CART_EXPIRED" }],
@@ -138,6 +140,7 @@ export class MongoCartRepository implements CartRepository {
         items: [],
         totalToman: 0,
         notes: "",
+        tableNumber: null,
         status: "active",
         expiresAt: new Date(timestamp.getTime() + CART_TTL_MS),
         createdAt: timestamp,
@@ -155,10 +158,12 @@ export class MongoCartRepository implements CartRepository {
     const original = readItems(row);
     let items = [...original],
       notes = row.notes,
+      tableNumber = row.tableNumber ?? null,
       accepted = true;
     let pending: CartItemSnapshot | undefined;
     if (typeof operation === "object") {
       if (operation.operation === "notes") notes = operation.notes;
+      else if (operation.operation === "table") tableNumber = operation.tableNumber;
       else if (operation.operation === "remove") {
         if (!items.some((i) => keyOf(i) === operation.itemKey))
           throw new ApplicationError("NOT_FOUND", "Cart item not found");
@@ -249,6 +254,7 @@ export class MongoCartRepository implements CartRepository {
             items: storeItems(priced.items),
             totalToman: priced.pricing.totalToman,
             notes,
+            tableNumber,
             updatedAt: timestamp,
           },
           $inc: { __v: 1 },
@@ -264,6 +270,7 @@ export class MongoCartRepository implements CartRepository {
       revision: row.__v,
       items: priced.items,
       notes,
+      tableNumber,
       expiresAt: row.expiresAt.toISOString(),
       pricing: priced.pricing,
       issues: uniqueIssues,

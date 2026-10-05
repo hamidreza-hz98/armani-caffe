@@ -91,6 +91,15 @@ test("live menu offers the plain server-rendered fallback without JavaScript", a
   }
 });
 
+test("QR landing identifies a valid table and rejects malformed table parameters", async ({
+  page,
+}) => {
+  await page.goto("/?table=3");
+  await expect(page.getByText("سفارش برای میز ۳")).toBeVisible();
+  await page.goto("/?table=003");
+  await expect(page.getByText(/شمارهٔ میز در نشانی معتبر نیست/u)).toBeVisible();
+});
+
 test("menu preview keeps HTML and client script transfer bounded", async ({ page }) => {
   const response = await page.goto("/internal/menu-preview");
   expect(response).not.toBeNull();

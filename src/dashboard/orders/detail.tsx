@@ -314,6 +314,7 @@ export function OrderDetail({
           <p>
             {date(order.placedAt)} · نسخه {number(order.revision)}
           </p>
+          {order.tableNumber && <p>شمارهٔ میز: {number(order.tableNumber)}</p>}
         </div>
         <div className={styles.headerActions}>
           <a

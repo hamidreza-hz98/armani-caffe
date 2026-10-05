@@ -166,6 +166,27 @@ test("one cart across sessions, exact server pricing, update/merge/remove and no
   expect(cart.items).toEqual([]);
   expect(cart.checkoutReady).toBe(false);
 });
+test("QR table selection persists on the active cart with optimistic revision protection", async () => {
+  const empty = await carts.read(token);
+  expect(empty.tableNumber).toBeNull();
+  const selected = await carts.mutate(token, {
+    operation: "table",
+    ...versionOf(empty),
+    tableNumber: 3,
+  });
+  expect(selected.tableNumber).toBe(3);
+  expect((await carts.read(secondToken)).tableNumber).toBe(3);
+  await expect(
+    carts.mutate(secondToken, { operation: "table", ...versionOf(empty), tableNumber: 4 }),
+  ).rejects.toMatchObject({ code: "CONFLICT" });
+  expect(
+    (
+      await connection
+        .db!.collection("carts")
+        .findOne({ _id: new mongoose.Types.ObjectId(empty.id) })
+    )?.tableNumber,
+  ).toBe(3);
+});
 test("strict inputs reject manipulated totals, duplicate additions, foreign additions, and limits", async () => {
   const cart = await carts.read(token),
     base = {

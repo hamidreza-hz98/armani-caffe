@@ -101,6 +101,7 @@ export function composeOrderService(
           a.inventoryItemId.localeCompare(b.inventoryItemId),
         ),
         notes: source.notes,
+        tableNumber: source.tableNumber,
       };
     },
     record: async (session, id, event, requestId, actor) => {

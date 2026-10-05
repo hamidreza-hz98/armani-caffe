@@ -6,6 +6,7 @@ export type CartView = {
   revision: number;
   items: readonly CartItemSnapshot[];
   notes: string;
+  tableNumber?: number | null;
   expiresAt: string;
   pricing: { subtotalToman: number; discountToman: 0; deliveryToman: 0; totalToman: number };
   issues: CartIssue[];

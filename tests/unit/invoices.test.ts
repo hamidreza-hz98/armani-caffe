@@ -72,6 +72,30 @@ describe("immutable invoice and Persian printing", () => {
       expect([...bytes.slice(-4)]).toEqual([10, 29, 86, 0]);
     }
   });
+  it("prints the immutable table snapshot when a QR table was selected", () => {
+    const html = renderInvoiceHtml({ ...issued, tableNumber: 3 });
+    expect(html).toContain("شماره میز");
+    expect(html).toContain(">۳</strong>");
+    expect(renderInvoiceHtml(issued)).not.toContain("شماره میز");
+  });
+  it("rejects a forged out-of-range table in an invoice source", () => {
+    expect(() =>
+      makeIssuedInvoice(
+        {
+          id: issued.orderId,
+          code: issued.orderCode,
+          customer: { id: issued.customerId, ...issued.customer },
+          items: issued.lines,
+          pricing: issued.pricing,
+          transaction: issued.transaction,
+          notes: issued.notes,
+          tableNumber: 1000,
+          placedAt: issued.issuedAt,
+        },
+        { identity: issued.identity, paperWidthMm: 58 },
+      ),
+    ).toThrow();
+  });
   it("rejects invalid totals and oversized printer raster", () => {
     expect(() =>
       makeIssuedInvoice(

@@ -32,6 +32,7 @@ export type OrderView = {
   pricing: PricingSnapshot;
   transaction: { id: string; provider: string; reference: string };
   notes: string;
+  tableNumber?: number | null;
   status: OrderStatus;
   paymentStatus: "paid" | "refunded";
   refundStatus: "NONE" | "REQUESTED" | "REFUNDED";

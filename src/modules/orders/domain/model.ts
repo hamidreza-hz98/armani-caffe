@@ -29,6 +29,7 @@ export type Order = EntityDto &
     customerId: string | null;
     items: readonly OrderItemSnapshot[];
     totalToman: TomanAmount;
+    tableNumber?: number | null;
     status: OrderStatus;
     paymentStatus: OrderPaymentStatus;
     idempotencyKey: string;

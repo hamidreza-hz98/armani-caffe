@@ -2,6 +2,8 @@
 
 For pre-deployment handoff, measured local acceptance, known limitations, and the no-go list, start with [Local acceptance](docs/local-acceptance.md) and the [production deployment checklist](docs/deployment-checklist.md). No production deployment is configured by these documents.
 
+QR table ordering (`/?table=3`) and its cart/order/invoice snapshot rules are documented in [QR table orders](docs/qr-table-orders.md).
+
 The mobile storefront menu, cache invalidation, basic no-JavaScript version, and performance budgets are documented in [Storefront menu](docs/storefront-menu.md).
 
 Production-mode performance budgets, measurements, cache verification, and known audit gaps are documented in [Performance](docs/performance.md). Run `npm run test:performance` to reproduce the browser and 10-concurrent-request gate.

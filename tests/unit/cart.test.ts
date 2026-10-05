@@ -4,6 +4,7 @@ import { parseCartMutation } from "@/modules/carts";
 import { CartService } from "@/modules/carts/application/service";
 import { makeCartItemSnapshot } from "@/modules/carts/domain/model";
 import { priceCart } from "@/modules/carts/domain/pricing";
+import { parseTableNumber } from "@/shared/table-number";
 const productId = "000000000000000000000001",
   additionId = "000000000000000000000002",
   cartId = "000000000000000000000003";
@@ -121,4 +122,19 @@ test("preview accepts only a cart ID and revision, never caller-owned quotes", (
     null,
   ])
     expect(() => service.preview("token", bad)).toThrow();
+});
+test("QR table numbers are bounded and cart mutation cannot accept forged free-form values", () => {
+  expect(parseTableNumber("3")).toBe(3);
+  for (const value of ["0", "003", "1000", "3abc", "<script>", ["3", "4"], undefined])
+    expect(parseTableNumber(value)).toBeNull();
+  expect(
+    parseCartMutation({ operation: "table", cartId, revision: 0, tableNumber: 3 }),
+  ).toMatchObject({ tableNumber: 3 });
+  expect(
+    parseCartMutation({ operation: "table", cartId, revision: 0, tableNumber: null }),
+  ).toMatchObject({ tableNumber: null });
+  for (const value of [0, 1000, 1.5, "3", undefined])
+    expect(() =>
+      parseCartMutation({ operation: "table", cartId, revision: 0, tableNumber: value }),
+    ).toThrow();
 });

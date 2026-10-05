@@ -27,6 +27,7 @@ export type Cart = EntityDto &
     sessionId: string | null;
     items: readonly CartItemSnapshot[];
     totalToman: TomanAmount;
+    tableNumber?: number | null;
     status: "active" | "payment_pending" | "checked_out" | "abandoned";
     expiresAt: UtcTimestamp | null;
   }>;

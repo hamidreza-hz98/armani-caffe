@@ -38,6 +38,25 @@ function cart(revision = 3, price = 125000, issues: unknown[] = [], notes = "", 
   };
 }
 
+test("a scanned QR table is synchronized to the cart before checkout", async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem("armani.table", "3"));
+  let current = { ...cart(), tableNumber: null as number | null };
+  let tableWrites = 0;
+  await page.route("**/api/customer/cart", async (route) => {
+    if (route.request().method() === "GET") return route.fulfill({ json: ok(current) });
+    const body = route.request().postDataJSON();
+    expect(body).toMatchObject({ operation: "table", tableNumber: 3, cartId });
+    tableWrites++;
+    current = { ...current, revision: current.revision + 1, tableNumber: 3 };
+    return route.fulfill({ json: ok(current) });
+  });
+  await page.goto("/cart");
+  await expect(page.getByText("شمارهٔ میز: ۳")).toBeVisible();
+  await page.reload();
+  await expect(page.getByText("شمارهٔ میز: ۳")).toBeVisible();
+  expect(tableWrites).toBe(1);
+});
+
 test("mobile pickup cart saves notes, uses server total, and initiates payment once", async ({
   page,
 }) => {

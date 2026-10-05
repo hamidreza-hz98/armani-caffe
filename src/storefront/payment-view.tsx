@@ -148,6 +148,7 @@ export function CustomerOrderView({ order }: { order: OrderView }) {
         </h1>
         <p role="status">وضعیت سفارش: {statuses[order.status]}</p>
         <p>دریافت حضوری در کافه</p>
+        {order.tableNumber && <p>میز {formatPersianNumber(order.tableNumber)}</p>}
       </div>
       <section className={styles.card}>
         <h2>اطلاعات سفارش</h2>
@@ -160,6 +161,12 @@ export function CustomerOrderView({ order }: { order: OrderView }) {
             <dt>پرداخت</dt>
             <dd>{order.paymentStatus === "paid" ? "پرداخت‌شده" : "بازپرداخت‌شده"}</dd>
           </div>
+          {order.tableNumber && (
+            <div>
+              <dt>شمارهٔ میز</dt>
+              <dd>{formatPersianNumber(order.tableNumber)}</dd>
+            </div>
+          )}
           <div>
             <dt>شماره پیگیری</dt>
             <dd>

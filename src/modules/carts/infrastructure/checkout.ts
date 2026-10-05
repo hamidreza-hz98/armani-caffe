@@ -3,6 +3,7 @@ import "server-only";
 import { type ClientSession, type Connection, Types } from "mongoose";
 
 import { ApplicationError } from "../../../shared/errors.ts";
+import { validTableNumber } from "../../../shared/table-number.ts";
 import type { CartItemSnapshot } from "../domain/model.ts";
 export function cartCheckoutPort(connection: Connection, now: () => Date = () => new Date()) {
   const rows = () => connection.db!.collection("carts");
@@ -19,6 +20,8 @@ export function cartCheckoutPort(connection: Connection, now: () => Date = () =>
         { session },
       );
       if (!row) throw new ApplicationError("CONFLICT", "Cart expired, changed, or unavailable");
+      if (row.tableNumber != null && !validTableNumber(row.tableNumber))
+        throw new ApplicationError("CONFLICT", "Cart table number needs review");
       return {
         items: row.items.map(
           (i: {
@@ -35,6 +38,7 @@ export function cartCheckoutPort(connection: Connection, now: () => Date = () =>
           }),
         ) as CartItemSnapshot[],
         notes: String(row.notes ?? ""),
+        tableNumber: typeof row.tableNumber === "number" ? row.tableNumber : null,
       };
     },
     freeze: async (

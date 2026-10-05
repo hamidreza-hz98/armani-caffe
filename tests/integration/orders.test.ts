@@ -234,7 +234,12 @@ async function replenish(quantity: number, idempotencyKey: string, kind = "purch
   )) as { id: string };
   await inventory.service.decide(ownerToken, pending.id, { decision: "approved" }, "stock-approve");
 }
-async function checkout(sessionToken = token, quantity = 2, pickupNotes?: string) {
+async function checkout(
+  sessionToken = token,
+  quantity = 2,
+  pickupNotes?: string,
+  tableNumber?: number,
+) {
   const empty = await carts.read(sessionToken);
   let cart = await carts.mutate(sessionToken, {
     operation: "add",
@@ -250,6 +255,13 @@ async function checkout(sessionToken = token, quantity = 2, pickupNotes?: string
       cartId: cart.id,
       revision: cart.revision,
       notes: pickupNotes,
+    });
+  if (tableNumber)
+    cart = await carts.mutate(sessionToken, {
+      operation: "table",
+      cartId: cart.id,
+      revision: cart.revision,
+      tableNumber,
     });
   const command = {
     cartId: cart.id,
@@ -271,6 +283,22 @@ test("pickup request and order note survive paid checkout and immutable invoice"
       .collection("invoices")
       .findOne({ orderId: new mongoose.Types.ObjectId(intent.id) }),
   ).toMatchObject({ notes });
+});
+test("QR table number is frozen through paid checkout, order, and invoice", async () => {
+  const { intent, payment } = await checkout(token, 1, undefined, 3);
+  await settle(payment);
+  await orders.service.confirm(payment.id, "confirm-table");
+  expect((await orders.service.detail(token, intent.id, true)).tableNumber).toBe(3);
+  expect(
+    await db()
+      .collection("checkout_intents")
+      .findOne({ _id: new mongoose.Types.ObjectId(intent.id) }),
+  ).toMatchObject({ tableNumber: 3 });
+  expect(
+    await db()
+      .collection("invoices")
+      .findOne({ orderId: new mongoose.Types.ObjectId(intent.id) }),
+  ).toMatchObject({ tableNumber: 3 });
 });
 async function settle(view: Awaited<ReturnType<typeof checkout>>["payment"]) {
   await ledger.outcome(view.authority!, {

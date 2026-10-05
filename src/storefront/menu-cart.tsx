@@ -15,6 +15,7 @@ import {
 import type { CartView } from "@/modules/carts";
 import { cartItemKey, type CartItemSnapshot, makeCartItemSnapshot } from "@/modules/carts";
 import { asToman } from "@/shared/domain";
+import { validTableNumber } from "@/shared/table-number";
 import { formatPersianNumber, formatToman } from "@/theme/format";
 
 import { CUSTOMER_AUTHENTICATED, CUSTOMER_LOGGED_OUT } from "./customer-auth-events";
@@ -34,7 +35,8 @@ type Add = {
 };
 type Change = { type: "change"; itemKey: string; quantity: number; note?: string };
 type Notes = { type: "notes"; notes: string };
-type Action = Add | Change | Notes;
+type Table = { type: "table"; tableNumber: number | null };
+type Action = Add | Change | Notes | Table;
 type Pending = {
   action: Action;
   resolve: (cart: CartView) => void;
@@ -113,9 +115,12 @@ export function projectCart(cart: CartView | null, actions: readonly Action[]): 
   if (!cart) return null;
   let items = [...cart.items];
   let notes = cart.notes;
+  let tableNumber = cart.tableNumber ?? null;
   for (const action of actions) {
     if (action.type === "notes") {
       notes = action.notes;
+    } else if (action.type === "table") {
+      tableNumber = action.tableNumber;
     } else if (action.type === "add") {
       const key = cartItemKey(action.productId, action.additionIds);
       const found = items.find((item) => itemKey(item) === key);
@@ -171,6 +176,7 @@ export function projectCart(cart: CartView | null, actions: readonly Action[]): 
   return {
     ...cart,
     notes,
+    tableNumber,
     items,
     pricing: { subtotalToman, discountToman: 0, deliveryToman: 0, totalToman: subtotalToman },
   };
@@ -180,10 +186,12 @@ export function MenuCartProvider({
   children,
   summary = true,
   initialGuest = false,
+  initialTable = null,
 }: {
   children: ReactNode;
   summary?: boolean;
   initialGuest?: boolean;
+  initialTable?: number | null;
 }) {
   const router = useRouter();
   const confirmed = useRef<CartView | null>(null);
@@ -191,6 +199,7 @@ export function MenuCartProvider({
   const running = useRef(false);
   const previewing = useRef(false);
   const generation = useRef(0);
+  const lastTableSync = useRef("");
   const [cart, setCart] = useState<CartView | null>(null);
   const [status, setStatus] = useState<CartContextValue["status"]>(
     initialGuest ? "guest" : "loading",
@@ -278,6 +287,33 @@ export function MenuCartProvider({
         );
       });
   }, [initialGuest]);
+  useEffect(() => {
+    if (initialTable) {
+      try {
+        sessionStorage.setItem("armani.table", String(initialTable));
+      } catch {
+        // The current QR URL still applies even if browser storage is unavailable.
+      }
+    }
+    if (status !== "ready" || !cart?.id || busy) return;
+    let desired: number | null = initialTable;
+    if (!desired) {
+      try {
+        const stored = Number(sessionStorage.getItem("armani.table"));
+        desired = validTableNumber(stored) ? stored : null;
+      } catch {
+        desired = null;
+      }
+    }
+    if (desired && cart.tableNumber !== desired) {
+      const key = `${cart.id}:${desired}`;
+      if (lastTableSync.current === key) return;
+      lastTableSync.current = key;
+      void dispatch({ type: "table", tableNumber: desired }).catch(() => {
+        setMessage("شمارهٔ میز ثبت نشد. صفحه را دوباره بارگذاری کنید.");
+      });
+    }
+  });
 
   async function drain() {
     if (running.current || previewing.current) return;
@@ -308,15 +344,17 @@ export function MenuCartProvider({
                 }
               : action.type === "notes"
                 ? { operation: "notes", notes: action.notes }
-                : action.quantity === 0
-                  ? { operation: "remove", itemKey: action.itemKey }
-                  : {
-                      operation: "update",
-                      itemKey: action.itemKey,
-                      additionIds: item!.additions.map((addition) => addition.additionId),
-                      quantity: action.quantity,
-                      note: action.note ?? item!.note ?? "",
-                    };
+                : action.type === "table"
+                  ? { operation: "table", tableNumber: action.tableNumber }
+                  : action.quantity === 0
+                    ? { operation: "remove", itemKey: action.itemKey }
+                    : {
+                        operation: "update",
+                        itemKey: action.itemKey,
+                        additionIds: item!.additions.map((addition) => addition.additionId),
+                        quantity: action.quantity,
+                        note: action.note ?? item!.note ?? "",
+                      };
           try {
             next = await cartRequest({ ...command, cartId: cart.id, revision: cart.revision });
             break;

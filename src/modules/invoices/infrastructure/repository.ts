@@ -83,6 +83,7 @@ const dto = (row: Row): IssuedInvoice => ({
   totalToman: row.totalToman,
   transaction: { provider: row.transaction.provider, reference: row.transaction.reference },
   notes: row.notes,
+  tableNumber: row.tableNumber ?? null,
   issuedAt: row.issuedAt.toISOString() as IssuedInvoice["issuedAt"],
   jalaliDateTime: row.jalaliDateTime,
   paperWidthMm: row.paperWidthMm,

@@ -1,0 +1,9 @@
+# QR table orders
+
+Print a distinct QR URL for each café table, for example `https://armanicaffe.ir/?table=3`. The `table` parameter accepts ASCII decimal integers 1–999 without leading zeros. This is a table label, not proof of physical presence: anyone who knows or edits the URL can choose another number. Verify the printed code and the café's table numbering before service; do not treat it as an authorization token.
+
+The landing page displays the selected table and rejects malformed values visibly. The browser retains a valid scanned number only in tab-scoped `sessionStorage` while the customer signs in or moves to the cart. Once authenticated, it sends an optimistic-version cart mutation; the server owns and validates the stored integer. The cart shows the confirmed number. Checkout freezes it into the checkout intent, then the paid order and immutable invoice. The receipt HTML, including the rasterized ESC/POS path, prints `شماره میز` from the invoice snapshot. A normal menu visit without a QR parameter does not create a table selection. Legacy carts/orders/invoices lacking the optional field are read as no table; no historical invoice is rewritten.
+
+After a successful payment redirect, the tab-scoped pending number is cleared. A new table scan replaces a previous selection on an active cart. QR table numbers are not yet backed by a configurable table registry or tamper-resistant token. Operators should confirm the table shown in the order detail and on the receipt before serving.
+
+Acceptance checks: unit validation for malformed numbers, cart concurrency/persistence integration, verified-payment order and invoice snapshot integration, 58/80 mm receipt rendering, and production-mode browser checks of `/?table=3` and cart synchronization. A final manual checkout-to-simulated-print pass with the real Redis/MinIO stack is still required by [local acceptance](local-acceptance.md).

@@ -68,18 +68,28 @@ export function MenuFailure() {
 export function MenuView({
   categories,
   initialGuest = false,
+  tableNumber = null,
+  invalidTable = false,
 }: {
   categories: readonly MenuCardCategory[];
   initialGuest?: boolean;
+  tableNumber?: number | null;
+  invalidTable?: boolean;
 }) {
   const productCount = categories.reduce((total, category) => total + category.products.length, 0);
   return (
-    <MenuCartProvider initialGuest={initialGuest}>
+    <MenuCartProvider initialGuest={initialGuest} initialTable={tableNumber}>
       <div className={styles.menu}>
         <div className={styles.intro}>
           <p className={styles.eyebrow}>منوی آنلاین</p>
           <h1>آرمانی کافه</h1>
           <p>نوشیدنی و خوراکی دلخواهتان را پیدا کنید.</p>
+          {tableNumber && <p role="status">سفارش برای میز {formatPersianNumber(tableNumber)}</p>}
+          {invalidTable && (
+            <p role="alert">
+              شمارهٔ میز در نشانی معتبر نیست. لطفاً کد QR روی میز را دوباره اسکن کنید.
+            </p>
+          )}
         </div>
         {productCount === 0 ? (
           <div className={styles.stateCard}>

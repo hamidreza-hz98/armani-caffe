@@ -1,4 +1,5 @@
 import { ApplicationError } from "../../../shared/errors.ts";
+import { validTableNumber } from "../../../shared/table-number.ts";
 
 export const CART_MAX_LINES = 50;
 export const CART_MAX_QUANTITY = 100;
@@ -16,7 +17,8 @@ export type CartCommand =
       "additionIds" | "quantity" | "note"
     >)
   | { operation: "remove"; itemKey: string }
-  | { operation: "notes"; notes: string };
+  | { operation: "notes"; notes: string }
+  | { operation: "table"; tableNumber: number | null };
 export type CartMutation = CartCommand & { revision: number; cartId: string };
 const invalid = () => new ApplicationError("VALIDATION", "Invalid cart input");
 export function cartRevision(value: unknown): number {
@@ -35,6 +37,7 @@ export function parseCartMutation(value: unknown): CartMutation {
     update: ["operation", "revision", "itemKey", "additionIds", "quantity", "note"],
     remove: ["operation", "revision", "itemKey"],
     notes: ["operation", "revision", "notes"],
+    table: ["operation", "revision", "tableNumber"],
   };
   if (typeof row.operation !== "string" || !Object.hasOwn(allowed, row.operation)) throw invalid();
   if (
@@ -45,6 +48,15 @@ export function parseCartMutation(value: unknown): CartMutation {
     throw invalid();
   const revision = cartRevision(row.revision);
   const id = cartId(row.cartId);
+  if (row.operation === "table") {
+    if (row.tableNumber !== null && !validTableNumber(row.tableNumber)) throw invalid();
+    return {
+      operation: "table",
+      revision,
+      cartId: id,
+      tableNumber: row.tableNumber as number | null,
+    };
+  }
   if (row.operation === "notes") {
     if (
       typeof row.notes !== "string" ||

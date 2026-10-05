@@ -194,6 +194,11 @@ function CartContent({
         destination.password
       )
         throw new Error("Unsafe payment URL");
+      try {
+        sessionStorage.removeItem("armani.table");
+      } catch {
+        // Cart and checkout snapshots remain authoritative.
+      }
       window.history.replaceState(null, "", `/payment/result/${intent.id}`);
       window.location.assign(destination.href);
     } catch {
@@ -342,6 +347,7 @@ function CartContent({
       <section className={styles.card} aria-labelledby="pickup-title">
         <h2 id="pickup-title">روش دریافت</h2>
         <p className={styles.pickupOnly}>تحویل حضوری در کافه</p>
+        {cart.tableNumber && <p>شمارهٔ میز: {formatPersianNumber(cart.tableNumber)}</p>}
         <fieldset className={styles.pickupChoices}>
           <legend>زمان درخواستی تحویل</legend>
           {(["asap", "30", "60"] as const).map((value) => (

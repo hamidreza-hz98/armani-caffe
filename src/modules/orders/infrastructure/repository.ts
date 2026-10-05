@@ -32,6 +32,7 @@ export type OrderPorts = {
     pricing: PricingSnapshot;
     stock: StockLine[];
     notes: string;
+    tableNumber?: number | null;
   }>;
   freeze: (
     session: ClientSession,
@@ -81,6 +82,7 @@ type Intent = {
   pricing: PricingSnapshot;
   stock: StockLine[];
   notes: string;
+  tableNumber?: number | null;
   state: CheckoutState;
   recovery: CheckoutView["recovery"];
   transactionId: string | null;
@@ -106,6 +108,7 @@ type Row = {
   pricing: PricingSnapshot;
   transaction: OrderView["transaction"];
   notes: string;
+  tableNumber?: number | null;
   status: OrderView["status"];
   paymentStatus: OrderView["paymentStatus"];
   refundStatus: OrderView["refundStatus"];
@@ -139,6 +142,7 @@ const orderDto = (r: Row): OrderView => ({
   pricing: r.pricing,
   transaction: r.transaction,
   notes: r.notes,
+  tableNumber: r.tableNumber ?? null,
   status: r.status,
   paymentStatus: r.paymentStatus,
   refundStatus: r.refundStatus,
@@ -334,6 +338,7 @@ export class MongoOrderRepository implements OrderOperations {
       pricing: intent.pricing,
       totalToman: intent.pricing.totalToman,
       notes: intent.notes,
+      tableNumber: intent.tableNumber ?? null,
       status: "NEW",
       paymentStatus: "paid",
       refundStatus: "NONE",

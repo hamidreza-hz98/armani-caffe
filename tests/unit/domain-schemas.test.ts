@@ -7,7 +7,7 @@ import { stockApprovalRequestSchema } from "@/modules/inventory/server";
 import { invoiceSchema } from "@/modules/invoices/server";
 import { mediaAssetSchema } from "@/modules/media/server";
 import { outboxEventSchema } from "@/modules/notifications/server";
-import { orderSchema } from "@/modules/orders/server";
+import { checkoutIntentSchema, orderSchema } from "@/modules/orders/server";
 import { transactionSchema } from "@/modules/payments/server";
 import { printJobSchema } from "@/modules/printing/server";
 import { settingsDefaults } from "@/modules/settings";
@@ -17,6 +17,7 @@ import { databaseIndexes } from "@/server/database/operations";
 const objectId = new mongoose.Types.ObjectId();
 const Admin = mongoose.model("DomainAdminTest", adminSchema);
 const Order = mongoose.model("DomainOrderTest", orderSchema);
+const CheckoutIntent = mongoose.model("DomainCheckoutIntentTest", checkoutIntentSchema);
 const Invoice = mongoose.model("DomainInvoiceTest", invoiceSchema);
 const Settings = mongoose.model("DomainSettingsTest", settingsSchema);
 const Audit = mongoose.model("DomainAuditTest", auditEventSchema);
@@ -37,6 +38,21 @@ const item = {
 };
 
 describe("Mongoose domain schema defenses", () => {
+  it("accepts absent table numbers but rejects invalid table snapshots", async () => {
+    const intent = {
+      cartId: objectId,
+      customerId: objectId,
+      key: "table-test",
+      cartRevision: 0,
+      customer: { id: String(objectId), phone: "+989123456789" },
+      items: [item],
+      pricing: { subtotalToman: 20000, discountToman: 0, deliveryToman: 0, totalToman: 20000 },
+      state: "PAYMENT_PENDING",
+    };
+    await expect(new CheckoutIntent(intent).validate()).resolves.toBeUndefined();
+    await expect(new CheckoutIntent({ ...intent, tableNumber: 3 }).validate()).resolves.toBeUndefined();
+    await expect(new CheckoutIntent({ ...intent, tableNumber: 1000 }).validate()).rejects.toThrow();
+  });
   it("rejects extra admin roles and normalizes phone", async () => {
     const admin = new Admin({
       username: "owner-test",
