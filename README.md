@@ -1,5 +1,7 @@
 # Armani Caffe
 
+For pre-deployment handoff, measured local acceptance, known limitations, and the no-go list, start with [Local acceptance](docs/local-acceptance.md) and the [production deployment checklist](docs/deployment-checklist.md). No production deployment is configured by these documents.
+
 The mobile storefront menu, cache invalidation, basic no-JavaScript version, and performance budgets are documented in [Storefront menu](docs/storefront-menu.md).
 
 Production-mode performance budgets, measurements, cache verification, and known audit gaps are documented in [Performance](docs/performance.md). Run `npm run test:performance` to reproduce the browser and 10-concurrent-request gate.
@@ -31,10 +33,19 @@ Stock units, approvals, immutable movements, migrations, and trusted order/produ
 ```bash
 npm ci
 npm run env:init
+npm run infra:up
+npm run infra:init:mongo
+npm run infra:init:minio
+npm run db:migrate:status
+npm run db:migrate:up -- --apply
+npm run db:indexes:apply -- --apply
+npm run db:seed -- --apply
+npm run infra:smoke
 npm run dev
 ```
 
 سپس آدرس [http://localhost:3000](http://localhost:3000) را باز کنید.
+پیش از اجرای فرمان‌های تغییر پایگاه داده، نشانی `MONGODB_URI` را با نمونهٔ محلی خود تطبیق دهید. در این رایانه MongoDB اختصاصی پروژه روی پورت 27018 با replica set به نام `rsowner` است؛ پورت 27017 به سرویس دیگری تعلق دارد. `infra:smoke` سرویس Redis را موقتاً بازراه‌اندازی می‌کند و نباید هنگام پردازش کار چاپ اجرا شود. برای اجرای همهٔ فرایندها، آزمون پذیرش و محدودیت‌های فعلی [راهنمای تحویل محلی](docs/local-acceptance.md) را ببینید.
 
 ## دستورات پروژه
 
@@ -110,7 +121,7 @@ npm run realtime:work # اجرای جداگانهٔ WebSocket و صف چاپ
 
 مدل‌های دامنه، مالکیت داده، وضعیت‌ها، نگه‌داری تاریخچه و ایندکس‌های کسب‌وکار در [مدل دامنه](docs/domain-model.md) ثبت شده‌اند.
 
-قرارداد ثبت رویداد ممیزی و outbox تراکنشی، سیاست تحویل حداقل یک‌بار و بازپخش دستی در [راهنمای ممیزی و outbox](docs/audit-outbox.md) آمده است. تا زمانی که مصرف‌کننده‌های واقعی ثبت نشده‌اند، worker تولیدی را اجرا نکنید.
+قرارداد ثبت رویداد ممیزی و outbox تراکنشی، سیاست تحویل حداقل یک‌بار و بازپخش دستی در [راهنمای ممیزی و outbox](docs/audit-outbox.md) آمده است. مصرف‌کنندهٔ چاپ در فرایند `realtime:work` ثبت می‌شود؛ فرمان مستقل `outbox:work` هنوز handler تحویل ندارد و نباید به‌عنوان پردازش فعال رویدادها شمارش شود.
 
 راهنمای [آزمون‌ها](docs/testing.md) شامل پیش‌نیاز مرورگر، ایزوله‌سازی داده‌ها، اجرای CI و بررسی traceهای خطا است.
 

@@ -1,6 +1,6 @@
 # Modular-monolith boundaries
 
-Armani Caffe is one deployable Next.js application, not a set of microservices. Each business capability owns its rules, use cases, contracts, and future adapters. This task establishes boundaries, not business behavior or persistence implementations.
+Armani Caffe is a modular-monolith Next.js application with separate supervised realtime and café print-bridge processes. Each business capability owns its rules, use cases, contracts, and adapters. MongoDB is the durable transactional source of truth; Redis coordinates the recoverable print schedule; private object storage holds media.
 
 ## Module map
 
@@ -23,7 +23,7 @@ Armani Caffe is one deployable Next.js application, not a set of microservices. 
 | `audit`              | Append-only accountability events                          | Audit contracts and server use cases                                     |
 | `notifications`      | Delivery requests, templates, and status                   | Notification contracts and server use cases                              |
 
-Every module has `domain/` (models and rules), `application/` (use cases and ports), `infrastructure/` (database/external adapters), and `contracts/` (transport-safe validation and DTOs). The root `index.ts` is the browser-safe public boundary and may export only pure domain and contracts. `server.ts` is the server-only public boundary for composed use cases. Both are deliberately empty until their corresponding features are implemented; consumers must not bypass them. Infrastructure files and `server.ts` directly import `server-only`.
+Every module has `domain/` (models and rules), `application/` (use cases and ports), `infrastructure/` (database/external adapters), and `contracts/` (transport-safe validation and DTOs). The root `index.ts` is the browser-safe public boundary and may export only pure domain and contracts. `server.ts` is the server-only public boundary for composed use cases. Consumers must not bypass them. Infrastructure files and `server.ts` directly import `server-only`.
 
 `src/shared` contains only dependency-free, reusable primitives: branded Mongo-compatible IDs, integer toman money, bounded pagination, result/error types, UTC date handling, and permission checks. `src/server/database` contains server-only database utilities and the transaction runner port. It is not a shortcut for module-owned repositories.
 
@@ -56,7 +56,7 @@ The repository's `npm run check:architecture` parses static imports, re-exports,
 
 ## Request flow
 
-This is the intended wiring pattern, not an implemented order endpoint yet.
+This is the implemented request pattern. Checkout/order confirmation additionally wraps domain writes, inventory movements, invoice creation, audit and outbox append in a MongoDB transaction. The realtime process consumes invoice print events and coordinates PrintJobs through Redis; the café bridge persists its local deduplication journal before acknowledging printer output.
 
 ```mermaid
 sequenceDiagram

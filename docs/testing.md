@@ -25,7 +25,9 @@ npm run test:e2e:dashboard
 npm run validate
 ```
 
-These scripts are headless and non-interactive. For local investigation:
+These scripts are headless and non-interactive. The local runner caps Vitest at two workers (integration remains one) and Playwright at two workers; CI uses one Playwright worker. This avoids Windows native-module and browser-server contention without changing fixture isolation. If a test fails under load, keep its trace and report the original failure even if an isolated rerun passes.
+
+For local investigation:
 
 ```bash
 npm run test:unit:watch
