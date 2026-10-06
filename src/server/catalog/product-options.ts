@@ -5,7 +5,6 @@ import { productOptions, quoteProduct } from "../../storefront/product-quote.ts"
 import { runSafeAction } from "../actions.ts";
 import { readJsonBody } from "../http/json.ts";
 import { requestIdFromHeader } from "../observability/index.ts";
-import { getServerConfig } from "../secrets/config.ts";
 import { configuredProductService } from "./products.ts";
 
 export async function handleProductOptions(
@@ -21,7 +20,7 @@ export async function handleProductOptions(
         throw new ApplicationError("VALIDATION", "Invalid options URL");
       if (!/^[a-f\d]{24}$/.test(id)) throw new ApplicationError("VALIDATION", "Invalid product ID");
       if (mode === "quote") {
-        const origin = new URL(getServerConfig().appUrl).origin;
+        const origin = new URL(request.url).origin;
         if (request.headers.get("origin") !== origin)
           throw new ApplicationError("FORBIDDEN", "Invalid quote origin");
       }

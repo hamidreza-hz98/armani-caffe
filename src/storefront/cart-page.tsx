@@ -221,7 +221,7 @@ function CartContent({
       <section className={styles.page}>
         <h1>سبد خرید</h1>
         <div className={styles.state}>
-          <p>برای مشاهده سبد و ادامه سفارش وارد حساب خود شوید.</p>
+          <p>برای مشاهده سبد و ادامه سفارش وارد حساب خود شوید. انتخاب‌های شما در این دستگاه محفوظ است.</p>
           <button type="button" onClick={() => openCustomerAuth()}>
             ورود یا ثبت‌نام
           </button>

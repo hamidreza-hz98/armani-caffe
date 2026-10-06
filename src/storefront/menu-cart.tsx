@@ -29,6 +29,7 @@ type Add = {
   productName: string;
   additionIds: string[];
   additionNames: string[];
+  additionPricesToman: number[];
   quantity: number;
   note?: string;
   unitPriceToman: number;
@@ -52,6 +53,41 @@ type CartContextValue = {
   preview: () => Promise<CartView>;
 };
 const CartContext = createContext<CartContextValue | null>(null);
+const GUEST_CART_KEY = "armani.guest-cart";
+
+function emptyCart(): CartView {
+  return {
+    id: "guest",
+    revision: 0,
+    items: [],
+    notes: "",
+    tableNumber: null,
+    expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    pricing: { subtotalToman: 0, discountToman: 0, deliveryToman: 0, totalToman: 0 },
+    issues: [],
+    checkoutReady: false,
+    accepted: true,
+  };
+}
+
+function readGuestCart(): CartView {
+  try {
+    const value = JSON.parse(localStorage.getItem(GUEST_CART_KEY) ?? "null") as CartView | null;
+    if (value && Array.isArray(value.items) && value.items.length <= 50) return value;
+  } catch {
+    // Start with a clean guest cart when saved browser data is unavailable or invalid.
+  }
+  return emptyCart();
+}
+
+function saveGuestCart(value: CartView | null) {
+  try {
+    if (value) localStorage.setItem(GUEST_CART_KEY, JSON.stringify(value));
+    else localStorage.removeItem(GUEST_CART_KEY);
+  } catch {
+    // The current page still supports cart edits if browser storage is unavailable.
+  }
+}
 
 export function useMenuCart() {
   const context = useContext(CartContext);
@@ -146,11 +182,13 @@ export function projectCart(cart: CartView | null, actions: readonly Action[]): 
             additions: action.additionIds.map((id, index) => ({
               additionId: id,
               name: action.additionNames[index] ?? "",
-              priceToman: 0,
+              priceToman: action.additionPricesToman[index] ?? 0,
             })),
             quantity: action.quantity,
             note: action.note ?? "",
-            basePriceToman: action.unitPriceToman,
+            basePriceToman:
+              action.unitPriceToman -
+              action.additionPricesToman.reduce((sum, price) => sum + price, 0),
           }),
         );
       }
@@ -219,7 +257,29 @@ export function MenuCartProvider({
 
   const reload = useCallback(async () => {
     try {
-      confirmed.current = await cartRequest();
+      let next = await cartRequest();
+      const guest = readGuestCart();
+      for (const item of guest.items) {
+        const result = await cartRequest({
+          operation: "add",
+          productId: item.productId,
+          additionIds: item.additions.map((addition) => addition.additionId),
+          quantity: item.quantity,
+          note: item.note,
+          cartId: next.id,
+          revision: next.revision,
+        });
+        next = result;
+      }
+      if (guest.notes)
+        next = await cartRequest({
+          operation: "notes",
+          notes: guest.notes,
+          cartId: next.id,
+          revision: next.revision,
+        });
+      saveGuestCart(null);
+      confirmed.current = next;
       setStatus("ready");
       setMessage("");
     } catch (error) {
@@ -287,6 +347,11 @@ export function MenuCartProvider({
         );
       });
   }, [initialGuest]);
+  useEffect(() => {
+    if (status !== "guest") return;
+    confirmed.current = readGuestCart();
+    publish();
+  }, [publish, status]);
   useEffect(() => {
     if (initialTable) {
       try {
@@ -411,6 +476,21 @@ export function MenuCartProvider({
   function dispatch(action: Action) {
     return new Promise<CartView>((resolve, reject) => {
       generation.current++;
+      if (status === "guest") {
+        try {
+          const current = confirmed.current ?? readGuestCart();
+          const updated = projectCart(current, [action]);
+          if (!updated) throw new Error("Guest cart unavailable");
+          const next = { ...updated, revision: current.revision + 1 };
+          confirmed.current = next;
+          saveGuestCart(next);
+          setCart(next);
+          resolve(next);
+        } catch (error) {
+          reject(error instanceof Error ? error : new Error("Guest cart unavailable"));
+        }
+        return;
+      }
       pending.current.push({ action, resolve, reject });
       setBusy(true);
       publish();
