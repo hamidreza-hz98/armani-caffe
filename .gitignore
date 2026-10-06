@@ -28,7 +28,9 @@
 /uploads/
 /storage/
 /volumes/
-/data/
+/data/*
+!data/
+!data/catalog.production.json
 *.log
 
 # misc

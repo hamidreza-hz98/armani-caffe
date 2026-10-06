@@ -1,0 +1,156 @@
+{
+  "version": 1,
+  "currency": "TOMAN",
+  "pricingNote": "Production defaults benchmarked against Iranian cafe menus in October 2026; review before launch.",
+  "categories": [
+    {
+      "name": "اسپرسوها",
+      "products": [
+        { "name": "اسپرسو", "price": 160000, "ingredients": "یک شات اسپرسو", "image": "espresso.png" },
+        { "name": "دبل اسپرسو", "price": 180000, "ingredients": "دو شات اسپرسو", "image": "double-espresso.png" },
+        { "name": "آمریکانو", "price": 190000, "ingredients": "اسپرسو، آب داغ", "image": "americano.png" },
+        { "name": "ریستریتو", "price": 165000, "ingredients": "شات کوتاه و غلیظ اسپرسو", "image": "ristretto.png" },
+        { "name": "لانگو", "price": 175000, "ingredients": "شات بلند اسپرسو", "image": "lungo.png" }
+      ]
+    },
+    {
+      "name": "قهوه‌های دمی",
+      "products": [
+        { "name": "قهوه ترک", "price": 190000, "ingredients": "قهوه ترک آسیاب ریز، آب", "image": "turkish-coffee.png" },
+        { "name": "قهوه یونانی", "price": 210000, "ingredients": "قهوه یونانی، آب", "image": "greek-coffee.png" },
+        { "name": "قهوه دمی", "price": 240000, "ingredients": "قهوه تازه‌آسیاب، آب تصفیه‌شده", "image": "pour-over-coffee.png" },
+        { "name": "قهوه سرددم", "price": 250000, "ingredients": "قهوه عصاره‌گیری سرد، یخ", "image": "cold-brew.png" }
+      ]
+    },
+    {
+      "name": "نوشیدنی‌های بر پایه قهوه",
+      "products": [
+        { "name": "لاته ساده", "price": 220000, "ingredients": "اسپرسو، شیر، فوم شیر", "image": "cafe-latte.png" },
+        { "name": "لاته طعم‌دار", "price": 260000, "ingredients": "اسپرسو، شیر، سیروپ انتخابی", "image": "flavored-latte.png" },
+        { "name": "کارامل ماکیاتو", "price": 280000, "ingredients": "اسپرسو، شیر، وانیل، سس کارامل", "image": "caramel-macchiato.png" },
+        { "name": "موکا", "price": 280000, "ingredients": "اسپرسو، شیر، شکلات", "image": "mocha.png" },
+        { "name": "کاپوچینو", "price": 220000, "ingredients": "اسپرسو، شیر، فوم شیر", "image": "cappuccino.png" },
+        { "name": "نسکافه", "price": 210000, "ingredients": "قهوه فوری، شیر، شکر اختیاری", "image": "nescafe.png" },
+        { "name": "آفوگاتو", "price": 260000, "ingredients": "بستنی وانیلی، اسپرسو", "image": "affogato.png" },
+        { "name": "کومپانا", "price": 200000, "ingredients": "اسپرسو، خامه زده‌شده", "image": "espresso-con-panna.png" },
+        { "name": "کورتادو", "price": 210000, "ingredients": "اسپرسو، شیر بخارداده‌شده", "image": "cortado.png" }
+      ]
+    },
+    {
+      "name": "شیک‌ها",
+      "products": [
+        { "name": "شیک توت‌فرنگی", "price": 290000, "ingredients": "بستنی وانیلی، توت‌فرنگی، شیر", "image": "strawberry-shake.png" },
+        { "name": "شیک کوکی", "price": 300000, "ingredients": "بستنی وانیلی، کوکی شکلاتی، شیر", "image": "cookie-shake.png" },
+        { "name": "شیک فندق", "price": 310000, "ingredients": "بستنی وانیلی، فندق، شیر", "image": "hazelnut-shake.png" },
+        { "name": "شیک لوتوس", "price": 320000, "ingredients": "بستنی وانیلی، کرم و بیسکویت لوتوس، شیر", "image": "lotus-shake.png" },
+        { "name": "شیک شکلات", "price": 300000, "ingredients": "بستنی شکلاتی، شیر، سس شکلات", "image": "chocolate-shake.png" },
+        { "name": "شیک نوتلا", "price": 330000, "ingredients": "بستنی وانیلی، نوتلا، شیر", "image": "nutella-shake.png" },
+        { "name": "شیک موز نوتلا", "price": 350000, "ingredients": "موز، نوتلا، بستنی وانیلی، شیر", "image": "banana-nutella-shake.png" },
+        { "name": "شیک وانیل", "price": 280000, "ingredients": "بستنی وانیلی، شیر، وانیل", "image": "vanilla-shake.png" }
+      ]
+    },
+    {
+      "name": "نوشیدنی‌های گرم",
+      "products": [
+        { "name": "شیر پسته زعفران", "price": 280000, "ingredients": "شیر، پسته، زعفران، عسل", "image": "pistachio-saffron-milk.png" },
+        { "name": "هات چاکلت", "price": 240000, "ingredients": "شیر، شکلات، پودر کاکائو", "image": "hot-chocolate.png" },
+        { "name": "ماسالا", "price": 220000, "ingredients": "چای سیاه، شیر، ادویه ماسالا", "image": "masala-chai.png" },
+        { "name": "وایت چاکلت", "price": 250000, "ingredients": "شیر، شکلات سفید", "image": "white-chocolate.png" },
+        { "name": "ماچا", "price": 280000, "ingredients": "پودر ماچا، شیر", "image": "matcha-latte.png" },
+        { "name": "چای کرک", "price": 220000, "ingredients": "چای سیاه، شیر، هل، ادویه", "image": "karak-tea.png" },
+        { "name": "اسپیرولینا", "price": 280000, "ingredients": "شیر، اسپیرولینا، عسل", "image": "spirulina-latte.png" },
+        { "name": "شیر عسل", "price": 180000, "ingredients": "شیر گرم، عسل", "image": "honey-milk.png" },
+        { "name": "شیر زنجبیل", "price": 190000, "ingredients": "شیر گرم، زنجبیل، عسل", "image": "ginger-milk.png" },
+        { "name": "پینک چاکلت", "price": 250000, "ingredients": "شیر، شکلات صورتی، وانیل", "image": "pink-chocolate.png" }
+      ]
+    },
+    {
+      "name": "چای‌ها",
+      "products": [
+        { "name": "چای سبز", "price": 120000, "ingredients": "چای سبز", "image": "green-tea.png" },
+        { "name": "چای سیاه دمی", "price": 100000, "ingredients": "چای سیاه ایرانی دم‌کشیده", "image": "brewed-black-tea.png" },
+        { "name": "چای سیاه کیسه‌ای", "price": 90000, "ingredients": "چای سیاه کیسه‌ای، آب جوش", "image": "black-tea-bag.png" },
+        { "name": "چای زنجبیل", "price": 120000, "ingredients": "چای سیاه، زنجبیل", "image": "ginger-tea.png" },
+        { "name": "چای لیمو", "price": 120000, "ingredients": "چای سیاه، لیموی تازه", "image": "lemon-tea.png" },
+        { "name": "چای دارچین", "price": 120000, "ingredients": "چای سیاه، دارچین", "image": "cinnamon-tea.png" },
+        { "name": "چای هل", "price": 120000, "ingredients": "چای سیاه، هل", "image": "cardamom-tea.png" }
+      ]
+    },
+    {
+      "name": "دمنوش‌ها",
+      "products": [
+        { "name": "دمنوش گل گاوزبان", "price": 170000, "ingredients": "گل گاوزبان، لیموعمانی، نبات", "image": "borage-herbal-tea.png" }
+      ]
+    },
+    {
+      "name": "ماکتیل‌ها",
+      "products": [
+        { "name": "ماکتیل بلو اوشن", "price": 260000, "ingredients": "سیروپ بلو کاراسائو بدون الکل، لیمو، سودا، یخ", "image": "blue-ocean-mocktail.png" },
+        { "name": "موهیتو", "price": 230000, "ingredients": "لیمو، نعناع، سودا، یخ", "image": "mojito.png" },
+        { "name": "رد موهیتو", "price": 250000, "ingredients": "توت‌فرنگی، لیمو، نعناع، سودا، یخ", "image": "red-mojito.png" },
+        { "name": "بلو موهیتو", "price": 250000, "ingredients": "بلو کاراسائو بدون الکل، لیمو، نعناع، سودا، یخ", "image": "blue-mojito.png" },
+        { "name": "مانگو موهیتو", "price": 270000, "ingredients": "انبه، لیمو، نعناع، سودا، یخ", "image": "mango-mojito.png" }
+      ]
+    },
+    {
+      "name": "صبحانه",
+      "products": [
+        { "name": "نیمرو", "price": 160000, "ingredients": "دو عدد تخم‌مرغ، کره، نان", "image": "fried-eggs.png" },
+        { "name": "املت", "price": 190000, "ingredients": "تخم‌مرغ، گوجه‌فرنگی، ادویه، نان", "image": "omelette.png" },
+        { "name": "سوسیس تخم‌مرغ", "price": 240000, "ingredients": "سوسیس، تخم‌مرغ، ادویه، نان", "image": "sausage-eggs.png" },
+        { "name": "سوسیس املت", "price": 260000, "ingredients": "سوسیس، تخم‌مرغ، گوجه‌فرنگی، نان", "image": "sausage-omelette.png" },
+        { "name": "لوبیا", "price": 170000, "ingredients": "خوراک لوبیا چیتی، قارچ، ادویه، نان", "image": "bean-breakfast.png" },
+        { "name": "عدسی", "price": 160000, "ingredients": "عدس، پیاز، ادویه، نان", "image": "lentil-breakfast.png" },
+        { "name": "املت ویژه", "price": 260000, "ingredients": "تخم‌مرغ، گوجه‌فرنگی، قارچ، پنیر، فلفل دلمه‌ای، نان", "image": "special-omelette.png" },
+        { "name": "کلاب پنیر مربا", "price": 170000, "ingredients": "نان تست، پنیر، مربا", "image": "cheese-jam-club.png" },
+        { "name": "کلاب کره مربا", "price": 160000, "ingredients": "نان تست، کره، مربا", "image": "butter-jam-club.png" },
+        { "name": "کلاب کره پنیر", "price": 170000, "ingredients": "نان تست، کره، پنیر", "image": "butter-cheese-club.png" },
+        { "name": "کلاب خامه عسل", "price": 190000, "ingredients": "نان تست، خامه، عسل", "image": "cream-honey-club.png" },
+        { "name": "کلاب نیمرو", "price": 220000, "ingredients": "نان تست، تخم‌مرغ، پنیر، سبزیجات", "image": "fried-egg-club.png" },
+        { "name": "کلاب کره بادام‌زمینی", "price": 190000, "ingredients": "نان تست، کره بادام‌زمینی، موز", "image": "peanut-butter-club.png" },
+        { "name": "کروسان شکم‌پر", "price": 260000, "ingredients": "کروسان، تخم‌مرغ، پنیر، ژامبون", "image": "stuffed-croissant.png" }
+      ]
+    },
+    {
+      "name": "عصرانه",
+      "products": [
+        { "name": "کلاب پیتزایی", "price": 260000, "ingredients": "نان تست، پنیر پیتزا، قارچ، فلفل دلمه‌ای، سس", "image": "pizza-club.png" },
+        { "name": "اسنک هات‌داگ", "price": 280000, "ingredients": "نان تست، هات‌داگ، پنیر، سس", "image": "hotdog-snack.png" },
+        { "name": "اسنک پپرونی", "price": 300000, "ingredients": "نان تست، پپرونی، پنیر، سس", "image": "pepperoni-snack.png" },
+        { "name": "اسنک مرغ", "price": 290000, "ingredients": "نان تست، مرغ مزه‌دار، پنیر، قارچ", "image": "chicken-snack.png" },
+        { "name": "اسنک گوشت", "price": 320000, "ingredients": "نان تست، گوشت، پنیر، قارچ", "image": "beef-snack.png" },
+        { "name": "اسنک ژامبون", "price": 280000, "ingredients": "نان تست، ژامبون، پنیر، قارچ", "image": "ham-snack.png" },
+        { "name": "اسنک سبزیجات", "price": 250000, "ingredients": "نان تست، قارچ، ذرت، فلفل دلمه‌ای، پنیر", "image": "vegetable-snack.png" }
+      ]
+    },
+    {
+      "name": "کیک و شیرینی",
+      "products": [
+        { "name": "کوکی روز", "price": 140000, "ingredients": "کوکی تازه روز؛ طعم بر اساس موجودی", "image": "cookie-of-the-day.png" },
+        { "name": "کیک براونی", "price": 180000, "ingredients": "شکلات، کاکائو، کره، تخم‌مرغ", "image": "brownie-cake.png" },
+        { "name": "کیک سیب دارچین", "price": 170000, "ingredients": "سیب، دارچین، آرد، کره، تخم‌مرغ", "image": "apple-cinnamon-cake.png" },
+        { "name": "کیک هویج", "price": 170000, "ingredients": "هویج، گردو، دارچین، کرم پنیر", "image": "carrot-cake.png" },
+        { "name": "کروسان", "price": 150000, "ingredients": "خمیر کره‌ای لایه‌ای", "image": "croissant.png" }
+      ]
+    },
+    {
+      "name": "دسرها",
+      "products": [
+        { "name": "دسر سه‌شیر", "price": 200000, "ingredients": "کیک اسفنجی، سه نوع شیر، خامه", "image": "tres-leches.png" },
+        { "name": "دسر کره لوتوس", "price": 210000, "ingredients": "کرم لوتوس، بیسکویت لوتوس، خامه", "image": "lotus-dessert.png" },
+        { "name": "دسر شکلات", "price": 200000, "ingredients": "شکلات، خامه، کیک شکلاتی", "image": "chocolate-dessert.png" },
+        { "name": "دسر قهوه", "price": 200000, "ingredients": "قهوه، خامه، بیسکویت", "image": "coffee-dessert.png" },
+        { "name": "تیرامیسو", "price": 220000, "ingredients": "ماسکارپونه، قهوه، لیدی‌فینگر، کاکائو", "image": "tiramisu.png" }
+      ]
+    },
+    {
+      "name": "کمبوهای صبحانه",
+      "products": [
+        { "name": "کمبو کلاسیک", "price": 390000, "ingredients": "نیمرو، پنیر، گردو، مربا، کره، نان، چای", "image": "classic-breakfast-combo.png" },
+        { "name": "کمبو ایرانی", "price": 450000, "ingredients": "املت، پنیر، گردو، سبزی، خیار و گوجه، نان، چای", "image": "iranian-breakfast-combo.png" },
+        { "name": "کمبو گرم", "price": 490000, "ingredients": "سوسیس تخم‌مرغ، لوبیا، سیب‌زمینی، نان، چای", "image": "hot-breakfast-combo.png" },
+        { "name": "کمبو آرمانی", "price": 560000, "ingredients": "املت ویژه، کروسان شکم‌پر، پنیر، گردو، میوه فصل، نوشیدنی گرم", "image": "armani-breakfast-combo.png" }
+      ]
+    }
+  ]
+}

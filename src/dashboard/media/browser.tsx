@@ -12,7 +12,7 @@ import { MediaDetails } from "./details";
 import styles from "./media.module.css";
 
 const formatSize = (bytes: number) =>
-  `${(bytes / 1024 / 1024).toLocaleString("fa-IR", { maximumFractionDigits: 1 })} مگابایت`;
+  `${(bytes / 1024 / 1024).toLocaleString("fa-IR", { maximumFractionDigits: 1 })} MB`;
 export function MediaBrowser({ items, owner }: { items: MediaSummary[]; owner: boolean }) {
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
@@ -121,8 +121,8 @@ export function MediaBrowser({ items, owner }: { items: MediaSummary[]; owner: b
                 <div>
                   <h2>{item.title}</h2>
                   <p>
-                    {item.mimeType.replace("image/", "").toUpperCase()} ·{" "}
-                    {formatSize(item.byteSize)}
+                    {formatSize(item.byteSize)} ·{" "}
+                    {item.mimeType.replace("image/", "").toUpperCase()}
                     {item.width && item.height ? ` · ${item.width}×${item.height}` : ""}
                   </p>
                 </div>
