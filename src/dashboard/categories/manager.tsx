@@ -7,6 +7,7 @@ import { useRef, useState } from "react";
 
 import type { Category } from "@/modules/catalog/categories";
 
+import { DashboardIcon } from "@/dashboard/icon";
 import { type CategoryList, categoryList, categoryRequest, CategoryRequestError } from "./api";
 import styles from "./categories.module.css";
 import { CategoryDeleteDialog } from "./delete-dialog";
@@ -30,6 +31,11 @@ export function CategoryManager({
   const [editing, setEditing] = useState<Category | "new" | null>(null);
   const [deleting, setDeleting] = useState<Category | null>(null);
   const [busy, setBusy] = useState(false);
+  const [dragging, setDragging] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<{
+    id: string;
+    position: "before" | "after";
+  } | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const dragId = useRef<string | null>(null);
@@ -50,13 +56,18 @@ export function CategoryManager({
     setConfirmed(latest);
     router.refresh();
   }
-  async function reorder(source: string, target: string) {
+  async function reorder(
+    source: string,
+    target: string,
+    position: "before" | "after" = "before",
+  ) {
     if (!editable || filtered || source === target || busyRef.current) return;
     const ids = confirmed.items.map((item) => item.id);
-    const from = ids.indexOf(source),
-      to = ids.indexOf(target);
-    if (from < 0 || to < 0) return;
-    ids.splice(to, 0, ...ids.splice(from, 1));
+    const from = ids.indexOf(source);
+    if (from < 0 || !ids.includes(target)) return;
+    ids.splice(from, 1);
+    const to = ids.indexOf(target);
+    ids.splice(position === "after" ? to + 1 : to, 0, source);
     busyRef.current = true;
     setBusy(true);
     setError("");
@@ -126,12 +137,32 @@ export function CategoryManager({
   }
   function touchDrop(event: React.PointerEvent<HTMLButtonElement>) {
     if (event.pointerType === "mouse" || !touchId.current) return;
-    const target = document
-      .elementFromPoint(event.clientX, event.clientY)
-      ?.closest<HTMLElement>("[data-category-id]")?.dataset.categoryId;
+    const element = document.elementFromPoint(event.clientX, event.clientY)
+      ?.closest<HTMLElement>("[data-category-id]");
+    const target = element?.dataset.categoryId;
     const source = touchId.current;
     touchId.current = null;
-    if (target) void reorder(source, target);
+    setDragging(null);
+    setDropTarget(null);
+    if (target && element) {
+      const position = event.clientY < element.getBoundingClientRect().top + element.offsetHeight / 2
+        ? "before"
+        : "after";
+      void reorder(source, target, position);
+    }
+  }
+  function touchOver(event: React.PointerEvent<HTMLButtonElement>) {
+    if (event.pointerType === "mouse" || !touchId.current) return;
+    const element = document.elementFromPoint(event.clientX, event.clientY)
+      ?.closest<HTMLElement>("[data-category-id]");
+    if (!element?.dataset.categoryId || element.dataset.categoryId === touchId.current) {
+      setDropTarget(null);
+      return;
+    }
+    const position = event.clientY < element.getBoundingClientRect().top + element.offsetHeight / 2
+      ? "before"
+      : "after";
+    setDropTarget({ id: element.dataset.categoryId, position });
   }
   return (
     <div className={styles.page}>
@@ -229,15 +260,35 @@ export function CategoryManager({
           {visible.map((item, index) => (
             <li
               key={item.id}
-              className={styles.item}
+              className={`${styles.item} ${dragging === item.id ? styles.dragging : ""} ${dropTarget?.id === item.id ? dropTarget.position === "before" ? styles.dropBefore : styles.dropAfter : ""}`}
               data-category-id={item.id}
               onDragOver={(event) => {
-                if (dragId.current) event.preventDefault();
+                if (!dragId.current || dragId.current === item.id) return;
+                event.preventDefault();
+                event.dataTransfer.dropEffect = "move";
+                const position = event.clientY < event.currentTarget.getBoundingClientRect().top + event.currentTarget.offsetHeight / 2
+                  ? "before"
+                  : "after";
+                setDropTarget({ id: item.id, position });
+              }}
+              onDragLeave={(event) => {
+                if (
+                  !event.currentTarget.contains(event.relatedTarget as Node | null) &&
+                  dropTarget?.id === item.id
+                )
+                  setDropTarget(null);
               }}
               onDrop={(event) => {
                 event.preventDefault();
-                if (dragId.current) void reorder(dragId.current, item.id);
+                if (dragId.current) {
+                  const position = event.clientY < event.currentTarget.getBoundingClientRect().top + event.currentTarget.offsetHeight / 2
+                    ? "before"
+                    : "after";
+                  void reorder(dragId.current, item.id, position);
+                }
                 dragId.current = null;
+                setDragging(null);
+                setDropTarget(null);
               }}
             >
               {editable && !filtered && (
@@ -249,19 +300,26 @@ export function CategoryManager({
                     draggable={!busy}
                     onDragStart={(event) => {
                       dragId.current = item.id;
+                      setDragging(item.id);
                       event.dataTransfer.effectAllowed = "move";
                       event.dataTransfer.setData("text/plain", item.id);
                     }}
                     onDragEnd={() => {
                       dragId.current = null;
+                      setDragging(null);
+                      setDropTarget(null);
                     }}
                     onPointerDown={(event) => {
-                      if (event.pointerType !== "mouse") touchId.current = item.id;
+                      if (event.pointerType !== "mouse") {
+                        touchId.current = item.id;
+                        setDragging(item.id);
+                      }
                     }}
+                    onPointerMove={touchOver}
                     onPointerUp={touchDrop}
                     style={{ touchAction: "none" }}
                   >
-                    ⠿
+                    <DashboardIcon name="grip" />
                   </button>
                   <div>
                     <button
@@ -270,7 +328,7 @@ export function CategoryManager({
                       aria-label={`انتقال ${item.name} به بالا`}
                       onClick={() => void reorder(item.id, confirmed.items[index - 1].id)}
                     >
-                      ↑
+                      <DashboardIcon name="arrowUp" />
                     </button>
                     <button
                       type="button"
@@ -278,7 +336,7 @@ export function CategoryManager({
                       aria-label={`انتقال ${item.name} به پایین`}
                       onClick={() => void reorder(item.id, confirmed.items[index + 1].id)}
                     >
-                      ↓
+                      <DashboardIcon name="arrowDown" />
                     </button>
                   </div>
                 </div>
@@ -294,7 +352,7 @@ export function CategoryManager({
                     unoptimized
                   />
                 ) : (
-                  <span aria-label="بدون تصویر">◇</span>
+                  <span aria-label="بدون تصویر"><DashboardIcon name="category" /></span>
                 )}
               </div>
               <div className={styles.description}>

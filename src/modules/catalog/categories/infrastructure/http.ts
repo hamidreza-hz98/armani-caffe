@@ -31,8 +31,12 @@ export function createCategoryHttpHandler(options: {
         )[operation];
         if (request.method !== method || new URL(request.url).search)
           throw new ApplicationError("VALIDATION", "Invalid category request");
-        if (method !== "GET" && !options.origins().includes(request.headers.get("origin") ?? ""))
-          throw new ApplicationError("FORBIDDEN", "Invalid request origin");
+        if (method !== "GET") {
+          const origin = request.headers.get("origin") ?? "";
+          const requestOrigin = new URL(request.url).origin;
+          if (origin !== requestOrigin && !options.origins().includes(origin))
+            throw new ApplicationError("FORBIDDEN", "Invalid request origin");
+        }
         const token = options.token(request);
         if (operation !== "public" && !token)
           throw new ApplicationError("UNAUTHORIZED", "Admin session required");

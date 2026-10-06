@@ -582,10 +582,26 @@
   padding: 16px 20px;
 }
 .optionsProduct {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   padding: 13px;
   border: 1px solid #d8cabb;
   border-radius: 14px;
   background: #f7f2ea;
+}
+.optionsProductImage {
+  display: block;
+  width: 88px;
+  height: 88px;
+  flex: none;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgb(42 28 18 / 18%);
+}
+.optionsProductDetails {
+  min-width: 0;
+  flex: 1;
 }
 .optionsProduct p {
   margin: 4px 0 12px;

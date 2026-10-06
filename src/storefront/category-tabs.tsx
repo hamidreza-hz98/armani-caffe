@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import styles from "./menu.module.css";
 import { categoryAnchor } from "./menu-model";
@@ -11,6 +11,7 @@ export function CategoryTabs({
   categories: readonly { id: string; name: string }[];
 }) {
   const [active, setActive] = useState(categories[0]?.id ?? "");
+  const tabsScroller = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!categories.length) return;
     let frame = 0;
@@ -34,9 +35,24 @@ export function CategoryTabs({
       window.removeEventListener("resize", update);
     };
   }, [categories]);
+  useEffect(() => {
+    const scroller = tabsScroller.current;
+    const activeTab = scroller?.querySelector<HTMLElement>('[aria-current="location"]');
+    if (!scroller || !activeTab) return;
+
+    const scrollerBounds = scroller.getBoundingClientRect();
+    const tabBounds = activeTab.getBoundingClientRect();
+    const scrollDelta =
+      tabBounds.left < scrollerBounds.left
+        ? tabBounds.left - scrollerBounds.left
+        : tabBounds.right > scrollerBounds.right
+          ? tabBounds.right - scrollerBounds.right
+          : 0;
+    if (scrollDelta) scroller.scrollBy({ left: scrollDelta, behavior: "smooth" });
+  }, [active]);
   return (
     <nav className={styles.tabs} aria-label="دسته‌بندی‌های منو">
-      <div className={styles.tabsScroller}>
+      <div className={styles.tabsScroller} ref={tabsScroller}>
         {categories.map((category) => (
           <a
             key={category.id}
