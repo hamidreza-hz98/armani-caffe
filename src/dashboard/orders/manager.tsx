@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { publicConfig } from "@/config/public";
+import {
+  DASHBOARD_NOTIFICATION_EVENT,
+  DASHBOARD_NOTIFICATION_SOUND_EVENT,
+  DASHBOARD_NOTIFICATION_SOUND_KEY,
+  setDashboardNotificationSound,
+} from "@/dashboard/notifications";
 import { useFeedback } from "@/theme/feedback-provider";
 import { EmptyState, RtlPagination, StatusMessage } from "@/theme/shared-states";
 
@@ -89,20 +95,6 @@ function readSaved(): SavedFilter[] {
     return [];
   }
 }
-function ping() {
-  const context = new AudioContext();
-  const oscillator = context.createOscillator();
-  const gain = context.createGain();
-  oscillator.frequency.value = 660;
-  gain.gain.setValueAtTime(0.06, context.currentTime);
-  gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.18);
-  oscillator.connect(gain).connect(context.destination);
-  oscillator.start();
-  oscillator.stop(context.currentTime + 0.18);
-  oscillator.onended = () => {
-    void context.close();
-  };
-}
 export function OrderManager({
   initial,
   filters,
@@ -127,17 +119,29 @@ export function OrderManager({
   const sequence = useRef(0);
   const seen = useRef(new Set<string>());
   const mounted = useRef(true);
-  const soundRef = useRef(false);
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
       setSaved(readSaved());
-      setSound(localStorage.getItem("armani.orders.sound") === "on");
+      setSound(localStorage.getItem(DASHBOARD_NOTIFICATION_SOUND_KEY) === "on");
     });
     return () => cancelAnimationFrame(frame);
   }, []);
   useEffect(() => {
-    soundRef.current = sound;
-  }, [sound]);
+    const onSoundChange = (event: Event) => {
+      const enabled = (event as CustomEvent<{ enabled: boolean }>).detail?.enabled === true;
+      setSound(enabled);
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === DASHBOARD_NOTIFICATION_SOUND_KEY)
+        setSound(event.newValue === "on");
+    };
+    window.addEventListener(DASHBOARD_NOTIFICATION_SOUND_EVENT, onSoundChange);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener(DASHBOARD_NOTIFICATION_SOUND_EVENT, onSoundChange);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
   const reload = useCallback(async () => {
     const request = ++sequence.current;
     try {
@@ -184,12 +188,12 @@ export function OrderManager({
           if (seen.current.size > 500) seen.current.delete(seen.current.values().next().value!);
           if (event.change === "order.confirmed") {
             setNotice("سفارش تازه دریافت شد.");
-            if (
-              soundRef.current &&
-              document.visibilityState === "visible" &&
-              Date.now() - Date.parse(event.at) < 120_000
-            )
-              ping();
+            if (Date.now() - Date.parse(event.at) < 120_000)
+              window.dispatchEvent(
+                new CustomEvent(DASHBOARD_NOTIFICATION_EVENT, {
+                  detail: { orderId: event.orderId, at: event.at },
+                }),
+              );
           }
           void reload();
         };
@@ -276,15 +280,23 @@ export function OrderManager({
   }
   async function toggleSound() {
     if (sound) {
-      localStorage.removeItem("armani.orders.sound");
+      setDashboardNotificationSound(false);
       setSound(false);
       return;
     }
     try {
       const context = new AudioContext();
       await context.resume();
-      await context.close();
-      localStorage.setItem("armani.orders.sound", "on");
+      setDashboardNotificationSound(true);
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.frequency.value = 740;
+      gain.gain.setValueAtTime(0.06, context.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.2);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start();
+      oscillator.stop(context.currentTime + 0.2);
+      oscillator.onended = () => void context.close();
       setSound(true);
     } catch {
       setError("مرورگر اجازه پخش صدا نداد.");

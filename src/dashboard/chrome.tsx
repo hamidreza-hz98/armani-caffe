@@ -1,11 +1,20 @@
 "use client";
 
-import { Drawer } from "@mui/material";
+import { ClickAwayListener, Drawer } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 
 import { DashboardIcon } from "./icon";
+import {
+  DASHBOARD_NOTIFICATION_EVENT,
+  DASHBOARD_NOTIFICATION_SOUND_EVENT,
+  DASHBOARD_NOTIFICATION_SOUND_KEY,
+  dashboardNotificationSoundEnabled,
+  playDashboardNotificationSound,
+  setDashboardNotificationSound,
+} from "./notifications";
 import type { DashboardLink, DashboardRole } from "./navigation";
 import styles from "./shell.module.css";
 
@@ -40,10 +49,49 @@ export function DashboardChrome({ links, actor }: Props) {
   const [drawer, setDrawer] = useState(false);
   const [profile, setProfile] = useState(false);
   const [notices, setNotices] = useState(false);
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const [query, setQuery] = useState("");
   const [loggingOut, setLoggingOut] = useState(false);
   const [error, setError] = useState("");
   const current = links.find((link) => link.href === path);
+
+  useEffect(() => {
+    setSoundEnabled(dashboardNotificationSoundEnabled());
+    function onNotification() {
+      setNotificationCount((count) => Math.min(99, count + 1));
+      setUnreadNotifications((count) => Math.min(99, count + 1));
+      if (
+        dashboardNotificationSoundEnabled() &&
+        document.visibilityState === "visible"
+      )
+        playDashboardNotificationSound();
+    }
+    function dismissOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setProfile(false);
+        setNotices(false);
+      }
+    }
+    function onSoundChange(event: Event) {
+      setSoundEnabled((event as CustomEvent<{ enabled: boolean }>).detail?.enabled === true);
+    }
+    function onStorage(event: StorageEvent) {
+      if (event.key === DASHBOARD_NOTIFICATION_SOUND_KEY)
+        setSoundEnabled(event.newValue === "on");
+    }
+    window.addEventListener(DASHBOARD_NOTIFICATION_EVENT, onNotification);
+    window.addEventListener(DASHBOARD_NOTIFICATION_SOUND_EVENT, onSoundChange);
+    window.addEventListener("storage", onStorage);
+    document.addEventListener("keydown", dismissOnEscape);
+    return () => {
+      window.removeEventListener(DASHBOARD_NOTIFICATION_EVENT, onNotification);
+      window.removeEventListener(DASHBOARD_NOTIFICATION_SOUND_EVENT, onSoundChange);
+      window.removeEventListener("storage", onStorage);
+      document.removeEventListener("keydown", dismissOnEscape);
+    };
+  }, []);
 
   function search(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,7 +126,14 @@ export function DashboardChrome({ links, actor }: Props) {
   const sidebar = (
     <div className={styles.sideInner}>
       <Link href="/dashboard" className={styles.brand} onClick={() => setDrawer(false)}>
-        <span className={styles.brandMark}>آ</span>
+        <Image
+          className={styles.brandLogo}
+          src="/brand/armani-logo.png"
+          alt=""
+          width={46}
+          height={46}
+          unoptimized
+        />
         <span>
           <strong>کافه آرمانی</strong>
           <small>پنل مدیریت</small>
@@ -151,52 +206,81 @@ export function DashboardChrome({ links, actor }: Props) {
               <DashboardIcon name="search" />
             </button>
           </form>
-          <div className={styles.popoverWrap}>
-            <button
-              type="button"
-              className={styles.iconButton}
-              aria-label="اعلان‌ها"
-              aria-expanded={notices}
-              onClick={() => {
-                setNotices(!notices);
-                setProfile(false);
-              }}
-            >
-              <DashboardIcon name="bell" />
-            </button>
-            {notices && (
-              <div className={styles.popover} role="status">
-                <strong>اعلان‌ها</strong>
-                <p>اعلان جدیدی برای نمایش در این بخش ثبت نشده است.</p>
-              </div>
-            )}
-          </div>
-          <div className={styles.popoverWrap}>
-            <button
-              type="button"
-              className={styles.profileButton}
-              aria-label={`پروفایل ${actor.displayName}`}
-              aria-expanded={profile}
-              onClick={() => {
-                setProfile(!profile);
-                setNotices(false);
-              }}
-            >
-              <span className={styles.avatar}>{actor.displayName.charAt(0)}</span>
-              <span className={styles.profileName}>{actor.displayName}</span>
-            </button>
-            {profile && (
-              <div className={styles.popover}>
-                <strong>{actor.displayName}</strong>
-                <small>{actor.role === "OWNER" ? "مدیر سیستم" : "صندوقدار"}</small>
-                <button type="button" disabled={loggingOut} onClick={() => void logout()}>
-                  <DashboardIcon name="logout" />
-                  {loggingOut ? "در حال خروج…" : "خروج از حساب"}
-                </button>
-                {error && <p role="alert">{error}</p>}
-              </div>
-            )}
-          </div>
+          <ClickAwayListener onClickAway={() => setNotices(false)}>
+            <div className={styles.popoverWrap}>
+              <button
+                type="button"
+                className={styles.iconButton}
+                aria-label="اعلان‌ها"
+                aria-expanded={notices}
+                onClick={() => {
+                  setNotices((open) => !open);
+                  setProfile(false);
+                  setUnreadNotifications(0);
+                }}
+              >
+                <DashboardIcon name="bell" />
+                {unreadNotifications > 0 && (
+                  <span className={styles.noticeBadge}>{unreadNotifications}</span>
+                )}
+              </button>
+              {notices && (
+                <div className={styles.popover}>
+                  <strong>اعلان‌ها</strong>
+                  {notificationCount > 0 ? (
+                    <>
+                      <p>{notificationCount.toLocaleString("fa-IR")} سفارش تازه دریافت شد.</p>
+                      <Link href="/dashboard/orders" onClick={() => setNotices(false)}>
+                        مشاهده سفارش‌ها
+                      </Link>
+                    </>
+                  ) : (
+                    <p>اعلان جدیدی برای نمایش در این بخش ثبت نشده است.</p>
+                  )}
+                  <button
+                    type="button"
+                    aria-pressed={soundEnabled}
+                    onClick={() => {
+                      const enabled = !soundEnabled;
+                      setDashboardNotificationSound(enabled);
+                      setSoundEnabled(enabled);
+                      if (enabled) playDashboardNotificationSound();
+                    }}
+                  >
+                    {soundEnabled ? "خاموش‌کردن صدای اعلان" : "فعال‌کردن صدای اعلان"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </ClickAwayListener>
+          <ClickAwayListener onClickAway={() => setProfile(false)}>
+            <div className={styles.popoverWrap}>
+              <button
+                type="button"
+                className={styles.profileButton}
+                aria-label={`پروفایل ${actor.displayName}`}
+                aria-expanded={profile}
+                onClick={() => {
+                  setProfile((open) => !open);
+                  setNotices(false);
+                }}
+              >
+                <span className={styles.avatar}>{actor.displayName.charAt(0)}</span>
+                <span className={styles.profileName}>{actor.displayName}</span>
+              </button>
+              {profile && (
+                <div className={styles.popover}>
+                  <strong>{actor.displayName}</strong>
+                  <small>{actor.role === "OWNER" ? "مدیر سیستم" : "صندوقدار"}</small>
+                  <button type="button" disabled={loggingOut} onClick={() => void logout()}>
+                    <DashboardIcon name="logout" />
+                    {loggingOut ? "در حال خروج…" : "خروج از حساب"}
+                  </button>
+                  {error && <p role="alert">{error}</p>}
+                </div>
+              )}
+            </div>
+          </ClickAwayListener>
         </div>
       </header>
     </>

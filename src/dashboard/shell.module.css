@@ -28,16 +28,13 @@
   color: #fff;
   text-decoration: none;
 }
-.brandMark {
+.brandLogo {
   display: grid;
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid #c99a3d;
-  border-radius: 12px;
-  color: #c99a3d;
-  font-size: 1.4rem;
-  font-weight: 800;
+  flex: none;
+  object-fit: contain;
 }
 .brand strong,
 .brand small,
@@ -94,7 +91,7 @@
   width: 38px;
   height: 38px;
   flex: none;
-  border-radius: 12px;
+  border-radius: 50%;
   background: #c99a3d;
   color: #171411;
   font-weight: 800;
@@ -190,6 +187,10 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: 0.8rem;
+  font-family: "Vazirmatn Variable", Tahoma, sans-serif;
+}
+.sideAccount strong {
+  font-family: "Vazirmatn Variable", Tahoma, sans-serif;
 }
 .menuButton {
   display: none;
@@ -230,6 +231,32 @@
   border-radius: 10px;
   font: inherit;
   cursor: pointer;
+}
+.popover > a {
+  display: block;
+  margin-top: 8px;
+  color: #6d4810;
+  font-weight: 700;
+  text-decoration: underline;
+}
+.iconButton {
+  position: relative;
+}
+.noticeBadge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 10px;
+  background: #b3261e;
+  color: #fff;
+  font-size: 10px;
+  line-height: 1;
+  pointer-events: none;
 }
 .main {
   max-width: 1500px;

@@ -1,6 +1,20 @@
 import type { DashboardLink } from "./navigation";
 
-type Name = DashboardLink["icon"] | "menu" | "search" | "bell" | "logout" | "close" | "chevron";
+type Name =
+  | DashboardLink["icon"]
+  | "menu"
+  | "search"
+  | "bell"
+  | "logout"
+  | "close"
+  | "chevron"
+  | "grip"
+  | "arrowUp"
+  | "arrowDown"
+  | "store"
+  | "phone"
+  | "printer"
+  | "creditCard";
 const paths: Record<Name, string> = {
   grid: "M3 3h7v7H3z M14 3h7v7h-7z M3 14h7v7H3z M14 14h7v7h-7z",
   receipt: "M6 3h12v18l-3-2-3 2-3-2-3 2z M9 8h6 M9 12h6 M9 16h4",
@@ -19,6 +33,13 @@ const paths: Record<Name, string> = {
   logout: "M9 4H4v16h5 M14 8l4 4-4 4 M8 12h10",
   close: "M5 5l14 14 M19 5L5 19",
   chevron: "M9 5l6 7-6 7",
+  grip: "M9 5h.01 M15 5h.01 M9 12h.01 M15 12h.01 M9 19h.01 M15 19h.01",
+  arrowUp: "M12 19V5 M6 11l6-6 6 6",
+  arrowDown: "M12 5v14 M18 13l-6 6-6-6",
+  store: "M3 10h18l-2-6H5z M5 10v10h14V10 M9 20v-6h6v6 M3 10a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0",
+  phone: "M5 3h14v18H5z M9 7h6 M10 17h4",
+  printer: "M6 9V3h12v6 M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2 M6 14h12v7H6z M18 12h.01",
+  creditCard: "M3 5h18v14H3z M3 10h18 M7 15h4",
 };
 
 export function DashboardIcon({ name }: { name: Name }) {
