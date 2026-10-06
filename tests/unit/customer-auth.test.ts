@@ -14,15 +14,16 @@ import { canonicalBirthDate, gregorianToJalali, jalaliToGregorian } from "@/shar
 describe("customer auth contracts", () => {
   it("normalizes Iranian mobile inputs and excludes unexpected fields", () => {
     expect(
-      parseCustomerSignup({ phone: "۰۹۱۲ ۳۴۵ ۶۷۸۹", password: "safe-password-12345" }).phone,
+      parseCustomerSignup({ phone: "۰۹۱۲ ۳۴۵ ۶۷۸۹", displayName: "مشتری" }).phone,
     ).toBe("+989123456789");
-    expect(parseCustomerLogin({ phone: "00989123456789", password: "bad" }).phone).toBe(
+    expect(parseCustomerLogin({ phone: "00989123456789", code: "123456" }).phone).toBe(
       "+989123456789",
     );
-    expect(() => parseCustomerSignup({ phone: "09123456789", password: "short" })).toThrow();
+    expect(() => parseCustomerSignup({ phone: "09123456789", password: "legacy" })).toThrow();
     expect(() =>
-      parseCustomerSignup({ phone: "09123456789", password: "safe-password-12345", role: "OWNER" }),
+      parseCustomerSignup({ phone: "09123456789", displayName: "مشتری", role: "OWNER" }),
     ).toThrow();
+    expect(() => parseCustomerLogin({ phone: "09123456789", code: "bad" })).toThrow();
     expect(() => parseCustomerProfileUpdate({ revision: 0, phone: "09123456789" })).toThrow();
   });
   it("round-trips canonical UTC birth dates through Jalali UI adapters", () => {
@@ -41,7 +42,7 @@ describe("customer auth contracts", () => {
     const Customer =
       mongoose.models.CustomerBirthDateTest ??
       mongoose.model("CustomerBirthDateTest", customerSchema);
-    const values = { phone: "09123456789", passwordHash: "scrypt-hash", status: "active" };
+    const values = { phone: "09123456789", status: "active" };
     await expect(
       new Customer({ ...values, birthDate: new Date("2000-03-20T00:00:00.000Z") }).validate(),
     ).resolves.toBeUndefined();

@@ -4,8 +4,8 @@ import { normalizeIranianMobile } from "@/shared/phone";
 export type AuthMode = "login" | "signup";
 export type AuthFields = {
   phone: string;
-  password: string;
-  displayName: string;
+  firstName: string;
+  lastName: string;
   birthYear: string;
   birthMonth: string;
   birthDay: string;
@@ -20,12 +20,10 @@ export function validateAuthFields(mode: AuthMode, fields: AuthFields) {
   } catch {
     errors.phone = "شماره موبایل باید ۱۱ رقم و با ۰۹ شروع شود.";
   }
-  if (!fields.password || (mode === "signup" && [...fields.password].length < 12))
-    errors.password =
-      mode === "signup" ? "رمز عبور باید حداقل ۱۲ کاراکتر باشد." : "رمز عبور را وارد کنید.";
-  if ([...fields.password].length > 128) errors.password = "رمز عبور بیش از حد طولانی است.";
-  if (mode === "signup" && (!fields.displayName.trim() || fields.displayName.length > 120))
-    errors.displayName = "نام را وارد کنید (حداکثر ۱۲۰ کاراکتر).";
+  if (mode === "signup" && (!fields.firstName.trim() || fields.firstName.length > 60))
+    errors.firstName = "نام را وارد کنید (حداکثر ۶۰ کاراکتر).";
+  if (mode === "signup" && (!fields.lastName.trim() || fields.lastName.length > 60))
+    errors.lastName = "نام خانوادگی را وارد کنید (حداکثر ۶۰ کاراکتر).";
   let birthDate: string | null = null;
   if (mode === "signup" && (fields.birthYear || fields.birthMonth || fields.birthDay)) {
     try {
@@ -42,15 +40,7 @@ export function validateAuthFields(mode: AuthMode, fields: AuthFields) {
   }
   return {
     errors,
-    input:
-      mode === "login"
-        ? { phone, password: fields.password }
-        : {
-            phone,
-            password: fields.password,
-            displayName: fields.displayName.trim(),
-            birthDate,
-          },
+    input: { phone, birthDate, displayName: `${fields.firstName.trim()} ${fields.lastName.trim()}`.trim() },
   };
 }
 
@@ -92,7 +82,7 @@ export async function customerAuthRequest<T>(
   if (!response.ok || !result.ok) {
     if (result.ok) throw new AuthRequestError("UNAVAILABLE", "ورود انجام نشد. دوباره تلاش کنید.");
     const messages: Record<string, string> = {
-      INVALID_CREDENTIALS: "شماره موبایل یا رمز عبور درست نیست.",
+      INVALID_CREDENTIALS: "شماره موبایل یا کد تأیید درست نیست.",
       RATE_LIMITED: "تلاش‌های زیادی انجام شده است. کمی بعد دوباره امتحان کنید.",
       CONFLICT: "این شماره موبایل قبلاً ثبت شده است.",
       VALIDATION: "اطلاعات واردشده معتبر نیست. فیلدها را بررسی کنید.",

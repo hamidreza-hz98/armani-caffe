@@ -46,11 +46,12 @@ export function createAdminAuthHttpHandler(options: {
           throw new ApplicationError("VALIDATION", "Invalid auth request");
         const production = options.production(),
           token = readAdminCookie(request, production);
-        if (
-          operation !== "session" &&
-          !options.origins().includes(request.headers.get("origin") ?? "")
-        )
-          throw new ApplicationError("FORBIDDEN", "Invalid request origin");
+        if (operation !== "session") {
+          const origin = request.headers.get("origin");
+          const sameOrigin = origin === new URL(request.url).origin;
+          if (!origin || (!options.origins().includes(origin) && !sameOrigin))
+            throw new ApplicationError("FORBIDDEN", "Invalid request origin");
+        }
         if (operation === "session" && !token)
           throw new ApplicationError("UNAUTHORIZED", "Valid session required");
         const body = operation === "session" ? {} : await readJsonBody(request, 8 * 1024);

@@ -1,5 +1,5 @@
 import { ApplicationError } from "../../../shared/errors.ts";
-import type { PasswordHasher, TransactionContext } from "../../../shared/security-ports.ts";
+import type { TransactionContext } from "../../../shared/security-ports.ts";
 import {
   type Customer,
   parseCustomerLogin,
@@ -10,11 +10,11 @@ import type { CustomerPrincipal } from "../domain/customer-session.ts";
 
 export type CustomerSignup = {
   phone: string;
-  password: string;
+  proof?: string;
   displayName: string | null;
   birthDate: string | null;
 };
-export type CustomerLogin = { phone: string; password: string };
+export type CustomerLogin = { phone: string; proof: string };
 export type CustomerProfileUpdate = {
   revision: number;
   displayName?: string | null;
@@ -25,15 +25,13 @@ export type CustomerCredentialIdentity = {
   phone: string;
   status: "active" | "blocked" | "anonymized";
   authVersion: number;
-  passwordHash: string;
 };
 export interface CustomerIdentityRepository {
   byPhone(phone: string): Promise<CustomerCredentialIdentity | null>;
   byId(id: string, tx?: TransactionContext): Promise<CustomerCredentialIdentity | null>;
   create(
     id: string,
-    input: Omit<CustomerSignup, "password">,
-    hash: string,
+    input: Omit<CustomerSignup, "proof">,
     tx: TransactionContext,
   ): Promise<Customer>;
   profile(id: string): Promise<Customer>;
@@ -49,8 +47,7 @@ export interface CustomerAuthStore {
   credentials(phone: string): Promise<CustomerCredentialIdentity | null>;
   rejectLogin(requestId: string): Promise<void>;
   signup(
-    input: Omit<CustomerSignup, "password">,
-    hash: string,
+    input: Omit<CustomerSignup, "proof">,
     requestId: string,
   ): Promise<Customer>;
   login(
@@ -64,32 +61,36 @@ export interface CustomerAuthStore {
   profile(token: string | null): Promise<Customer>;
   update(token: string | null, input: CustomerProfileUpdate, requestId: string): Promise<Customer>;
 }
-/** Future OTP adapter may verify possession, but must still use this session/identity port. */
+/** Verifies phone possession before issuing customer sessions. */
 export interface CustomerProofVerifier {
   verify(phone: string, proof: string): Promise<boolean>;
 }
 export class CustomerAuthService {
   private readonly store: CustomerAuthStore;
-  private readonly passwords: PasswordHasher;
-  constructor(store: CustomerAuthStore, passwords: PasswordHasher) {
+  private readonly proofs: CustomerProofVerifier;
+  constructor(store: CustomerAuthStore, proofs: CustomerProofVerifier) {
     this.store = store;
-    this.passwords = passwords;
+    this.proofs = proofs;
   }
   async signup(raw: unknown, requestId: string) {
     const input = parseCustomerSignup(raw);
     await this.store.throttle(input.phone, "signup");
-    const hash = await this.passwords.hash(input.password);
+    if (!input.proof || !(await this.proofs.verify(input.phone, input.proof)))
+      throw new ApplicationError("INVALID_CREDENTIALS", "Invalid verification code");
     return this.store.signup(
-      { phone: input.phone, displayName: input.displayName, birthDate: input.birthDate },
-      hash,
+      {
+        phone: input.phone,
+        displayName: input.displayName,
+        birthDate: input.birthDate,
+      },
       requestId,
     );
   }
   async login(raw: unknown, previousToken: string | null, requestId: string) {
     const input = parseCustomerLogin(raw);
     await this.store.throttle(input.phone, "login");
+    const valid = await this.proofs.verify(input.phone, input.proof);
     const identity = await this.store.credentials(input.phone);
-    const valid = await this.passwords.verify(input.password, identity?.passwordHash ?? null);
     if (!valid || !identity || identity.status !== "active") {
       await this.store.rejectLogin(requestId);
       throw new ApplicationError("INVALID_CREDENTIALS", "Invalid credentials");

@@ -20,7 +20,9 @@ import { isolatedResources } from "../fixtures/isolation";
 
 const secret = "customer-test-secret-longer-than-thirty-two-characters";
 const password = "correct-horse-customer-12345";
-const signup = { phone: "۰۹۱۲۳۴۵۶۷۸۹", password, displayName: "مشتری", birthDate: "2000-03-20" };
+const code = "123456";
+const proofs = { verify: async (_phone: string, proof: string) => proof === code };
+const signup = { phone: "۰۹۱۲۳۴۵۶۷۸۹", code, displayName: "مشتری", birthDate: "2000-03-20" };
 let replica: MongoMemoryReplSet;
 let connection: mongoose.Connection;
 let now = new Date("2026-01-01T00:00:00.000Z");
@@ -64,7 +66,7 @@ beforeEach(async () => {
     "_schema_migrations",
   ])
     await connection.db!.collection(name).deleteMany({});
-  security = createCustomerSecurity(connection, secret, clock);
+  security = createCustomerSecurity(connection, secret, clock, proofs);
 });
 afterAll(async () => {
   if (connection) {
@@ -74,13 +76,12 @@ afterAll(async () => {
   await replica?.stop();
 });
 
-test("signup normalizes mobile, stores UTC birth date, audits, and rejects duplicates", async () => {
+test("signup normalizes mobile without storing a password, audits, and rejects duplicates", async () => {
   const customer = await security.auth.signup(signup, "signup-1");
   expect(customer).toMatchObject({ phone: "+989123456789", birthDate: "2000-03-20", revision: 0 });
-  expect(JSON.stringify(customer)).not.toContain("password");
+  expect(JSON.stringify(customer)).not.toContain("passwordHash");
   const stored = await connection.db!.collection("customers").findOne({ phone: "+989123456789" });
-  expect(stored!.passwordHash).toMatch(/^scrypt\$v1\$/);
-  expect(stored!.passwordHash).not.toContain(password);
+  expect(stored).not.toHaveProperty("passwordHash");
   expect(stored!.birthDate).toEqual(new Date("2000-03-20T00:00:00.000Z"));
   expect(gregorianToJalali(customer.birthDate!)).toBe("1379-01-01");
   expect(jalaliToGregorian(gregorianToJalali(customer.birthDate!))).toBe(customer.birthDate);
@@ -105,12 +106,12 @@ test("signup normalizes mobile, stores UTC birth date, audits, and rejects dupli
   ).toBe(1);
   expect(
     JSON.stringify(await connection.db!.collection("audit_events").find({}).toArray()),
-  ).not.toContain(password);
+  ).not.toContain(code);
 });
 
 test("login, rotation, logout, expiry, blocked status, and admin separation", async () => {
   const customer = await security.auth.signup(signup, "signup");
-  const issued = await security.auth.login({ phone: "00989123456789", password }, null, "login");
+  const issued = await security.auth.login({ phone: "00989123456789", code }, null, "login");
   expect(issued.principal.id).toBe(customer.id);
   expect(await security.auth.resolve(issued.token)).toMatchObject({ id: customer.id });
   const admin = createAdminSecurity(connection, "separate-admin-secret-longer-than-32", clock);
@@ -139,12 +140,12 @@ test("login, rotation, logout, expiry, blocked status, and admin separation", as
   expect(await security.auth.resolve(issued.token)).toBeNull();
   await security.auth.logout(rotated.token, "logout");
   expect(await security.auth.resolve(rotated.token)).toBeNull();
-  const fresh = await security.auth.login({ phone: "+989123456789", password }, null, "login2");
+  const fresh = await security.auth.login({ phone: "+989123456789", code }, null, "login2");
   now = new Date(now.getTime() + 8 * 24 * 60 * 60 * 1000);
   expect(await security.auth.resolve(fresh.token)).toBeNull();
   now = new Date("2026-01-01T00:00:00.000Z");
   const blockedToken = await security.auth.login(
-    { phone: "+989123456789", password },
+    { phone: "+989123456789", code },
     null,
     "login3",
   );
@@ -153,13 +154,13 @@ test("login, rotation, logout, expiry, blocked status, and admin separation", as
     .updateOne({ _id: new mongoose.Types.ObjectId(customer.id) }, { $set: { status: "blocked" } });
   expect(await security.auth.resolve(blockedToken.token)).toBeNull();
   await expect(
-    security.auth.login({ phone: "+989123456789", password }, null, "blocked"),
+    security.auth.login({ phone: "+989123456789", code }, null, "blocked"),
   ).rejects.toMatchObject({ code: "INVALID_CREDENTIALS" });
 });
 
 test("profile update is authorized and optimistic, with no birth-day shift", async () => {
   await security.auth.signup(signup, "signup");
-  const issued = await security.auth.login({ phone: "09123456789", password }, null, "login");
+  const issued = await security.auth.login({ phone: "09123456789", code }, null, "login");
   expect(await security.auth.profile(issued.token)).toMatchObject({
     birthDate: "2000-03-20",
     revision: 0,
@@ -185,11 +186,11 @@ test("generic login failures and per-account rate limiting use persistent counte
   await security.auth.signup(signup, "signup");
   for (let index = 0; index < 5; index++) {
     await expect(
-      security.auth.login({ phone: "09123456789", password: "wrong" }, null, `wrong-${index}`),
+      security.auth.login({ phone: "09123456789", code: "000000" }, null, `wrong-${index}`),
     ).rejects.toMatchObject({ code: "INVALID_CREDENTIALS" });
   }
   await expect(
-    security.auth.login({ phone: "09123456789", password }, null, "limited"),
+    security.auth.login({ phone: "09123456789", code }, null, "limited"),
   ).rejects.toMatchObject({ code: "RATE_LIMITED" });
   const failure = await connection
     .db!.collection("audit_events")
@@ -197,7 +198,7 @@ test("generic login failures and per-account rate limiting use persistent counte
   expect(failure!.metadata).toEqual({});
   now = new Date(now.getTime() + 16 * 60 * 1000);
   await expect(
-    security.auth.login({ phone: "09123456789", password }, null, "after-window"),
+    security.auth.login({ phone: "09123456789", code }, null, "after-window"),
   ).resolves.toHaveProperty("token");
 });
 
@@ -228,8 +229,8 @@ test("HTTP cookies, CSRF, admin-cookie isolation, and safe DTOs", async () => {
   );
   const created = await handler(request("signup", signup), "signup");
   expect(created.status).toBe(200);
-  expect(await created.text()).not.toContain(password);
-  const login = await handler(request("login", { phone: "09123456789", password }), "login");
+  expect(await created.text()).not.toContain(code);
+  const login = await handler(request("login", { phone: "09123456789", code }), "login");
   expect(login.status).toBe(200);
   expect(login.headers.get("set-cookie")).toContain("armani-customer-dev=");
   expect(login.headers.get("set-cookie")).toContain("HttpOnly");
@@ -288,10 +289,11 @@ test("migration 5 upgrades compatible legacy customers and revokes old sessions"
     expiresAt: new Date(now.getTime() + 10000),
   });
   expect(await applyMigrations(connection, clock)).toEqual([
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
   ]);
   const row = await connection.db!.collection("customers").findOne({ phone: "+989111111111" });
   expect(row).toMatchObject({ authVersion: 1, birthDate: null });
+  expect(row).not.toHaveProperty("passwordHash");
   expect(
     (await connection.db!.collection("sessions").findOne({ principalKind: "customer" }))!.revokedAt,
   ).toEqual(now);

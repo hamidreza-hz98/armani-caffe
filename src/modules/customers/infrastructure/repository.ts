@@ -10,7 +10,6 @@ import type { Customer } from "../domain/model.ts";
 type Row = {
   _id: Types.ObjectId;
   phone: string;
-  passwordHash: string;
   displayName: string | null;
   birthDate: Date | null;
   status: "active" | "blocked" | "anonymized";
@@ -36,7 +35,6 @@ export type CustomerIdentity = {
   phone: string;
   status: "active" | "blocked" | "anonymized";
   authVersion: number;
-  passwordHash: string;
 };
 function identity(row: Row | null): CustomerIdentity | null {
   if (!row || !Number.isSafeInteger(row.authVersion) || row.authVersion < 1) return null;
@@ -45,7 +43,6 @@ function identity(row: Row | null): CustomerIdentity | null {
     phone: row.phone,
     status: row.status,
     authVersion: row.authVersion,
-    passwordHash: row.passwordHash,
   };
 }
 export class MongoCustomerRepository {
@@ -77,14 +74,12 @@ export class MongoCustomerRepository {
   async create(
     id: string,
     values: { phone: string; displayName: string | null; birthDate: string | null },
-    passwordHash: string,
     tx: TransactionContext,
   ): Promise<Customer> {
     const timestamp = this.now();
     const row: Row = {
       _id: new Types.ObjectId(id),
       ...values,
-      passwordHash,
       birthDate: values.birthDate ? new Date(`${values.birthDate}T00:00:00.000Z`) : null,
       status: "active",
       authVersion: 1,

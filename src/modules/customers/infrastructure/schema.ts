@@ -8,7 +8,6 @@ export const customerSchema = new Schema(
   {
     phone: iranianMobileField(),
     displayName: { type: String, trim: true, maxlength: 120, default: null },
-    passwordHash: { type: String, required: true, maxlength: 255, select: false },
     birthDate: {
       type: Date,
       default: null,

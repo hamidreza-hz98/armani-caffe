@@ -1,6 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Button from "@mui/material/Button";
+import DialogContent from "@mui/material/DialogContent";
+import Drawer from "@mui/material/Drawer";
+import IconButton from "@mui/material/IconButton";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import { type FormEvent, useEffect, useRef, useState } from "react";
 
 import { formatPersianNumber } from "@/theme/format";
@@ -10,47 +15,34 @@ import {
   type AuthFieldErrors,
   type AuthFields,
   type AuthMode,
-  AuthRequestError,
-  customerAuthRequest,
   validateAuthFields,
 } from "./customer-auth-client";
-import { CUSTOMER_AUTHENTICATED, OPEN_CUSTOMER_AUTH } from "./customer-auth-events";
+import { OPEN_CUSTOMER_AUTH } from "./customer-auth-events";
 
 const emptyFields: AuthFields = {
   phone: "",
-  password: "",
-  displayName: "",
+  firstName: "",
+  lastName: "",
   birthYear: "",
   birthMonth: "",
   birthDay: "",
 };
 const months = [
-  "فروردین",
-  "اردیبهشت",
-  "خرداد",
-  "تیر",
-  "مرداد",
-  "شهریور",
-  "مهر",
-  "آبان",
-  "آذر",
-  "دی",
-  "بهمن",
-  "اسفند",
+  "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند",
 ];
 
 export function CustomerAuthSheet() {
-  const router = useRouter();
-  const dialog = useRef<HTMLDialogElement>(null);
   const firstField = useRef<HTMLInputElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<AuthMode>("login");
+  const [step, setStep] = useState<"details" | "otp">("details");
   const [fields, setFields] = useState<AuthFields>(emptyFields);
   const [errors, setErrors] = useState<AuthFieldErrors>({});
   const [serverError, setServerError] = useState("");
-  const [pending, setPending] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [secondsLeft, setSecondsLeft] = useState(120);
 
   useEffect(() => {
     const onOpen = (event: Event) => {
@@ -59,293 +51,188 @@ export function CustomerAuthSheet() {
       setFields(emptyFields);
       setErrors({});
       setServerError("");
-      setVisible(false);
+      setStep("details");
       setOpen(true);
     };
     window.addEventListener(OPEN_CUSTOMER_AUTH, onOpen);
     return () => window.removeEventListener(OPEN_CUSTOMER_AUTH, onOpen);
   }, []);
   useEffect(() => {
-    if (open) {
-      if (!dialog.current?.open) dialog.current?.showModal();
-      firstField.current?.focus();
-    } else if (!open && dialog.current?.open) {
-      dialog.current.close();
-    }
-  }, [open, mode]);
+    if (!open || step !== "otp" || secondsLeft <= 0) return;
+    const timer = window.setTimeout(() => setSecondsLeft((value) => value - 1), 1000);
+    return () => window.clearTimeout(timer);
+  }, [open, step, secondsLeft]);
 
   function close() {
-    if (pending) return;
     setOpen(false);
     setFields(emptyFields);
     queueMicrotask(() => returnFocus.current?.focus());
   }
   function switchMode(next: AuthMode) {
-    if (pending) return;
     setMode(next);
+    setStep("details");
     setErrors({});
     setServerError("");
-    setFields((current) => ({ ...current, password: "" }));
-    setVisible(false);
+    setFields(emptyFields);
   }
   function update(key: keyof AuthFields, value: string) {
     setFields((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: undefined }));
     setServerError("");
   }
-  async function submit(event: FormEvent<HTMLFormElement>) {
+  function submitDetails(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
     const parsed = validateAuthFields(mode, fields);
     if (Object.keys(parsed.errors).length) {
       setErrors(parsed.errors);
       const first = Object.keys(parsed.errors)[0];
-      dialog.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      document.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
       return;
     }
-    setPending(true);
+    setFields((current) => ({ ...current, phone: parsed.input.phone }));
+    setStep("otp");
+    setOtp("");
+    setSecondsLeft(120);
     setServerError("");
-    let accountCreated = false;
-    try {
-      if (mode === "signup") {
-        await customerAuthRequest("signup", parsed.input);
-        accountCreated = true;
-      }
-      await customerAuthRequest("login", { phone: parsed.input.phone, password: fields.password });
-      setFields(emptyFields);
-      setOpen(false);
-      window.dispatchEvent(new Event(CUSTOMER_AUTHENTICATED));
-      router.refresh();
-      queueMicrotask(() => returnFocus.current?.focus());
-    } catch (error) {
-      if (accountCreated) {
-        setMode("login");
-        setServerError("حساب شما ساخته شد. ورود کامل نشد؛ دوباره تلاش کنید.");
-        return;
-      }
-      if (error instanceof AuthRequestError) {
-        setServerError(error.message);
-        if (error.code === "CONFLICT") setErrors({ phone: error.message });
-      } else setServerError("درخواست انجام نشد. دوباره تلاش کنید.");
-    } finally {
-      setPending(false);
+  }
+  function submitOtp(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (otp.length !== 6) {
+      setServerError("کد تأیید باید ۶ رقم باشد.");
+      return;
     }
+    setServerError("تأیید پیامکی در نسخه بعدی فعال می‌شود. فعلاً امکان ورود با کد وجود ندارد.");
   }
   const currentYear = Number(
     new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric" })
       .formatToParts(new Date())
       .find((part) => part.type === "year")?.value,
   );
+  const timeText = `${formatPersianNumber(Math.floor(secondsLeft / 60))}:${formatPersianNumber(secondsLeft % 60).padStart(2, "۰")}`;
+
   return (
-    <dialog
-      ref={dialog}
-      dir="rtl"
-      className={styles.dialog}
-      aria-labelledby="customer-auth-title"
-      onClick={(event) => {
-        if (event.target === event.currentTarget) close();
-      }}
-      onClose={() => {
-        setOpen(false);
-        setFields(emptyFields);
-        returnFocus.current?.focus();
-      }}
-      onCancel={(event) => {
-        if (pending) event.preventDefault();
+    <Drawer
+      anchor="bottom"
+      open={open}
+      onClose={close}
+      ModalProps={{ keepMounted: true }}
+      slotProps={{
+        backdrop: {
+          onClick: (event) => {
+            if (event.target === event.currentTarget) close();
+          },
+        },
+        paper: {
+          className: styles.dialog,
+          sx: {
+            m: 0,
+            alignSelf: "stretch",
+            width: "100vw",
+            maxWidth: "100vw",
+            left: 0,
+            right: 0,
+            boxSizing: "border-box",
+            maxHeight: "90dvh",
+          },
+          role: "dialog",
+          "aria-labelledby": "customer-auth-title",
+          dir: "rtl",
+        },
       }}
     >
       <div className={styles.handle} aria-hidden="true" />
       <div className={styles.heading}>
-        <span className={styles.headingIcon} aria-hidden="true">
-          {mode === "login" ? "↪" : "+"}
-        </span>
+        <span className={styles.headingIcon} aria-hidden="true">{step === "otp" ? "✓" : mode === "login" ? "↪" : "+"}</span>
         <div>
-          <h2 id="customer-auth-title">
-            {mode === "login" ? "ورود به حساب" : "عضویت در آرمانی کافه"}
-          </h2>
-          <p>
-            {mode === "login"
-              ? "برای مشاهده سفارش‌ها و باشگاه مشتریان"
-              : "حساب خود را بسازید و سفارش دهید"}
-          </p>
+          <Typography component="h2" id="customer-auth-title" variant="h6">
+            {step === "otp" ? "تأیید شماره موبایل" : mode === "login" ? "ورود به حساب" : "عضویت در آرمانی کافه"}
+          </Typography>
+          <Typography component="p" variant="caption">
+            {step === "otp" ? `کد تأیید برای ${fields.phone} ارسال خواهد شد.` : mode === "login" ? "برای مشاهده سفارش‌ها و باشگاه مشتریان" : "حساب خود را بسازید و سفارش دهید"}
+          </Typography>
         </div>
-        <button
-          type="button"
-          className={styles.close}
-          aria-label="بستن"
-          disabled={pending}
-          onClick={close}
-        >
-          ×
-        </button>
+        <IconButton className={styles.close} aria-label="بستن" onClick={close}>×</IconButton>
       </div>
-      <form noValidate onSubmit={(event) => void submit(event)} className={styles.form}>
-        {mode === "signup" && (
-          <div className={styles.field}>
-            <label htmlFor="customer-name">
-              نام <span aria-hidden="true">*</span>
-            </label>
-            <input
-              ref={mode === "signup" ? firstField : undefined}
-              id="customer-name"
-              name="displayName"
-              autoComplete="name"
-              maxLength={120}
-              value={fields.displayName}
-              onChange={(event) => update("displayName", event.target.value)}
-              aria-invalid={!!errors.displayName}
-              aria-describedby={errors.displayName ? "customer-name-error" : undefined}
+      <DialogContent className={styles.content}>
+        {step === "otp" ? (
+          <form noValidate onSubmit={submitOtp} className={styles.form}>
+            <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center" }}>
+              پیامک حاوی کد ۶ رقمی برای این شماره ارسال خواهد شد.
+            </Typography>
+            <TextField
+              inputRef={firstField}
+              name="otp"
+              label="کد تأیید"
+              placeholder="— — — — — —"
+              value={otp}
+              onChange={(event) => { setOtp(event.target.value.replace(/\D/g, "").slice(0, 6)); setServerError(""); }}
+              slotProps={{ htmlInput: { inputMode: "numeric", maxLength: 6, dir: "ltr", autoComplete: "one-time-code", "aria-label": "کد تأیید ۶ رقمی" } }}
+              fullWidth
+              autoFocus
             />
-            {errors.displayName && (
-              <small id="customer-name-error" role="alert">
-                {errors.displayName}
-              </small>
-            )}
-          </div>
-        )}
-        <div className={styles.field}>
-          <label htmlFor="customer-phone">
-            شماره موبایل <span aria-hidden="true">*</span>
-          </label>
-          <div className={styles.phoneRow}>
-            <input
-              ref={mode === "login" ? firstField : undefined}
-              id="customer-phone"
+            {serverError && <p className={styles.error} role="alert">{serverError}</p>}
+            <Typography className={styles.countdown} variant="body2" aria-live="polite">
+              {secondsLeft > 0 ? `امکان ارسال دوباره کد تا ${timeText}` : "کد را دریافت نکردید؟"}
+            </Typography>
+            <Button className={styles.submit} variant="contained" type="submit" fullWidth>تأیید و ادامه</Button>
+            <div className={styles.otpActions}>
+              <Button variant="text" disabled={secondsLeft > 0} onClick={() => { setSecondsLeft(120); setServerError("ارسال پیامک در نسخه بعدی فعال می‌شود."); }}>
+                ارسال دوباره کد
+              </Button>
+              <Button variant="text" onClick={() => { setStep("details"); setServerError(""); setOtp(""); }}>
+                تغییر شماره موبایل
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <form noValidate onSubmit={submitDetails} className={styles.form}>
+            {mode === "signup" && <>
+              <TextField inputRef={firstField} name="firstName" label="نام" required autoComplete="given-name" value={fields.firstName} onChange={(e) => update("firstName", e.target.value)} error={!!errors.firstName} helperText={errors.firstName} fullWidth />
+              <TextField name="lastName" label="نام خانوادگی" required autoComplete="family-name" value={fields.lastName} onChange={(e) => update("lastName", e.target.value)} error={!!errors.lastName} helperText={errors.lastName} fullWidth />
+            </>}
+            <TextField
+              inputRef={mode === "login" ? firstField : undefined}
               name="phone"
+              label="شماره موبایل"
+              required
               type="tel"
-              inputMode="tel"
               autoComplete="tel-national"
-              dir="ltr"
               placeholder="0912 345 6789"
               value={fields.phone}
-              onChange={(event) => update("phone", event.target.value)}
-              aria-invalid={!!errors.phone}
-              aria-describedby={errors.phone ? "customer-phone-error" : "customer-phone-hint"}
+              onChange={(e) => update("phone", e.target.value)}
+              error={!!errors.phone}
+              helperText={errors.phone || "شماره ثبت‌شده در ایران را وارد کنید."}
+              slotProps={{ htmlInput: { inputMode: "tel", dir: "ltr" } }}
+              fullWidth
             />
-            <span dir="ltr">🇮🇷 +98</span>
-          </div>
-          <small id="customer-phone-hint">شماره ثبت‌شده در ایران را وارد کنید.</small>
-          {errors.phone && (
-            <small id="customer-phone-error" role="alert">
-              {errors.phone}
-            </small>
-          )}
-        </div>
-        {mode === "signup" && (
-          <fieldset className={styles.birth}>
-            <legend>
-              تاریخ تولد (اختیاری) <small>تقویم شمسی</small>
-            </legend>
-            <div className={styles.dateRow}>
-              <select
-                name="birthDay"
-                aria-label="روز تولد"
-                value={fields.birthDay}
-                onChange={(event) => update("birthDay", event.target.value)}
-                aria-invalid={!!errors.birthDay}
-                aria-describedby={errors.birthDay ? "customer-birth-error" : undefined}
-              >
-                <option value="">روز</option>
-                {Array.from({ length: 31 }, (_, index) => (
-                  <option key={index + 1} value={String(index + 1)}>
-                    {formatPersianNumber(index + 1)}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="birthMonth"
-                aria-label="ماه تولد"
-                value={fields.birthMonth}
-                onChange={(event) => update("birthMonth", event.target.value)}
-              >
-                <option value="">ماه</option>
-                {months.map((month, index) => (
-                  <option key={month} value={String(index + 1)}>
-                    {month}
-                  </option>
-                ))}
-              </select>
-              <select
-                name="birthYear"
-                aria-label="سال تولد"
-                value={fields.birthYear}
-                onChange={(event) => update("birthYear", event.target.value)}
-              >
-                <option value="">سال</option>
-                {Array.from({ length: 121 }, (_, index) => currentYear - index).map((year) => (
-                  <option key={year} value={String(year)}>
-                    {formatPersianNumber(year)}
-                  </option>
-                ))}
-              </select>
+            {mode === "signup" && <fieldset className={styles.birth}>
+              <legend>تاریخ تولد (اختیاری) <small>تقویم شمسی</small></legend>
+              <div className={styles.dateRow}>
+                <select name="birthDay" aria-label="روز تولد" value={fields.birthDay} onChange={(e) => update("birthDay", e.target.value)} aria-invalid={!!errors.birthDay}>
+                  <option value="">روز</option>{Array.from({ length: 31 }, (_, i) => <option key={i + 1} value={String(i + 1)}>{formatPersianNumber(i + 1)}</option>)}
+                </select>
+                <select name="birthMonth" aria-label="ماه تولد" value={fields.birthMonth} onChange={(e) => update("birthMonth", e.target.value)}>
+                  <option value="">ماه</option>{months.map((month, i) => <option key={month} value={String(i + 1)}>{month}</option>)}
+                </select>
+                <select name="birthYear" aria-label="سال تولد" value={fields.birthYear} onChange={(e) => update("birthYear", e.target.value)}>
+                  <option value="">سال</option>{Array.from({ length: 121 }, (_, i) => currentYear - i).map((year) => <option key={year} value={String(year)}>{formatPersianNumber(year)}</option>)}
+                </select>
+              </div>
+              {errors.birthDay && <small role="alert">{errors.birthDay}</small>}
+            </fieldset>}
+            {serverError && <p className={styles.error} role="alert">{serverError}</p>}
+            <Button className={styles.submit} variant="contained" type="submit" fullWidth>
+              {mode === "login" ? "دریافت کد ورود" : "ثبت‌نام و دریافت کد"}
+            </Button>
+            <div className={styles.switch}>
+              {mode === "login" ? "حساب کاربری ندارید؟" : "قبلاً ثبت‌نام کرده‌اید؟"}
+              <Button variant="text" onClick={() => switchMode(mode === "login" ? "signup" : "login")}>
+                {mode === "login" ? "ثبت‌نام" : "ورود به حساب"}
+              </Button>
             </div>
-            {errors.birthDay && (
-              <small id="customer-birth-error" role="alert">
-                {errors.birthDay}
-              </small>
-            )}
-          </fieldset>
+          </form>
         )}
-        <div className={styles.field}>
-          <label htmlFor="customer-password">
-            رمز عبور <span aria-hidden="true">*</span>
-          </label>
-          <div className={styles.passwordRow}>
-            <input
-              id="customer-password"
-              name="password"
-              type={visible ? "text" : "password"}
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              value={fields.password}
-              onChange={(event) => update("password", event.target.value)}
-              aria-invalid={!!errors.password}
-              aria-describedby={
-                errors.password
-                  ? "customer-password-error"
-                  : mode === "signup"
-                    ? "customer-password-hint"
-                    : undefined
-              }
-            />
-            <button
-              type="button"
-              aria-label={visible ? "پنهان کردن رمز عبور" : "نمایش رمز عبور"}
-              aria-pressed={visible}
-              onClick={() => setVisible((value) => !value)}
-            >
-              {visible ? "پنهان" : "نمایش"}
-            </button>
-          </div>
-          {mode === "signup" && <small id="customer-password-hint">حداقل ۱۲ کاراکتر</small>}
-          {errors.password && (
-            <small id="customer-password-error" role="alert">
-              {errors.password}
-            </small>
-          )}
-        </div>
-        {serverError && (
-          <p className={styles.error} role="alert">
-            {serverError}
-          </p>
-        )}
-        <button className={styles.submit} type="submit" disabled={pending}>
-          {pending
-            ? "در حال بررسی اطلاعات…"
-            : mode === "login"
-              ? "ورود به حساب کاربری"
-              : "ساخت حساب کاربری"}
-        </button>
-        <div className={styles.switch}>
-          {mode === "login" ? "حساب کاربری ندارید؟" : "قبلاً ثبت‌نام کرده‌اید؟"}
-          <button
-            type="button"
-            disabled={pending}
-            onClick={() => switchMode(mode === "login" ? "signup" : "login")}
-          >
-            {mode === "login" ? "ثبت‌نام" : "ورود به حساب"}
-          </button>
-        </div>
-      </form>
-    </dialog>
+      </DialogContent>
+    </Drawer>
   );
 }

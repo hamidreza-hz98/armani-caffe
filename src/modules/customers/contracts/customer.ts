@@ -39,28 +39,26 @@ function birthDate(input: unknown) {
     throw new ApplicationError("VALIDATION", "Invalid birth date");
   }
 }
-function password(input: unknown, creation: boolean): string {
-  if (
-    typeof input !== "string" ||
-    [...input].length < (creation ? 12 : 1) ||
-    [...input].length > 128 ||
-    /[\u0000-\u001f\u007f]/u.test(input)
-  )
-    throw new ApplicationError("VALIDATION", "Invalid password");
-  return input;
-}
 export function parseCustomerSignup(input: unknown) {
-  const row = record(input, ["phone", "password", "displayName", "birthDate"]);
+  const row = record(input, ["phone", "displayName", "birthDate", "code"]);
+  const proof = row.code;
+  if (
+    proof !== undefined &&
+    (typeof proof !== "string" || !/^\d{6}$/u.test(proof))
+  )
+    throw new ApplicationError("VALIDATION", "Invalid verification code");
   return {
     phone: customerPhone(row.phone),
-    password: password(row.password, true),
+    ...(proof === undefined ? {} : { proof }),
     displayName: row.displayName === undefined ? null : name(row.displayName),
     birthDate: row.birthDate === undefined ? null : birthDate(row.birthDate),
   };
 }
 export function parseCustomerLogin(input: unknown) {
-  const row = record(input, ["phone", "password"]);
-  return { phone: customerPhone(row.phone), password: password(row.password, false) };
+  const row = record(input, ["phone", "code"]);
+  if (typeof row.code !== "string" || !/^\d{6}$/u.test(row.code))
+    throw new ApplicationError("VALIDATION", "Invalid verification code");
+  return { phone: customerPhone(row.phone), proof: row.code };
 }
 export function parseCustomerProfileUpdate(input: unknown) {
   const row = record(input, ["displayName", "birthDate", "revision"]);

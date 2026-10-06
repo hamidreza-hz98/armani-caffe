@@ -107,7 +107,7 @@ export class MongoCustomerAuthStore implements CustomerAuthStore {
   rejectLogin(requestId: string) {
     return this.failureAudit(requestId);
   }
-  async signup(input: Omit<CustomerSignup, "password">, hash: string, requestId: string) {
+  async signup(input: Omit<CustomerSignup, "proof">, requestId: string) {
     const id = new Types.ObjectId().toString();
     return this.commit(
       {
@@ -116,7 +116,7 @@ export class MongoCustomerAuthStore implements CustomerAuthStore {
         subjectId: id,
         requestId,
       },
-      (tx) => this.customers.create(id, input, hash, tx),
+      (tx) => this.customers.create(id, input, tx),
     );
   }
   private async active(token: string | null, tx?: TransactionContext) {
@@ -223,8 +223,7 @@ export class MongoCustomerAuthStore implements CustomerAuthStore {
         if (
           !current ||
           current.status !== "active" ||
-          current.authVersion !== identity.authVersion ||
-          current.passwordHash !== identity.passwordHash
+          current.authVersion !== identity.authVersion
         )
           throw new ApplicationError("INVALID_CREDENTIALS", "Invalid credentials");
         await this.revoke(previousToken, tx);

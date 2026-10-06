@@ -83,7 +83,7 @@ test("migration status is read-only and migrations apply once in transactions", 
   const fixed = new Date("2025-01-01T00:00:00.000Z");
   assert.deepEqual(
     await applyMigrations(connection, () => fixed),
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14],
   );
   assert.deepEqual(await applyMigrations(connection, () => fixed), []);
   assert.equal((await migrationStatus(connection))[0].appliedAt, fixed);

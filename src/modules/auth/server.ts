@@ -14,7 +14,7 @@ import { appendAudit } from "../audit/server.ts";
 import { MongoCustomerRepository } from "../customers/server.ts";
 import { commitSensitiveChange } from "../notifications/server.ts";
 import { AdminAuthService } from "./application/admin-auth.ts";
-import { CustomerAuthService } from "./application/customer-auth.ts";
+import { CustomerAuthService, type CustomerProofVerifier } from "./application/customer-auth.ts";
 import { validAdminToken } from "./domain/admin-session.ts";
 import { createCustomerHttpHandler } from "./infrastructure/customer-http.ts";
 import { MongoCustomerAuthStore } from "./infrastructure/customer-repository.ts";
@@ -192,6 +192,11 @@ export function createCustomerSecurity(
   connection: Connection,
   key: string,
   now: () => Date = () => new Date(),
+  proofs: CustomerProofVerifier = {
+    verify: async () => {
+      throw new ApplicationError("UNAVAILABLE", "SMS verification is not configured");
+    },
+  },
 ) {
   const commit: SecurityCommit = async (change, operation) => {
     const idempotencyKey = `customer:${randomUUID()}`;
@@ -261,7 +266,11 @@ export function createCustomerSecurity(
     },
     now,
   );
-  return { auth: new CustomerAuthService(store, new ScryptPasswords()), customers, store };
+  return {
+    auth: new CustomerAuthService(store, proofs),
+    customers,
+    store,
+  };
 }
 export async function configuredCustomerSecurity() {
   const config = getServerConfig();
