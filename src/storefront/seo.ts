@@ -38,7 +38,13 @@ export function storefrontMetadata(settings: PublicSettings, appUrl: string): Me
     icons: {
       icon: settings.business.faviconMediaId
         ? `/api/media/${settings.business.faviconMediaId}/file?variant=small`
-        : "/armani-icon.svg",
+        : [
+            { url: "/favicon.ico", sizes: "any" },
+            { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+            { url: "/android-chrome-192x192.png", type: "image/png", sizes: "192x192" },
+          ],
+      apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
     },
+    manifest: "/site.webmanifest",
   };
 }

@@ -113,7 +113,9 @@
   padding: 60px;
 }
 .visualContent {
+  width: 100%;
   max-width: 560px;
+  text-align: center;
 }
 .visualContent strong {
   font-size: 1.1rem;
@@ -128,16 +130,13 @@
 .visualContent small {
   color: #ded0be;
 }
-.brandMark {
+.brandLogo {
   display: inline-grid;
   place-items: center;
-  width: 42px;
-  height: 42px;
-  border: 1px solid #c99a3d;
-  border-radius: 12px;
-  color: #c99a3d;
-  font-size: 1.4rem;
-  font-weight: 800;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  object-fit: contain;
 }
 @media (max-width: 799px) {
   .page {
@@ -148,7 +147,7 @@
     order: -1;
     min-height: 170px;
     padding: 22px;
-    place-items: end start;
+    place-items: center;
   }
   .visualContent p,
   .visualContent small {

@@ -53,10 +53,11 @@
   flex-shrink: 1;
 }
 .brand img {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   flex: none;
-  border-radius: 10px;
+  object-fit: contain;
+  background: transparent;
 }
 .brand span {
   display: flex;

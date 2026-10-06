@@ -33,7 +33,15 @@ export async function generateMetadata(): Promise<Metadata> {
         url: home.href,
         images: [{ url: new URL("/social-preview", home).href, width: 1200, height: 630 }],
       },
-      icons: { icon: "/armani-icon.svg" },
+      manifest: "/site.webmanifest",
+      icons: {
+        icon: [
+          { url: "/favicon.ico", sizes: "any" },
+          { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+          { url: "/android-chrome-192x192.png", type: "image/png", sizes: "192x192" },
+        ],
+        apple: [{ url: "/apple-touch-icon.png", type: "image/png", sizes: "180x180" }],
+      },
     };
   }
 }

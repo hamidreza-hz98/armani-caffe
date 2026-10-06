@@ -26,8 +26,8 @@ export function StorefrontHeader({ data }: { data: StorefrontShellData }) {
             <Image
               src={data.businessLogoUrl ?? "/armani-icon.svg"}
               alt=""
-              width={42}
-              height={42}
+              width={52}
+              height={52}
               priority
               unoptimized
             />
@@ -74,7 +74,7 @@ export function StorefrontHeaderFallback() {
     <header className={styles.header} aria-label="در حال آماده‌سازی ابزارهای فروشگاه">
       <div className={styles.headerInner}>
         <span className={styles.brand}>
-          <Image src="/armani-icon.svg" alt="" width={42} height={42} priority />
+          <Image src="/brand/armani-logo.png" alt="" width={42} height={42} priority unoptimized />
           <span>
             <strong>آرمانی کافه</strong>
             <small>کافه و سفارش آنلاین</small>

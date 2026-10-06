@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 
@@ -43,7 +44,7 @@ export function DashboardLoginForm({ destination }: { destination: string }) {
       <section className={styles.formSide}>
         <div className={styles.formWrap}>
           <div className={styles.mobileBrand}>
-            <span className={styles.brandMark}>آ</span>
+            <Image className={styles.brandLogo} src="/brand/armani-logo.png" alt="" width={46} height={46} priority unoptimized />
             <span>کافه آرمانی</span>
           </div>
           <p className={styles.eyebrow}>پنل کنترل پرسنل مجاز</p>
@@ -99,7 +100,7 @@ export function DashboardLoginForm({ destination }: { destination: string }) {
       </section>
       <section className={styles.visual} aria-hidden="true">
         <div className={styles.visualContent}>
-          <span className={styles.brandMark}>آ</span>
+          <Image className={styles.brandLogo} src="/brand/armani-logo.png" alt="" width={46} height={46} priority unoptimized />
           <strong>کافه آرمانی</strong>
           <p>هماهنگی بی‌نقص، از دانه‌های سبز تا فنجان اسپرسو.</p>
           <small>مدیریت سفارش‌های حضوری، موجودی و محتوای منو</small>
