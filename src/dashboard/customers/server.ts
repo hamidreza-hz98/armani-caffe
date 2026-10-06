@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 
 import { type ClientSession, Types } from "mongoose";
 
-import { configuredAdminSecurity, ScryptPasswords } from "@/modules/auth/server";
+import { configuredAdminSecurity } from "@/modules/auth/server";
 import { customerPhone, parseCustomerSignup } from "@/modules/customers/server";
 import { commitSensitiveChange } from "@/modules/notifications/server";
 import { getDatabaseConnection } from "@/server/database/connection";
@@ -36,7 +36,6 @@ type DbRow = {
   createdAt: Date;
   updatedAt: Date;
   lastOrderAt: Date | null;
-  passwordHash: string;
   authVersion: number;
   anonymizedAt?: Date | null;
 };
@@ -104,7 +103,7 @@ export async function listCustomers(filters: CustomerFilters): Promise<CustomerL
   const collection = await rows();
   const [items, total, active, blocked, anonymized] = await Promise.all([
     collection
-      .find(query(filters), { projection: { passwordHash: 0, authVersion: 0 } })
+      .find(query(filters), { projection: { authVersion: 0 } })
       .sort({ createdAt: -1, _id: -1 })
       .skip((filters.page - 1) * 20)
       .limit(20)
@@ -160,7 +159,7 @@ export async function customerDetail(id: string) {
   const orderCollection = connection.db!.collection<OrderRow>("orders");
   const customer = await collection.findOne(
     { _id: new Types.ObjectId(id) },
-    { projection: { passwordHash: 0, authVersion: 0 }, maxTimeMS: 2500 },
+    { projection: { authVersion: 0 }, maxTimeMS: 2500 },
   );
   if (!customer) throw new ApplicationError("NOT_FOUND", "Customer not found");
   const orderFilter = {
@@ -278,7 +277,6 @@ async function change<T>(
 export async function createCustomer(token: string | null, input: unknown, requestId: string) {
   const parsed = parseCustomerSignup(input);
   if (!parsed.displayName) throw new ApplicationError("VALIDATION", "Customer name required");
-  const hash = await new ScryptPasswords().hash(parsed.password);
   const id = new Types.ObjectId().toString();
   return change(token, "customer.admin_created", id, requestId, async (session) => {
     const connection = await getDatabaseConnection();
@@ -288,7 +286,6 @@ export async function createCustomer(token: string | null, input: unknown, reque
       phone: parsed.phone,
       displayName: parsed.displayName,
       birthDate: parsed.birthDate ? new Date(`${parsed.birthDate}T00:00:00.000Z`) : null,
-      passwordHash: hash,
       status: "active",
       authVersion: 1,
       lastOrderAt: null,
@@ -364,11 +361,11 @@ export async function anonymizeCustomer(
           phone: `anon:${id}`,
           displayName: null,
           birthDate: null,
-          passwordHash: `disabled:${randomUUID()}`,
           status: "anonymized",
           anonymizedAt: timestamp,
           updatedAt: timestamp,
         },
+        $unset: { passwordHash: "" },
         $inc: { __v: 1, authVersion: 1 },
       },
       { session, returnDocument: "after" },

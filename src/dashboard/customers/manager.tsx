@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { gregorianToJalali, jalaliToGregorian } from "@/shared/jalali-date";
+import { formatPersianNumber } from "@/theme/format";
 
 import styles from "./manager.module.css";
 import type { CustomerFilters, CustomerList, CustomerRow } from "./server";
@@ -21,6 +22,10 @@ type Detail = {
   }[];
 };
 type Envelope<T> = { ok: true; value: T } | { ok: false; error: { code: string } };
+const birthMonths = [
+  "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور",
+  "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند",
+];
 async function request<T>(path: string, method = "GET", body?: unknown): Promise<T> {
   let response: Response;
   try {
@@ -306,13 +311,24 @@ function CustomerEditor({
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!form.current?.reportValidity() || busy) return;
+    setError("");
     const data = new FormData(form.current);
-    const rawBirth = String(data.get("birthDate") ?? "").trim();
+    const birthDay = String(data.get("birthDay") ?? "");
+    const birthMonth = String(data.get("birthMonth") ?? "");
+    const birthYear = String(data.get("birthYear") ?? "");
+    const hasBirthDate = !!(birthDay || birthMonth || birthYear);
+    if (hasBirthDate && !(birthDay && birthMonth && birthYear)) {
+      setError("روز، ماه و سال تولد را کامل انتخاب کنید.");
+      return;
+    }
+    const rawBirth = hasBirthDate
+      ? `${birthYear}-${birthMonth.padStart(2, "0")}-${birthDay.padStart(2, "0")}`
+      : "";
     let birthDate: string | null = null;
     try {
       birthDate = rawBirth ? jalaliToGregorian(rawBirth) : null;
     } catch {
-      setError("تاریخ تولد جلالی معتبر نیست. نمونه: ۱۳۷۵-۰۶-۱۵ با رقم‌های لاتین.");
+      setError("تاریخ تولد معتبر نیست.");
       return;
     }
     const input = {
@@ -321,7 +337,7 @@ function CustomerEditor({
       birthDate,
       ...(customer
         ? { status: data.get("status"), revision: customer.revision }
-        : { password: String(data.get("password") ?? "") }),
+        : {}),
     };
     setBusy(true);
     setError("");
@@ -339,6 +355,12 @@ function CustomerEditor({
       setBusy(false);
     }
   }
+  const currentYear = Number(
+    new Intl.DateTimeFormat("en-u-ca-persian-nu-latn", { year: "numeric" })
+      .formatToParts(new Date())
+      .find((part) => part.type === "year")?.value,
+  );
+  const birthParts = customer?.birthDate ? gregorianToJalali(customer.birthDate).split("-") : [];
   return (
     <dialog
       ref={dialog}
@@ -373,20 +395,47 @@ function CustomerEditor({
             defaultValue={customer?.phone ?? ""}
           />
         </label>
-        <label>
-          تاریخ تولد جلالی (اختیاری)
-          <input
-            name="birthDate"
-            dir="ltr"
-            inputMode="numeric"
-            placeholder="1375-06-15"
-            defaultValue={customer?.birthDate ? gregorianToJalali(customer.birthDate) : ""}
-            aria-describedby="birth-help"
-          />
-        </label>
-        <p id="birth-help" className={styles.hint}>
-          تاریخ به صورت جلالی وارد و به صورت تاریخ تقویمی UTC نگهداری می‌شود.
-        </p>
+        <fieldset className={styles.birth}>
+          <legend>تاریخ تولد (اختیاری)</legend>
+          <div className={styles.dateRow}>
+            <select
+              name="birthDay"
+              aria-label="روز تولد"
+              defaultValue={birthParts[2] ? String(Number(birthParts[2])) : ""}
+            >
+              <option value="">روز</option>
+              {Array.from({ length: 31 }, (_, index) => index + 1).map((day) => (
+                <option key={day} value={String(day)}>
+                  {formatPersianNumber(day)}
+                </option>
+              ))}
+            </select>
+            <select
+              name="birthMonth"
+              aria-label="ماه تولد"
+              defaultValue={birthParts[1] ? String(Number(birthParts[1])) : ""}
+            >
+              <option value="">ماه</option>
+              {birthMonths.map((month, index) => (
+                <option key={month} value={String(index + 1)}>
+                  {month}
+                </option>
+              ))}
+            </select>
+            <select
+              name="birthYear"
+              aria-label="سال تولد"
+              defaultValue={birthParts[0] ?? ""}
+            >
+              <option value="">سال</option>
+              {Array.from({ length: 121 }, (_, index) => currentYear - index).map((year) => (
+                <option key={year} value={String(year)}>
+                  {formatPersianNumber(year)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </fieldset>
         {customer ? (
           <label>
             وضعیت
@@ -395,19 +444,7 @@ function CustomerEditor({
               <option value="blocked">مسدود</option>
             </select>
           </label>
-        ) : (
-          <label>
-            رمز اولیه
-            <input
-              type="password"
-              name="password"
-              required
-              minLength={12}
-              maxLength={128}
-              autoComplete="new-password"
-            />
-          </label>
-        )}
+        ) : null}
         {error && (
           <p role="alert" className={styles.error}>
             {error}
