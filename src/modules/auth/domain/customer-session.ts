@@ -1,5 +1,5 @@
-export const CUSTOMER_SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000;
-export const CUSTOMER_SESSION_IDLE_MS = 7 * 24 * 60 * 60 * 1000;
+export const CUSTOMER_SESSION_TTL_MS = 365 * 24 * 60 * 60 * 1000;
+export const CUSTOMER_SESSION_IDLE_MS = CUSTOMER_SESSION_TTL_MS;
 export const customerCookieName = (production: boolean) =>
   production ? "__Host-armani-customer" : "armani-customer-dev";
 export const validCustomerToken = (value: unknown): value is string =>
