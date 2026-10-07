@@ -40,7 +40,11 @@ export function validateAuthFields(mode: AuthMode, fields: AuthFields) {
   }
   return {
     errors,
-    input: { phone, birthDate, displayName: `${fields.firstName.trim()} ${fields.lastName.trim()}`.trim() },
+    input: {
+      phone,
+      birthDate,
+      displayName: `${fields.firstName.trim()} ${fields.lastName.trim()}`.trim(),
+    },
   };
 }
 
@@ -57,8 +61,14 @@ export class AuthRequestError extends Error {
   }
 }
 
+export async function customerOtpPreviewMode() {
+  const response = await fetch("/api/customer/auth/otp", { cache: "no-store" });
+  if (!response.ok) throw new AuthRequestError("UNAVAILABLE", "وضعیت پیامک دریافت نشد.");
+  return ((await response.json()) as { preview: boolean }).preview;
+}
+
 export async function customerAuthRequest<T>(
-  operation: "login" | "signup" | "logout",
+  operation: "login" | "signup" | "logout" | "otp",
   body: object,
 ) {
   let response: Response;
