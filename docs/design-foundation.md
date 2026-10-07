@@ -1,6 +1,6 @@
 # Persian RTL design foundation
 
-The approved palette and visual direction come from [`../STITCH_UI_PROMPTS.md`](../../STITCH_UI_PROMPTS.md), Prompt 00. The extracted Stitch board in `UI-UX/` is supporting reference material; where its draft tokens differ, the approved prompt takes precedence.
+The approved palette and visual direction come from [`../STITCH_UI_PROMPTS.md`](../../STITCH_UI_PROMPTS.md), Prompt 00. The extracted Stitch board in `../../UI-UX/` is supporting reference material; where its draft tokens differ, the approved prompt takes precedence.
 
 `src/theme/tokens.ts` stores brand colors, shapes, elevation, and minimum touch size. `src/theme/theme.ts` maps these to MUI's palette, typography, breakpoints, components, and CSS variables (`--armani-*`). The app deliberately ships a warm light scheme only; dark mode needs a separately reviewed accessible palette.
 
