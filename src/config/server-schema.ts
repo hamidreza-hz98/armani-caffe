@@ -23,6 +23,12 @@ export type ServerConfig = Readonly<{
     sessionSecret: string;
     adminSessionSecret: string;
   }>;
+  sms: Readonly<{
+    apiKey?: string;
+    loginTemplateId?: number;
+    signupTemplateId?: number;
+    codeParameter: string;
+  }>;
   encryption: Readonly<{
     key: string;
     previousKey?: string;
@@ -62,6 +68,27 @@ export function parseServerConfig(env: EnvSource, mode: NodeMode): ServerConfig 
   const secretKey = reader.text("MINIO_SECRET_KEY");
   const sessionSecret = reader.secret("AUTH_SESSION_SECRET");
   const adminSessionSecret = reader.secret("AUTH_ADMIN_SESSION_SECRET");
+  const smsApiKey = reader.optionalText("SMSIR_API_KEY");
+  const loginTemplate = reader.optionalText("SMSIR_LOGIN_TEMPLATE_ID");
+  const signupTemplate = reader.optionalText("SMSIR_SIGNUP_TEMPLATE_ID");
+  const codeParameter = reader.optionalText("SMSIR_CODE_PARAMETER") ?? "CODE";
+  for (const [name, value] of [
+    ["SMSIR_LOGIN_TEMPLATE_ID", loginTemplate],
+    ["SMSIR_SIGNUP_TEMPLATE_ID", signupTemplate],
+  ] as const) {
+    if (
+      value &&
+      (!/^\d+$/.test(value) || !Number.isSafeInteger(Number(value)) || Number(value) < 1)
+    )
+      reader.issues.push(`${name} must be a positive integer`);
+  }
+  if (!/^[A-Za-z][A-Za-z0-9_]{0,63}$/.test(codeParameter))
+    reader.issues.push("SMSIR_CODE_PARAMETER must be a template parameter name");
+  if (
+    [smsApiKey, loginTemplate, signupTemplate].some(Boolean) &&
+    ![smsApiKey, loginTemplate, signupTemplate].every(Boolean)
+  )
+    reader.issues.push("SMS.ir requires API key and both template IDs together");
   if (sessionSecret && sessionSecret === adminSessionSecret) {
     reader.issues.push("AUTH_SESSION_SECRET and AUTH_ADMIN_SESSION_SECRET must differ");
   }
@@ -112,6 +139,12 @@ export function parseServerConfig(env: EnvSource, mode: NodeMode): ServerConfig 
     redisUrl,
     minio: Object.freeze({ endpoint, region, bucket, accessKey, secretKey }),
     auth: Object.freeze({ sessionSecret, adminSessionSecret }),
+    sms: Object.freeze({
+      apiKey: smsApiKey,
+      loginTemplateId: loginTemplate ? Number(loginTemplate) : undefined,
+      signupTemplateId: signupTemplate ? Number(signupTemplate) : undefined,
+      codeParameter,
+    }),
     encryption: Object.freeze({ key, previousKey }),
     paymentCallbackBaseUrl,
     webSocket: Object.freeze({ port, path: webSocketPath, heartbeatMs }),

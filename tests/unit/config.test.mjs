@@ -13,6 +13,25 @@ test("server configuration parses a complete environment", () => {
   assert.equal(config.logLevel, "info");
   assert.equal(config.logFormat, "json");
   assert.equal(config.test, null);
+  assert.equal(config.sms.apiKey, undefined);
+});
+
+test("SMS.ir configuration activates only when all template credentials are present", () => {
+  assert.throws(
+    () => parseServerConfig(testEnv({ SMSIR_API_KEY: "key" }), "production"),
+    /SMS.ir requires API key and both template IDs together/,
+  );
+  const config = parseServerConfig(
+    testEnv({
+      SMSIR_API_KEY: "key",
+      SMSIR_LOGIN_TEMPLATE_ID: "123",
+      SMSIR_SIGNUP_TEMPLATE_ID: "456",
+      SMSIR_CODE_PARAMETER: "CODE",
+    }),
+    "production",
+  );
+  assert.equal(config.sms.loginTemplateId, 123);
+  assert.equal(config.sms.signupTemplateId, 456);
 });
 
 test("public configuration exposes only allowlisted browser values", () => {
