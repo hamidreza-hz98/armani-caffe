@@ -163,7 +163,7 @@ test("guest resumes the chosen menu item after authentication", async ({ page })
     await route.fulfill({ json: ok({ id: "a".repeat(24) }) });
   });
   await page.goto("/internal/menu-preview");
-  await page.getByRole("button", { name: "+ افزودن" }).first().click();
+  await page.getByRole("button", { name: "افزودن", exact: true }).first().click();
   const options = page.getByRole("dialog", { name: "شخصی‌سازی سفارش" });
   await expect(options.getByText("۹۵٬۰۰۰ تومان", { exact: true })).toBeVisible();
   await options.getByRole("button", { name: "ورود و افزودن به سبد" }).click();

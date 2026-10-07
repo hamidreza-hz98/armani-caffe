@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { cartItemKey } from "@/modules/carts";
@@ -100,7 +100,10 @@ export function CartControl({
         })
           .then((response) => apiValue<Quote>(response))
           .then((value) => {
-            if (request === sequence.current) setQuote(value);
+            if (request === sequence.current) {
+              setQuote(value);
+              setError("");
+            }
           })
           .catch(() => {
             if (!controller.signal.aborted && request === sequence.current)
@@ -120,6 +123,7 @@ export function CartControl({
     setAdded(false);
     setLoading(true);
     setOptions(null);
+    setQuote(null);
     setSelected([]);
     setQuantity(1);
     setNote("");
@@ -177,7 +181,10 @@ export function CartControl({
         <CartLineControl item={base} />
       ) : (
         <button type="button" className={styles.addButton} onClick={() => void showOptions()}>
-          {hasAdditions ? "انتخاب گزینه‌ها" : "+ افزودن"}
+          <span className={styles.addIcon} aria-hidden="true">
+            +
+          </span>{" "}
+          افزودن
           {count > 0 ? ` (${formatPersianNumber(count)})` : ""}
         </button>
       )}
@@ -321,9 +328,7 @@ export function CartControl({
                 disabled={!quote || saving || (status !== "ready" && status !== "guest")}
                 onClick={() => void add()}
               >
-                {saving
-                  ? "در حال افزودن…"
-                  : "افزودن به سبد"}
+                {saving ? "در حال افزودن…" : "افزودن به سبد"}
               </button>
             </div>
           </>

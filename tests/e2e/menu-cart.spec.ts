@@ -32,6 +32,52 @@ const cart = (quantity: number, revision: number, additionIds: string[] = [], no
 });
 const ok = (value: unknown) => ({ ok: true, value });
 
+test("product options scroll within a short viewport while checkout stays visible", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 500 });
+  await page.route("**/api/customer/cart", async (route) =>
+    route.fulfill({ json: ok(cart(0, 3)) }),
+  );
+  await page.route(`**/api/products/${productId}/options`, async (route) =>
+    route.fulfill({
+      json: ok(
+        route.request().method() === "GET"
+          ? {
+              id: productId,
+              name: "اسپرسو دوبل",
+              description: "قهوه تازه",
+              basePriceToman: 95000,
+              imageId: null,
+              orderable: true,
+              additions: Array.from({ length: 16 }, (_, index) => ({
+                id: String(index + 1).padStart(24, "0"),
+                name: `افزودنی ${index + 1}`,
+                priceToman: 10000,
+                available: true,
+                imageId: null,
+              })),
+            }
+          : { productId, additionIds: [], quantity: 1, unitPriceToman: 95000, totalToman: 95000 },
+      ),
+    }),
+  );
+  await page.goto("/internal/menu-preview");
+  await page.getByRole("button", { name: "افزودن", exact: true }).first().click();
+  const dialog = page.getByRole("dialog", { name: "شخصی‌سازی سفارش" });
+  const body = dialog.locator("fieldset").locator("..");
+  await expect(dialog.getByRole("checkbox", { name: /افزودنی 16/ })).toBeAttached();
+  await expect
+    .poll(() => body.evaluate((element) => element.scrollHeight > element.clientHeight))
+    .toBe(true);
+  await dialog.getByRole("checkbox", { name: /افزودنی 16/ }).scrollIntoViewIfNeeded();
+  expect(await body.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+  await expect(dialog.getByRole("button", { name: "افزودن به سبد" })).toBeVisible();
+  expect(await dialog.evaluate((element) => element.getBoundingClientRect().height)).toBeLessThan(
+    500,
+  );
+});
+
 test("bottom sheet quotes additions, saves product note, and leaves menu content uncovered", async ({
   page,
 }) => {
@@ -84,7 +130,7 @@ test("bottom sheet quotes additions, saves product note, and leaves menu content
     });
   });
   await page.goto("/internal/menu-preview");
-  const opener = page.getByRole("button", { name: "+ افزودن" }).first();
+  const opener = page.getByRole("button", { name: "افزودن", exact: true }).first();
   await opener.click();
   const dialog = page.getByRole("dialog", { name: "شخصی‌سازی سفارش" });
   await expect(dialog).toBeVisible();

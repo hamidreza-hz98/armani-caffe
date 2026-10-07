@@ -138,7 +138,7 @@ test.describe("offline recovery", () => {
       });
     });
     await page.goto("/internal/menu-preview");
-    await page.getByRole("button", { name: "+ افزودن" }).first().click();
+    await page.getByRole("button", { name: "افزودن", exact: true }).first().click();
     const dialog = page.getByRole("dialog", { name: "شخصی‌سازی سفارش" });
     await expect(dialog.getByText("در حال دریافت گزینه‌ها…")).toBeVisible();
     await dialog.getByRole("checkbox", { name: /شات اضافه/ }).check();

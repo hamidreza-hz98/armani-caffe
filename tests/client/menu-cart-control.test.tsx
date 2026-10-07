@@ -98,7 +98,7 @@ test("options sheet quotes additions and sends no client price to cart mutation"
       <CartControl productId={id} orderable hasAdditions />
     </MenuCartProvider>,
   );
-  fireEvent.click(screen.getByRole("button", { name: "انتخاب گزینه‌ها" }));
+  fireEvent.click(screen.getByRole("button", { name: "افزودن" }));
   await screen.findByText("شات اضافه");
   fireEvent.click(screen.getByRole("checkbox", { name: /شات اضافه/ }));
   fireEvent.change(screen.getByLabelText("توضیحات برای باریستا (اختیاری)"), {
@@ -122,7 +122,7 @@ test("options sheet quotes additions and sends no client price to cart mutation"
   expect(refresh).toHaveBeenCalledOnce();
 });
 
-test("guest sees login help; unavailable product offers no add control", async () => {
+test("guest can view a quote; unavailable product offers no add control", async () => {
   vi.stubGlobal(
     "fetch",
     vi.fn().mockImplementation((url: string, init?: RequestInit) =>
@@ -160,10 +160,8 @@ test("guest sees login help; unavailable product offers no add control", async (
       <CartControl productId={id} orderable />
     </MenuCartProvider>,
   );
-  fireEvent.click(screen.getByRole("button", { name: "+ افزودن" }));
-  await waitFor(() =>
-    expect(screen.getByRole("button", { name: "ورود و افزودن به سبد" })).toBeVisible(),
-  );
+  fireEvent.click(screen.getByRole("button", { name: "افزودن" }));
+  await waitFor(() => expect(screen.getByRole("button", { name: "افزودن به سبد" })).toBeVisible());
   view.rerender(
     <MenuCartProvider>
       <CartControl productId={id} orderable={false} />

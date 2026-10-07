@@ -5,7 +5,16 @@ import { productOptions, quoteProduct } from "../../storefront/product-quote.ts"
 import { runSafeAction } from "../actions.ts";
 import { readJsonBody } from "../http/json.ts";
 import { requestIdFromHeader } from "../observability/index.ts";
+import { getServerConfig } from "../secrets/config.ts";
 import { configuredProductService } from "./products.ts";
+
+export function isAllowedQuoteOrigin(request: Request, appUrl: string, adminUrl: string) {
+  const origin = request.headers.get("origin");
+  return (
+    origin !== null &&
+    [new URL(request.url).origin, new URL(appUrl).origin, new URL(adminUrl).origin].includes(origin)
+  );
+}
 
 export async function handleProductOptions(
   request: Request,
@@ -20,8 +29,8 @@ export async function handleProductOptions(
         throw new ApplicationError("VALIDATION", "Invalid options URL");
       if (!/^[a-f\d]{24}$/.test(id)) throw new ApplicationError("VALIDATION", "Invalid product ID");
       if (mode === "quote") {
-        const origin = new URL(request.url).origin;
-        if (request.headers.get("origin") !== origin)
+        const config = getServerConfig();
+        if (!isAllowedQuoteOrigin(request, config.appUrl, config.adminUrl))
           throw new ApplicationError("FORBIDDEN", "Invalid quote origin");
       }
       const categories = await (await configuredProductService()).menu();

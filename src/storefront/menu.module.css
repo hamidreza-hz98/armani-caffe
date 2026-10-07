@@ -194,6 +194,17 @@
   cursor: pointer;
   white-space: nowrap;
 }
+.addIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-inline-end: 3px;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 18%);
+  font-size: 14px;
+  line-height: 1;
+}
 .addButton:hover {
   background: #3a2418;
 }
@@ -552,6 +563,10 @@
 .optionsDialog::backdrop {
   background: rgb(23 20 17 / 50%);
 }
+.optionsDialog[open] {
+  display: flex;
+  flex-direction: column;
+}
 .optionsHeader,
 .optionsFooter {
   display: flex;
@@ -560,6 +575,7 @@
   gap: 12px;
   padding: 12px 20px;
   background: #fffcf7;
+  flex: none;
 }
 .optionsHeader {
   border-block-end: 1px solid #d8cabb;
@@ -577,8 +593,9 @@
   cursor: pointer;
 }
 .optionsBody {
-  max-height: calc(88dvh - 155px);
+  min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 16px 20px;
 }
 .optionsProduct {
