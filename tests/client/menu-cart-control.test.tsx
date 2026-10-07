@@ -38,7 +38,7 @@ afterEach(() => {
   refresh.mockClear();
 });
 
-test("options sheet quotes additions and sends no client price to cart mutation", async () => {
+test("options sheet prices additions without a quote request or client price in cart mutation", async () => {
   const fetcher = vi.fn().mockImplementation((url: string, init?: RequestInit) => {
     if (url === "/api/customer/cart" && !init?.body) return Promise.resolve(success(cart()));
     if (url.endsWith("/options") && !init?.body)
@@ -61,18 +61,7 @@ test("options sheet quotes additions and sends no client price to cart mutation"
           ],
         }),
       );
-    if (url.endsWith("/options")) {
-      const selected = JSON.parse(init!.body as string).additionIds;
-      return Promise.resolve(
-        success({
-          productId: id,
-          additionIds: selected,
-          quantity: 1,
-          unitPriceToman: selected.length ? 130000 : 100000,
-          totalToman: selected.length ? 130000 : 100000,
-        }),
-      );
-    }
+    if (url.endsWith("/options")) throw new Error("Quote endpoint must not be called");
     return Promise.resolve(
       success(
         cart(
@@ -119,6 +108,9 @@ test("options sheet quotes additions and sends no client price to cart mutation"
     quantity: 1,
     note: "کم‌شیرین",
   });
+  expect(
+    fetcher.mock.calls.filter(([url, init]) => url.endsWith("/options") && init?.body),
+  ).toHaveLength(0);
   expect(refresh).toHaveBeenCalledOnce();
 });
 

@@ -10,6 +10,7 @@ import { formatPersianNumber, formatToman } from "@/theme/format";
 import { CartLineControl } from "./cart-line-control";
 import styles from "./menu.module.css";
 import { useMenuCart } from "./menu-cart";
+import { quoteSelectedOptions } from "./option-quote";
 
 type Addition = {
   id: string;
@@ -26,13 +27,6 @@ type Options = {
   imageId: string | null;
   orderable: boolean;
   additions: Addition[];
-};
-type Quote = {
-  productId: string;
-  additionIds: string[];
-  quantity: number;
-  unitPriceToman: number;
-  totalToman: number;
 };
 type ApiResult<T> =
   { ok: true; value: T } | { ok: false; error: { code: string; message: string } };
@@ -60,12 +54,11 @@ export function CartControl({
   const [selected, setSelected] = useState<string[]>([]);
   const [quantity, setQuantity] = useState(1);
   const [note, setNote] = useState("");
-  const [quote, setQuote] = useState<Quote | null>(null);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [added, setAdded] = useState(false);
-  const sequence = useRef(0);
+  const quote = options ? quoteSelectedOptions(options, selected, quantity) : null;
   const baseKey = cartItemKey(productId, []);
   const base = cart?.items.find(
     (item) =>
@@ -84,46 +77,12 @@ export function CartControl({
     else dialog.current?.close();
   }, [open]);
 
-  useEffect(() => {
-    if (!open || !options) return;
-    const controller = new AbortController();
-    const request = ++sequence.current;
-    const timer = setTimeout(
-      () =>
-        void fetch(`/api/products/${productId}/options`, {
-          method: "POST",
-          credentials: "same-origin",
-          cache: "no-store",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ additionIds: selected, quantity }),
-          signal: controller.signal,
-        })
-          .then((response) => apiValue<Quote>(response))
-          .then((value) => {
-            if (request === sequence.current) {
-              setQuote(value);
-              setError("");
-            }
-          })
-          .catch(() => {
-            if (!controller.signal.aborted && request === sequence.current)
-              setError("قیمت‌گذاری در دسترس نیست؛ دوباره تلاش کنید.");
-          }),
-      100,
-    );
-    return () => {
-      clearTimeout(timer);
-      controller.abort();
-    };
-  }, [open, options, productId, quantity, selected]);
-
   async function showOptions() {
     if (!orderable) return;
     setOpen(true);
     setAdded(false);
     setLoading(true);
     setOptions(null);
-    setQuote(null);
     setSelected([]);
     setQuantity(1);
     setNote("");
@@ -251,10 +210,7 @@ export function CartControl({
                     type="button"
                     aria-label="کم کردن تعداد"
                     disabled={quantity <= 1}
-                    onClick={() => {
-                      setQuote(null);
-                      setQuantity((value) => value - 1);
-                    }}
+                    onClick={() => setQuantity((value) => value - 1)}
                   >
                     −
                   </button>
@@ -263,10 +219,7 @@ export function CartControl({
                     type="button"
                     aria-label="زیاد کردن تعداد"
                     disabled={quantity >= 100}
-                    onClick={() => {
-                      setQuote(null);
-                      setQuantity((value) => value + 1);
-                    }}
+                    onClick={() => setQuantity((value) => value + 1)}
                   >
                     +
                   </button>
@@ -286,7 +239,6 @@ export function CartControl({
                         checked={selected.includes(addition.id)}
                         disabled={!addition.available}
                         onChange={() => {
-                          setQuote(null);
                           setSelected((current) =>
                             current.includes(addition.id)
                               ? current.filter((id) => id !== addition.id)
@@ -320,7 +272,7 @@ export function CartControl({
               <span>
                 مبلغ نهایی:{" "}
                 <strong aria-live="polite">
-                  {quote ? formatToman(quote.totalToman) : "در حال محاسبه…"}
+                  {quote ? formatToman(quote.totalToman) : "قیمت در دسترس نیست"}
                 </strong>
               </span>
               <button

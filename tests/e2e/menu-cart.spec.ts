@@ -82,6 +82,7 @@ test("bottom sheet quotes additions, saves product note, and leaves menu content
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
+  let quoteRequests = 0;
   await page.route("**/api/customer/cart", async (route) => {
     if (route.request().method() === "GET") return route.fulfill({ json: ok(cart(0, 3)) });
     const command = route.request().postDataJSON();
@@ -117,16 +118,10 @@ test("bottom sheet quotes additions, saves product note, and leaves menu content
           ],
         }),
       });
-    const selection = route.request().postDataJSON();
-    const unitPriceToman = selection.additionIds.length ? 125000 : 95000;
+    quoteRequests++;
     return route.fulfill({
-      json: ok({
-        productId,
-        additionIds: selection.additionIds,
-        quantity: selection.quantity,
-        unitPriceToman,
-        totalToman: unitPriceToman * selection.quantity,
-      }),
+      status: 503,
+      json: { ok: false, error: { code: "UNAVAILABLE", message: "Quote offline" } },
     });
   });
   await page.goto("/internal/menu-preview");
@@ -146,6 +141,7 @@ test("bottom sheet quotes additions, saves product note, and leaves menu content
   expect((await new AxeBuilder({ page }).analyze()).violations).toEqual([]);
   await dialog.getByRole("button", { name: "افزودن به سبد" }).click();
   await expect(dialog.getByText("به سبد خرید شما افزوده شد!")).toBeVisible();
+  expect(quoteRequests).toBe(0);
   await dialog.getByRole("button", { name: "بازگشت به منو" }).click();
   const summary = page.getByRole("complementary", { name: "خلاصه سبد خرید" });
   await expect(summary).toContainText("۲ قلم در سبد");
