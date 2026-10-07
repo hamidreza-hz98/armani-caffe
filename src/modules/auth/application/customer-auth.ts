@@ -46,10 +46,7 @@ export interface CustomerAuthStore {
   throttle(phone: string, operation: "signup" | "login"): Promise<void>;
   credentials(phone: string): Promise<CustomerCredentialIdentity | null>;
   rejectLogin(requestId: string): Promise<void>;
-  signup(
-    input: Omit<CustomerSignup, "proof">,
-    requestId: string,
-  ): Promise<Customer>;
+  signup(input: Omit<CustomerSignup, "proof">, requestId: string): Promise<Customer>;
   login(
     identity: CustomerCredentialIdentity,
     previousToken: string | null,
@@ -63,7 +60,7 @@ export interface CustomerAuthStore {
 }
 /** Verifies phone possession before issuing customer sessions. */
 export interface CustomerProofVerifier {
-  verify(phone: string, proof: string): Promise<boolean>;
+  verify(phone: string, proof: string, purpose: "login" | "signup"): Promise<boolean>;
 }
 export class CustomerAuthService {
   private readonly store: CustomerAuthStore;
@@ -75,7 +72,7 @@ export class CustomerAuthService {
   async signup(raw: unknown, requestId: string) {
     const input = parseCustomerSignup(raw);
     await this.store.throttle(input.phone, "signup");
-    if (!input.proof || !(await this.proofs.verify(input.phone, input.proof)))
+    if (!input.proof || !(await this.proofs.verify(input.phone, input.proof, "signup")))
       throw new ApplicationError("INVALID_CREDENTIALS", "Invalid verification code");
     return this.store.signup(
       {
@@ -86,10 +83,16 @@ export class CustomerAuthService {
       requestId,
     );
   }
+  async signupAndLogin(raw: unknown, previousToken: string | null, requestId: string) {
+    const customer = await this.signup(raw, requestId);
+    const identity = await this.store.credentials(customer.phone);
+    if (!identity) throw new ApplicationError("UNAVAILABLE", "Customer identity unavailable");
+    return this.store.login(identity, previousToken, requestId);
+  }
   async login(raw: unknown, previousToken: string | null, requestId: string) {
     const input = parseCustomerLogin(raw);
     await this.store.throttle(input.phone, "login");
-    const valid = await this.proofs.verify(input.phone, input.proof);
+    const valid = await this.proofs.verify(input.phone, input.proof, "login");
     const identity = await this.store.credentials(input.phone);
     if (!valid || !identity || identity.status !== "active") {
       await this.store.rejectLogin(requestId);

@@ -34,6 +34,7 @@ import { checkoutIntentSchema, orderSchema } from "../../modules/orders/server.t
 import { transactionSchema } from "../../modules/payments/server.ts";
 import { printJobSchema } from "../../modules/printing/server.ts";
 import { settingsReceiptSchema, settingsSchema } from "../../modules/settings/server.ts";
+import { otpChallengeSchema, smsSendThrottleSchema } from "../../modules/sms/server.ts";
 
 const schemas = [
   adminSchema,
@@ -63,6 +64,8 @@ const schemas = [
   printJobSchema,
   settingsSchema,
   settingsReceiptSchema,
+  otpChallengeSchema,
+  smsSendThrottleSchema,
   auditEventSchema,
   outboxEventSchema,
 ];

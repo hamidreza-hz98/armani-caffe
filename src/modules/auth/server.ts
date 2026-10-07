@@ -13,6 +13,7 @@ import { AdminService, createAdminsHttpHandler, MongoAdminRepository } from "../
 import { appendAudit } from "../audit/server.ts";
 import { MongoCustomerRepository } from "../customers/server.ts";
 import { commitSensitiveChange } from "../notifications/server.ts";
+import { configuredOtpService } from "../sms/server.ts";
 import { AdminAuthService } from "./application/admin-auth.ts";
 import { CustomerAuthService, type CustomerProofVerifier } from "./application/customer-auth.ts";
 import { validAdminToken } from "./domain/admin-session.ts";
@@ -274,7 +275,19 @@ export function createCustomerSecurity(
 }
 export async function configuredCustomerSecurity() {
   const config = getServerConfig();
-  return createCustomerSecurity(await getDatabaseConnection(), config.auth.sessionSecret);
+  return createCustomerSecurity(
+    await getDatabaseConnection(),
+    config.auth.sessionSecret,
+    undefined,
+    {
+      verify: async (phone, proof, purpose) =>
+        (await configuredOtpService()).verify(
+          phone,
+          purpose === "login" ? "customer-login" : "customer-signup",
+          proof,
+        ),
+    },
+  );
 }
 export const handleCustomerHttp = createCustomerHttpHandler({
   service: async () => (await configuredCustomerSecurity()).auth,

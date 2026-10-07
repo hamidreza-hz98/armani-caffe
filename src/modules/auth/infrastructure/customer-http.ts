@@ -70,7 +70,6 @@ export function createCustomerHttpHandler(options: {
           return { loggedOut: true };
         }
         const service = await options.service();
-        if (operation === "signup") return service.signup(body, requestId);
         if (operation === "session") {
           const principal = await service.resolve(token);
           if (!principal) throw new ApplicationError("UNAUTHORIZED", "Customer session required");
@@ -84,9 +83,11 @@ export function createCustomerHttpHandler(options: {
           return { loggedOut: true };
         }
         const issued =
-          operation === "login"
-            ? await service.login(body, token, requestId)
-            : await service.rotate(token, requestId);
+          operation === "signup"
+            ? await service.signupAndLogin(body, token, requestId)
+            : operation === "login"
+              ? await service.login(body, token, requestId)
+              : await service.rotate(token, requestId);
         cookie = customerCookie(
           issued.token,
           issued.expiresAt,

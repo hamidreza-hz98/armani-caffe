@@ -6,6 +6,7 @@ import ts from "typescript";
 
 export const moduleNames = [
   "auth",
+  "sms",
   "admins",
   "customers",
   "media",
