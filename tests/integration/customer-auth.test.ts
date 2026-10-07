@@ -12,6 +12,7 @@ import {
   readCustomerCookie,
   ScryptPasswords,
 } from "@/modules/auth/server";
+import { OtpService, SmsService } from "@/modules/sms/server";
 import { applyDatabaseIndexes, applyMigrations } from "@/server/database/operations";
 import { gregorianToJalali, jalaliToGregorian } from "@/shared/jalali-date";
 
@@ -59,6 +60,8 @@ beforeEach(async () => {
     "admins",
     "sessions",
     "customer_auth_throttles",
+    "sms_otp_challenges",
+    "sms_send_throttles",
     "admin_login_throttles",
     "admin_owner_guard",
     "audit_events",
@@ -67,6 +70,47 @@ beforeEach(async () => {
   ])
     await connection.db!.collection(name).deleteMany({});
   security = createCustomerSecurity(connection, secret, clock, proofs);
+});
+
+test("OTP is sent by template, expires, limits resend and attempts, and is consumed once", async () => {
+  const messages: unknown[] = [];
+  const sms = new SmsService({
+    sendTemplate: async (message) => {
+      messages.push(message);
+    },
+  });
+  const otp = new OtpService(
+    connection,
+    sms,
+    secret,
+    { "customer-login": 111, "customer-signup": 222 },
+    "CODE",
+    clock,
+  );
+  await otp.send("+989123456789", "customer-login");
+  expect(messages).toHaveLength(1);
+  expect(messages[0]).toMatchObject({ mobile: "09123456789", templateId: 111 });
+  const sent = messages[0] as { parameters: { value: string }[] };
+  const code = sent.parameters[0].value;
+  await expect(otp.send("+989123456789", "customer-login")).rejects.toMatchObject({
+    code: "RATE_LIMITED",
+  });
+  expect(await otp.verify("+989123456789", "customer-signup", code)).toBe(false);
+  expect(
+    await otp.verify("+989123456789", "customer-login", "000000" === code ? "999999" : "000000"),
+  ).toBe(false);
+  expect(await otp.verify("+989123456789", "customer-login", code)).toBe(true);
+  expect(await otp.verify("+989123456789", "customer-login", code)).toBe(false);
+  now = new Date(now.getTime() + 121000);
+  await otp.send("+989123456789", "customer-login");
+  now = new Date(now.getTime() + 301000);
+  expect(
+    await otp.verify(
+      "+989123456789",
+      "customer-login",
+      (messages[1] as { parameters: { value: string }[] }).parameters[0].value,
+    ),
+  ).toBe(false);
 });
 afterAll(async () => {
   if (connection) {
@@ -142,13 +186,11 @@ test("login, rotation, logout, expiry, blocked status, and admin separation", as
   expect(await security.auth.resolve(rotated.token)).toBeNull();
   const fresh = await security.auth.login({ phone: "+989123456789", code }, null, "login2");
   now = new Date(now.getTime() + 8 * 24 * 60 * 60 * 1000);
+  expect(await security.auth.resolve(fresh.token)).toMatchObject({ id: customer.id });
+  now = new Date("2027-01-02T00:00:00.000Z");
   expect(await security.auth.resolve(fresh.token)).toBeNull();
   now = new Date("2026-01-01T00:00:00.000Z");
-  const blockedToken = await security.auth.login(
-    { phone: "+989123456789", code },
-    null,
-    "login3",
-  );
+  const blockedToken = await security.auth.login({ phone: "+989123456789", code }, null, "login3");
   await connection
     .db!.collection("customers")
     .updateOne({ _id: new mongoose.Types.ObjectId(customer.id) }, { $set: { status: "blocked" } });
@@ -229,11 +271,12 @@ test("HTTP cookies, CSRF, admin-cookie isolation, and safe DTOs", async () => {
   );
   const created = await handler(request("signup", signup), "signup");
   expect(created.status).toBe(200);
-  expect(await created.text()).not.toContain(code);
+  expect(await created.json()).toMatchObject({ ok: true, value: { phone: "+989123456789" } });
   const login = await handler(request("login", { phone: "09123456789", code }), "login");
   expect(login.status).toBe(200);
   expect(login.headers.get("set-cookie")).toContain("armani-customer-dev=");
   expect(login.headers.get("set-cookie")).toContain("HttpOnly");
+  expect(login.headers.get("set-cookie")).toContain("Max-Age=31536000");
   const cookie = login.headers.get("set-cookie")!.split(";")[0];
   expect(
     readCustomerCookie(
