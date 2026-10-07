@@ -74,7 +74,7 @@ export function StorefrontHeaderFallback() {
     <header className={styles.header} aria-label="در حال آماده‌سازی ابزارهای فروشگاه">
       <div className={styles.headerInner}>
         <span className={styles.brand}>
-          <Image src="/brand/armani-logo.png" alt="" width={42} height={42} priority unoptimized />
+          <Image src="/armani-icon.svg" alt="" width={42} height={42} priority unoptimized />
           <span>
             <strong>آرمانی کافه</strong>
             <small>کافه و سفارش آنلاین</small>

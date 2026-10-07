@@ -80,7 +80,7 @@ export async function loadStorefrontShell(): Promise<StorefrontShellData> {
     businessName: business.title,
     businessLogoUrl: business.logoMediaId
       ? `/api/media/${business.logoMediaId}/file?variant=small`
-      : "/brand/armani-logo.png",
+      : "/armani-icon.svg",
     account:
       accountResult.status === "fulfilled"
         ? accountResult.value

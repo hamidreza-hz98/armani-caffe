@@ -128,7 +128,7 @@ export function DashboardChrome({ links, actor }: Props) {
       <Link href="/dashboard" className={styles.brand} onClick={() => setDrawer(false)}>
         <Image
           className={styles.brandLogo}
-          src="/brand/armani-logo.png"
+          src="/armani-icon.svg"
           alt=""
           width={46}
           height={46}
